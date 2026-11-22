@@ -21,6 +21,15 @@ export default function HomePage() {
   const spicesAndSeeds = PRODUCTS.filter((p) =>
     p.categorySlug === "spices-seeds"
   );
+  const organicFood = PRODUCTS.filter(
+    (p) =>
+      p.categorySlug === "organic-food" ||
+      p.slug === "satkhira-aam" ||
+      p.slug === "twin-fol" ||
+      p.slug === "dry-food-mix" ||
+      p.slug === "kumra-bori" ||
+      p.slug === "beetroot-powder"
+  );
 
   return (
     <div className="bg-[#f8fafc]">
@@ -62,6 +71,13 @@ export default function HomePage() {
         title="মসলা, চুইঝাল ও ভেষজ পণ্য (Spices & Organic Seeds)"
         viewAllHref="/collections/spices-seeds"
         products={spicesAndSeeds}
+      />
+
+      {/* Organic Food, Dry Fruits & Fresh Seasonal Fruits */}
+      <ProductCarouselSection
+        title="অর্গানিক ফুড, ড্রাই ফ্রুটস ও মৌসুমি ফল (Organic Food & Fruits)"
+        viewAllHref="/collections/organic-food"
+        products={organicFood}
       />
 
       {/* Customer Testimonials Carousel */}

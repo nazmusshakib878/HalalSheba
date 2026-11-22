@@ -22,7 +22,7 @@ const COLLECTION_TITLES: Record<string, string> = {
   "organic-certified": "Organic Certified",
   "functional-food": "Functional Food",
   "cooking-essentials": "Cooking Essentials",
-  "organic-food": "Organic Certified",
+  "organic-food": "অর্গানিক ফুড ও মৌসুমি ফল (Organic & Fruits)",
   pickle: "Pickle",
 };
 
