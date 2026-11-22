@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 34" width="380" height="34">
+  <!-- VISA -->
+  <rect x="0" y="2" width="48" height="30" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="24" y="22" font-family="-apple-system,sans-serif" font-weight="900" font-size="14" fill="#1434CB" text-anchor="middle" font-style="italic">VISA</text>
+
+  <!-- Mastercard -->
+  <rect x="54" y="2" width="48" height="30" rx="4" fill="#ffffff" stroke="#e2e8f0"/>
+  <circle cx="73" cy="17" r="9" fill="#EB001B"/>
+  <circle cx="83" cy="17" r="9" fill="#F79E1B" fill-opacity="0.85"/>
+
+  <!-- AMEX -->
+  <rect x="108" y="2" width="48" height="30" rx="4" fill="#0077A6"/>
+  <text x="132" y="21" font-family="-apple-system,sans-serif" font-weight="800" font-size="10.5" fill="#ffffff" text-anchor="middle">AMEX</text>
+
+  <!-- bKash -->
+  <rect x="162" y="2" width="52" height="30" rx="4" fill="#E2136E"/>
+  <text x="188" y="21" font-family="-apple-system,sans-serif" font-weight="800" font-size="11.5" fill="#ffffff" text-anchor="middle">bKash</text>
+
+  <!-- Nagad -->
+  <rect x="220" y="2" width="50" height="30" rx="4" fill="#F7931E"/>
+  <text x="245" y="21" font-family="-apple-system,sans-serif" font-weight="800" font-size="11" fill="#ffffff" text-anchor="middle">Nagad</text>
+
+  <!-- Rocket -->
+  <rect x="276" y="2" width="48" height="30" rx="4" fill="#8C3494"/>
+  <text x="300" y="21" font-family="-apple-system,sans-serif" font-weight="800" font-size="10" fill="#ffffff" text-anchor="middle">Rocket</text>
+
+  <!-- SSLCOMMERZ -->
+  <rect x="330" y="2" width="48" height="30" rx="4" fill="#2B3990"/>
+  <text x="354" y="21" font-family="-apple-system,sans-serif" font-weight="800" font-size="9" fill="#ffffff" text-anchor="middle">SSL</text>
+</svg>

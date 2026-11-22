@@ -99,9 +99,7 @@ export function Footer() {
               </p>
               <div className="flex flex-wrap items-center gap-2.5">
                 <a
-                  href="https://play.google.com/store/apps/details?id=com.ghorerbazar.official"
-                  target="_blank"
-                  rel="noreferrer"
+                  href="#download-app"
                   className="inline-block"
                 >
                   {playErr ? (
@@ -120,9 +118,7 @@ export function Footer() {
                   )}
                 </a>
                 <a
-                  href="https://apps.apple.com/app/ghorer-bazar/id6764511612"
-                  target="_blank"
-                  rel="noreferrer"
+                  href="#download-app"
                   className="inline-block"
                 >
                   {appErr ? (
@@ -311,7 +307,7 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom Copyright + Pay With Row (matching ghorerbazar.com) */}
+        {/* Bottom Copyright + Pay With Row */}
         <div className="border-t border-gray-200 pt-5 flex flex-col lg:flex-row items-center justify-between gap-4">
           <div className="text-[13.5px] text-[#6b7280] shrink-0">
             Copyright &copy; 2026 Halal Sheba (হালাল সেবা). All rights reserved.

@@ -274,7 +274,7 @@ function CollectionViewInner() {
               setPage(1);
             }}
             aria-label="Minimum price"
-            className="gb-range absolute inset-0 w-full"
+            className="hs-range absolute inset-0 w-full"
           />
           <input
             type="range"
@@ -288,7 +288,7 @@ function CollectionViewInner() {
               setPage(1);
             }}
             aria-label="Maximum price"
-            className="gb-range absolute inset-0 w-full"
+            className="hs-range absolute inset-0 w-full"
           />
         </div>
       </div>

@@ -60,7 +60,8 @@ function CheckoutInner() {
   const deliveryCharge = area === "inside-dhaka" ? 60 : 120;
 
   const discount = useMemo(() => {
-    if (appliedPromo === "GHORER10") return Math.round(subtotal * 0.1);
+    if (appliedPromo === "HALAL10" || appliedPromo === "HALALBAZAR10")
+      return Math.round(subtotal * 0.1);
     if (appliedPromo === "HONEY200" && subtotal >= 1000) return 200;
     return 0;
   }, [appliedPromo, subtotal]);
@@ -69,11 +70,11 @@ function CheckoutInner() {
 
   const handleApplyPromo = () => {
     const code = promoCode.trim().toUpperCase();
-    if (code === "GHORER10" || code === "HONEY200") {
+    if (code === "HALAL10" || code === "HALALBAZAR10" || code === "HONEY200") {
       setAppliedPromo(code);
       showToast(`Promo code ${code} applied!`);
     } else {
-      showToast("Try GHORER10 (10% off) or HONEY200 (৳200 off ৳1,000+)", "info");
+      showToast("Try HALAL10 (10% off) or HONEY200 (৳200 off ৳1,000+)", "info");
     }
   };
 
@@ -400,7 +401,7 @@ function CheckoutInner() {
               type="text"
               value={promoCode}
               onChange={(e) => setPromoCode(e.target.value)}
-              placeholder="Coupon (try GHORER10)"
+              placeholder="Coupon (try HALAL10)"
               className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#f48721]"
             />
             <button

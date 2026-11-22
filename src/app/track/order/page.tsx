@@ -19,9 +19,9 @@ function TrackOrderInner() {
   const initialId = searchParams.get("id") || "";
   const { findOrder, orders } = useStore();
 
-  const [searchInput, setSearchInput] = useState(initialId || "GB-10042");
+  const [searchInput, setSearchInput] = useState(initialId || "HS-10042");
   const [matchedOrder, setMatchedOrder] = useState<CustomerOrder | undefined>(
-    () => findOrder(initialId || "GB-10042")
+    () => findOrder(initialId || "HS-10042")
   );
   const [searched, setSearched] = useState(false);
 

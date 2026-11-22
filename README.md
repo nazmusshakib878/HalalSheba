@@ -1,14 +1,14 @@
-# GhorerBazar — Safe & Reliable Food E-Commerce
+# Halal Sheba (হালাল সেবা) — Premium Halal & Safe Food E-Commerce Platform
 
-Next.js 15 (App Router) + React 19 + TypeScript + Tailwind CSS v4 storefront recreating [ghorerbazar.com](https://ghorerbazar.com/).
+Next.js 15 (App Router) + React 19 + TypeScript + Tailwind CSS storefront for **Halal Sheba (হালাল সেবা)**.
 
 ## Key Features & Routes
 
-- `/` — Homepage featuring sticky header with instant live search autocomplete, 12-category navigation bar with dropdowns, Hero slider + side promo banner, Featured Categories carousel, 4-card Top Selling horizontal showcase (`Add To Cart` + `Buy now`), Our Brands carousel, category product carousels (`All Natural Honey`, `Premium Dates`, `Cooking Essentials`, `Organic Food`), mid-page promotional banner, `Just For You` grid with Load More, and 5-column Footer with payment badges.
+- `/` — Homepage featuring sticky header with instant live search autocomplete, multi-category navigation bar with dropdowns, luxury 3D Gold Halal Sheba logo, Hero slider with trust chips, Featured Categories carousel, Top Selling showcase with instant Cart & Buy Now buttons, Our Brands carousel, categorized product carousels (`All Natural Honey`, `Gur & Sweets`, `Pure Oil & Ghee`, `Spices & Organic Seeds`, `Organic Food & Fruits`), 4-pillar trust bar, and 5-column Footer with local payment method badges.
 - `/collections/[slug]` — Category & collection catalog with subcategory checklists, dual-handle Price Range slider, Brand & Product Flag filters, sorting, per-page count, and pagination.
-- `/products/[slug]` — Product details page with multi-image gallery, discount calculation, quantity controls, Add to Cart, Buy Now, Order on WhatsApp, hotline link, Description & Customer Reviews tabs, and Related Products.
-- `/checkout` & `/buy/now/[id]` — Complete checkout flow supporting Inside/Outside Dhaka shipping rates, promo codes (`GHORER10`, `HONEY200`), payment method selection, and instant order confirmation.
-- `/track/order` — Interactive 5-step order status tracker (includes sample order `GB-10042` plus newly placed orders).
+- `/products/[slug]` — Product details page with multi-image gallery, discount calculation, quantity controls, Add to Cart, Buy Now, Order on WhatsApp, direct Hotline ordering (`01313-946402`), Description & Customer Reviews tabs, and Related Products.
+- `/checkout` & `/buy/now/[id]` — Complete checkout flow supporting Inside/Outside Dhaka shipping rates, promo codes (`HALAL10`, `HONEY200`), payment method selection, and instant order confirmation.
+- `/track/order` — Interactive 5-step order status tracker (includes sample order `HS-10042` plus newly placed orders).
 - `/my/wishlists`, `/login`, `/all-brands`, `/brand/[slug]`, `/faq`, `/page/[slug]`.
 
 ## Setup Instructions

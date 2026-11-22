@@ -79,11 +79,11 @@ interface StoreContextValue {
   showToast: (text: string, type?: "success" | "info") => void;
 }
 
-const STORAGE_KEY = "ghorerbazar_store_v1";
+const STORAGE_KEY = "halalsheba_store_v1";
 
 const SEEDED_ORDERS: CustomerOrder[] = [
   {
-    orderId: "GB-10042",
+    orderId: "HS-10042",
     customerName: "Tariqul Islam",
     phone: "01711000042",
     area: "inside-dhaka",
@@ -275,7 +275,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       const randomNum = 10050 + Math.floor(Math.random() * 89000);
       const newOrder: CustomerOrder = {
         ...orderData,
-        orderId: `GB-${randomNum}`,
+        orderId: `HS-${randomNum}`,
         status: "Order Placed",
         createdAt: new Date().toISOString(),
       };

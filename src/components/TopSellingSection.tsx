@@ -19,7 +19,7 @@ export function TopSellingSection() {
         Top Selling Products
       </h2>
 
-      {/* 2-Column Featured Grid matching ghorerbazar.com */}
+      {/* 2-Column Featured Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {topSelling.map((product) => {
           const saveAmount =

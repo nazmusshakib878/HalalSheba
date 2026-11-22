@@ -76,9 +76,9 @@ export interface Product {
 
 export const SITE_ASSETS = {
   logo: "/images/halal-sheba-logo.png",
-  paymentGateway: "https://cdn.ghorerbazar.com/company_logo/faysy1756641916.png",
-  googlePlayBadge: "https://ghorerbazar.com/assets/images/google-play.svg",
-  appStoreBadge: "https://ghorerbazar.com/assets/images/app-store.svg",
+  paymentGateway: "/images/badges/payment-methods.svg",
+  googlePlayBadge: "/images/badges/google-play.svg",
+  appStoreBadge: "/images/badges/app-store.svg",
   rightPromoBanner: {
     image: "/images/banners/promo-side.jpg",
     alt: "স্পেশাল কম্বো অফার",

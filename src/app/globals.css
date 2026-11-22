@@ -33,14 +33,14 @@
 }
 
 /* Dual range slider styling */
-input[type="range"].gb-range {
+input[type="range"].hs-range {
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
   pointer-events: none;
 }
 
-input[type="range"].gb-range::-webkit-slider-thumb {
+input[type="range"].hs-range::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   height: 18px;
@@ -53,7 +53,7 @@ input[type="range"].gb-range::-webkit-slider-thumb {
   pointer-events: auto;
 }
 
-input[type="range"].gb-range::-moz-range-thumb {
+input[type="range"].hs-range::-moz-range-thumb {
   height: 18px;
   width: 18px;
   border-radius: 9999px;
