@@ -73,8 +73,8 @@ interface StoreContextValue {
   findOrder: (query: string) => CustomerOrder | undefined;
   reviews: ProductReview[];
   addReview: (review: Omit<ProductReview, "id" | "createdAt">) => void;
-  user: { name: string; phone: string } | null;
-  signIn: (name: string, phone: string) => void;
+  user: { name: string; phone: string; email?: string; address?: string } | null;
+  signIn: (name: string, phone: string, email?: string, address?: string) => void;
   signOut: () => void;
   showToast: (text: string, type?: "success" | "info") => void;
 }
@@ -149,7 +149,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [wishlist, setWishlist] = useState<number[]>([]);
   const [orders, setOrders] = useState<CustomerOrder[]>(SEEDED_ORDERS);
   const [reviews, setReviews] = useState<ProductReview[]>(SEEDED_REVIEWS);
-  const [user, setUser] = useState<{ name: string; phone: string } | null>(null);
+  const [user, setUser] = useState<{
+    name: string;
+    phone: string;
+    email?: string;
+    address?: string;
+  } | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
@@ -319,8 +324,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   );
 
   const signIn = useCallback(
-    (name: string, phone: string) => {
-      setUser({ name: name.trim() || "Halal Sheba Customer", phone: phone.trim() });
+    (name: string, phone: string, email?: string, address?: string) => {
+      setUser({
+        name: name.trim() || "Halal Sheba Customer",
+        phone: phone.trim(),
+        email: email?.trim() || undefined,
+        address: address?.trim() || undefined,
+      });
       showToast("Signed in successfully");
     },
     [showToast]

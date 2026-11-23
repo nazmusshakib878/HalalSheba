@@ -131,8 +131,8 @@ function CheckoutInner() {
   // Form State
   const [customerName, setCustomerName] = useState(user?.name || "");
   const [phone, setPhone] = useState(user?.phone || "");
-  const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
+  const [email, setEmail] = useState(user?.email || "");
+  const [address, setAddress] = useState(user?.address || "");
   const [district, setDistrict] = useState("Dhaka");
   const [thana, setThana] = useState("");
   const [note, setNote] = useState("");
@@ -365,7 +365,7 @@ function CheckoutInner() {
             Login
           </Link>
           <Link
-            href="/login"
+            href="/register"
             className="rounded bg-[#f48721] hover:bg-[#df7412] px-4 py-1.5 text-xs font-semibold text-white transition-colors shadow-2xs"
           >
             Register
