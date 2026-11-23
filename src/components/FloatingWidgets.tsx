@@ -68,9 +68,9 @@ export function FloatingWidgets() {
       </button>
 
       {/* Bottom-Right Controls: Scroll To Top + Live Support Chat (elevated above mobile bottom nav) */}
-      <div className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-[85] flex flex-col items-end gap-2.5 sm:gap-3">
+      <div className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] md:bottom-6 right-3 sm:right-6 z-[85] flex flex-col items-end gap-2.5 sm:gap-3">
         {chatOpen && (
-          <div className="w-[310px] sm:w-[330px] rounded-xl bg-white border border-gray-200 shadow-[0_16px_40px_rgba(0,0,0,0.18)] overflow-hidden mb-1">
+          <div className="w-[min(330px,calc(100vw-1.5rem))] rounded-xl bg-white border border-gray-200 shadow-[0_16px_40px_rgba(0,0,0,0.18)] overflow-hidden mb-1">
             <div className="bg-[#041f1e] text-white px-4 py-3 flex items-center justify-between">
               <div>
                 <p className="text-sm font-bold">Halal Sheba Live Support</p>

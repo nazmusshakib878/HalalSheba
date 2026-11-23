@@ -60,10 +60,6 @@ export default function ProductDetailPage() {
   }, [product.id, product.categorySlug]);
 
   const wishlisted = isWishlisted(product.id);
-  const saveAmount =
-    product.regularPrice && product.regularPrice > product.price
-      ? product.regularPrice - product.price
-      : 0;
 
   const whatsappUrl = `https://api.whatsapp.com/send/?phone=8801313946402&text=${encodeURIComponent(
     `Hello Halal Sheba, I want to order: ${product.name} (Qty: ${quantity}) - Price: ${formatTaka(
@@ -131,16 +127,6 @@ export default function ProductDetailPage() {
 
           {/* Main Image */}
           <div className="relative flex-1 rounded-2xl border border-amber-100/60 bg-[#fef4ea] aspect-square flex items-center justify-center p-2 sm:p-4 overflow-hidden shadow-2xs">
-            {product.badgeLeft && (
-              <span className="absolute top-3 left-3 z-10 rounded-md bg-[#065f46] px-2.5 py-1 text-xs font-bold text-white shadow-xs">
-                {product.badgeLeft}
-              </span>
-            )}
-            {product.saveText && (
-              <span className="absolute top-3 right-3 z-10 rounded-md bg-[#16a34a] px-2.5 py-1 text-xs font-bold text-white shadow-xs">
-                {product.saveText}
-              </span>
-            )}
             <SafeImage
               src={images[selectedImage] || product.image}
               alt={product.name}
@@ -199,11 +185,6 @@ export default function ProductDetailPage() {
               {product.regularPrice && (
                 <span className="text-[20px] text-slate-400 line-through font-medium">
                   {formatTaka(product.regularPrice)}
-                </span>
-              )}
-              {saveAmount > 0 && (
-                <span className="rounded-md bg-[#16a34a] text-white px-2.5 py-0.5 text-xs font-bold shadow-xs">
-                  Save {formatTaka(saveAmount)}
                 </span>
               )}
             </div>

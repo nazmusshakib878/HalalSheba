@@ -17,7 +17,7 @@ export function ProductCarouselSection({
   viewAllHref,
   products,
 }: ProductCarouselSectionProps) {
-  const [perView, setPerView] = useState(5);
+  const [perView, setPerView] = useState(4);
   const [startIndex, setStartIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
 
@@ -25,9 +25,8 @@ export function ProductCarouselSection({
     const updatePerView = () => {
       const w = window.innerWidth;
       if (w < 640) setPerView(2);
-      else if (w < 768) setPerView(3);
-      else if (w < 1024) setPerView(4);
-      else setPerView(5);
+      else if (w < 1024) setPerView(3);
+      else setPerView(4);
     };
     updatePerView();
     window.addEventListener("resize", updatePerView);
@@ -96,7 +95,7 @@ export function ProductCarouselSection({
               <div
                 key={product.id}
                 style={{ width: `${100 / perView}%` }}
-                className="shrink-0 px-1.5 sm:px-2"
+                className="shrink-0 px-1.5 sm:px-2 flex flex-col"
               >
                 <ProductCard product={product} />
               </div>

@@ -23,7 +23,7 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col bg-white text-[#252a34] antialiased overflow-x-hidden">
         <StoreProvider>
           <Header />
-          <main className="flex-1 bg-[#f8fafc] pb-16 md:pb-0">{children}</main>
+          <main className="flex-1 bg-[#f8fafc] pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0">{children}</main>
           <Footer />
           <CartDrawer />
           <FloatingWidgets />
