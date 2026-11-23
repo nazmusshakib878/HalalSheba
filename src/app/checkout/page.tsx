@@ -104,7 +104,21 @@ function CheckoutInner() {
   const { cart, clearCart, placeOrder, user, showToast, updateQuantity, removeFromCart } = useStore();
 
   const buyNowProduct = useMemo(
-    () => (buyNowSlug ? PRODUCTS.find((p) => p.slug === buyNowSlug) : undefined),
+    () => {
+      if (!buyNowSlug) return undefined;
+      const catalogProduct = PRODUCTS.find((p) => p.slug === buyNowSlug);
+      if (catalogProduct || buyNowSlug !== "sorishar-tel-5-liter") return catalogProduct;
+      const mustardOil = PRODUCTS.find((p) => p.slug === "sorishar-tel");
+      return mustardOil ? {
+        ...mustardOil,
+        id: 33,
+        slug: buyNowSlug,
+        price: 1600,
+        regularPrice: 1750,
+        weight: "৫ লিটার",
+        image: "/images/products/sorishar-tel-5l.jpg",
+      } : undefined;
+    },
     [buyNowSlug]
   );
 

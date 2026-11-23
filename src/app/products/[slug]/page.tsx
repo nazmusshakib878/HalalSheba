@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { PRODUCTS, formatTaka } from "@/data/catalog";
@@ -21,10 +21,26 @@ export default function ProductDetailPage() {
   const { addToCart, toggleWishlist, isWishlisted, reviews, addReview } =
     useStore();
 
-  const product = useMemo(
-    () => PRODUCTS.find((p) => p.slug === params?.slug) || PRODUCTS[0],
-    [params?.slug]
-  );
+  const product = useMemo(() => {
+    const requestedSlug = params?.slug;
+    const baseProduct = PRODUCTS.find((p) => p.slug === requestedSlug)
+      || (requestedSlug === "sorishar-tel-5-liter"
+        ? PRODUCTS.find((p) => p.slug === "sorishar-tel")
+        : undefined)
+      || PRODUCTS[0];
+    if (requestedSlug !== "sorishar-tel-5-liter" || baseProduct.slug !== "sorishar-tel") return baseProduct;
+    return {
+      ...baseProduct,
+      id: 33,
+      slug: requestedSlug,
+      name: "ঘানি ভাঙা খাঁটি সরিষার তেল",
+      price: 1600,
+      regularPrice: 1750,
+      weight: "৫ লিটার",
+      image: "/images/products/sorishar-tel-5l.jpg",
+      gallery: ["/images/products/sorishar-tel-5l.jpg", "/images/products/sorishar-tel.jpg"],
+    };
+  }, [params?.slug]);
 
   const images =
     product.gallery && product.gallery.length > 0
@@ -32,6 +48,7 @@ export default function ProductDetailPage() {
       : [product.image];
 
   const [selectedImage, setSelectedImage] = useState(0);
+  useEffect(() => setSelectedImage(0), [params?.slug]);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<"description" | "reviews">(
     "description"
@@ -109,7 +126,15 @@ export default function ProductDetailPage() {
               <button
                 key={idx}
                 type="button"
-                onClick={() => setSelectedImage(idx)}
+                onClick={() => {
+                  if (product.slug === "sorishar-tel" && idx === 1) {
+                    router.push("/products/sorishar-tel-5-liter");
+                  } else if (product.slug === "sorishar-tel-5-liter" && idx === 1) {
+                    router.push("/products/sorishar-tel");
+                  } else {
+                    setSelectedImage(idx);
+                  }
+                }}
                 className={`h-16 w-16 sm:h-20 sm:w-20 shrink-0 rounded-xl border-2 bg-[#fef4ea] overflow-hidden p-1 cursor-pointer transition-all ${
                   selectedImage === idx
                     ? "border-[#f48721] ring-2 ring-orange-100 shadow-sm"
@@ -180,7 +205,7 @@ export default function ProductDetailPage() {
             {/* Price Block */}
             <div className="flex items-baseline gap-3 flex-wrap py-3 border-y border-slate-100">
               <span className="text-[32px] font-black text-[#f48721]">
-                {formatTaka(product.price)}
+              {formatTaka(product.price)}
               </span>
               {product.regularPrice && (
                 <span className="text-[20px] text-slate-400 line-through font-medium">
@@ -372,35 +397,45 @@ export default function ProductDetailPage() {
           {activeTab === "description" ? (
             <div className="space-y-5 max-w-4xl">
               <h2 className="text-lg font-bold text-slate-900">
-                About {product.name}
+                {product.name} সম্পর্কে
               </h2>
-              <p className="text-sm leading-relaxed text-slate-600">
-                {product.shortDescription}
-              </p>
-
-              <div>
-                <h3 className="text-sm font-bold text-slate-900 mb-2.5">
-                  Key Highlights &amp; Quality Assurance
-                </h3>
-                <ul className="space-y-2 text-sm text-slate-600 list-disc pl-5">
-                  {product.highlights.map((item, idx) => (
-                    <li key={idx}>{item}</li>
+              {product.descriptionSections ? (
+                <div className="space-y-6">
+                  {product.descriptionSections.map((section) => (
+                    <section key={section.heading} className="space-y-2">
+                      <h3 className="text-base font-bold text-slate-900">{section.heading}</h3>
+                      {section.paragraphs.map((paragraph, idx) => (
+                        <p key={idx} className="text-sm leading-7 text-slate-600">{paragraph}</p>
+                      ))}
+                    </section>
                   ))}
-                </ul>
-              </div>
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm leading-relaxed text-slate-600">{product.shortDescription}</p>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900 mb-2.5">
+                      {product.slug === "kalojira-modhu" ? "🍯 কালোজিরা ফুলের RAW মধুর বৈশিষ্ট্য" : "পণ্যের বৈশিষ্ট্য"}
+                    </h3>
+                    <ul className="space-y-2 text-sm text-slate-600 list-disc pl-5">
+                      {product.highlights.map((item, idx) => <li key={idx}>{item}</li>)}
+                    </ul>
+                  </div>
+                </>
+              )}
 
               <div className="overflow-x-auto pt-2">
                 <table className="w-full max-w-xl text-sm border border-slate-200 rounded-xl overflow-hidden">
                   <tbody className="divide-y divide-slate-200">
                     <tr>
                       <td className="bg-slate-50 px-4 py-3 font-semibold text-slate-800 w-40">
-                        Brand
+                        ব্র্যান্ড
                       </td>
                       <td className="px-4 py-3 text-slate-600">{product.brand}</td>
                     </tr>
                     <tr>
                       <td className="bg-slate-50 px-4 py-3 font-semibold text-slate-800">
-                        Category
+                        ক্যাটাগরি
                       </td>
                       <td className="px-4 py-3 text-slate-600">
                         {product.category}
@@ -408,7 +443,7 @@ export default function ProductDetailPage() {
                     </tr>
                     <tr>
                       <td className="bg-slate-50 px-4 py-3 font-semibold text-slate-800">
-                        Pack Weight
+                        প্যাকের ওজন
                       </td>
                       <td className="px-4 py-3 text-slate-600">
                         {product.weight || "Standard"}
@@ -416,7 +451,7 @@ export default function ProductDetailPage() {
                     </tr>
                     <tr>
                       <td className="bg-slate-50 px-4 py-3 font-semibold text-slate-800">
-                        Origin &amp; Storage
+                        উৎপত্তি ও সংরক্ষণ
                       </td>
                       <td className="px-4 py-3 text-slate-600">
                         {product.origin} — Store in a cool, dry place away from direct sunlight.
