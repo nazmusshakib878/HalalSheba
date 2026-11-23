@@ -196,15 +196,23 @@ function CheckoutInner() {
       return;
     }
     if (!customerName.trim()) {
-      showToast("Please enter your full name", "info");
+      showToast("আপনার সম্পূর্ণ নাম লিখুন (Full name is required)", "info");
       return;
     }
-    if (!phone.trim()) {
-      showToast("Please enter your mobile phone number", "info");
+    const cleanPhone = phone.trim().replace(/[\s-]/g, "");
+    const bdPhoneRegex = /^(?:\+?88)?(01[3-9]\d{8})$/;
+    const phoneMatch = cleanPhone.match(bdPhoneRegex);
+    if (!cleanPhone) {
+      showToast("মোবাইল নম্বর দেওয়া বাধ্যতামূলক (Phone number is required)", "info");
       return;
     }
+    if (!phoneMatch) {
+      showToast("অনুগ্রহ করে সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (যেমন: 01712345678)", "info");
+      return;
+    }
+    const validPhone = phoneMatch[1];
     if (!address.trim()) {
-      showToast("Please enter your complete delivery address", "info");
+      showToast("সম্পূর্ণ ডেলিভারি ঠিকানা লিখুন (Address is required)", "info");
       return;
     }
     if (!agreedTerms) {
@@ -218,7 +226,7 @@ function CheckoutInner() {
     try {
     const order = await placeOrder({
       customerName: customerName.trim(),
-      phone: phone.trim(),
+      phone: validPhone,
       area,
       address: `${address.trim()}${thana ? ", " + thana : ""}, ${district}`,
       note: note.trim() || undefined,
@@ -457,19 +465,25 @@ function CheckoutInner() {
                   className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-[#f48721] transition-colors"
                 />
 
-                <div className="relative flex items-center rounded-md border border-gray-300 bg-white focus-within:border-[#f48721] transition-colors">
-                  <div className="flex items-center gap-1 px-3 border-r border-gray-200 text-xs font-semibold text-gray-600 shrink-0 select-none bg-gray-50/80 h-full rounded-l-md">
-                    <span>🇧🇩</span>
-                    <span>88</span>
+                <div>
+                  <div className="relative flex items-center rounded-md border border-gray-300 bg-white focus-within:border-[#f48721] transition-colors">
+                    <div className="flex items-center gap-1 px-3 border-r border-gray-200 text-xs font-semibold text-gray-600 shrink-0 select-none bg-gray-50/80 h-full rounded-l-md">
+                      <span>🇧🇩</span>
+                      <span>88</span>
+                    </div>
+                    <input
+                      type="tel"
+                      required
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="017******** (১১ ডিজিটের মোবাইল নম্বর) *"
+                      className="w-full px-3 py-2.5 text-sm outline-none bg-transparent"
+                    />
                   </div>
-                  <input
-                    type="tel"
-                    required
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="017********"
-                    className="w-full px-3 py-2.5 text-sm outline-none bg-transparent"
-                  />
+                  <p className="text-[11.5px] text-[#065f46] font-medium mt-1 flex items-center gap-1">
+                    <span>📞</span>
+                    <span>অর্ডার কনফার্মেশনের জন্য এই নম্বরে সরাসরি কল করা হবে (বাধ্যতামূলক)।</span>
+                  </p>
                 </div>
               </div>
 

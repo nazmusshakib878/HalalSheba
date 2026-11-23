@@ -201,26 +201,27 @@ export function Orders() {
                     <div style={{ fontSize: 15, fontWeight: 700, color: '#1e293b' }}>
                       {o.name}
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6, marginBottom: 10, flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, marginBottom: 10, flexWrap: 'wrap' }}>
                       <a
                         href={`tel:${o.phone}`}
                         style={{
                           display: 'inline-flex',
                           alignItems: 'center',
-                          gap: 4,
+                          gap: 6,
                           fontSize: 13,
-                          fontWeight: 600,
-                          color: '#075744',
-                          background: '#eaf6ef',
-                          padding: '5px 10px',
+                          fontWeight: 800,
+                          color: '#ffffff',
+                          background: '#075744',
+                          padding: '6px 12px',
                           borderRadius: 6,
                           textDecoration: 'none',
+                          boxShadow: '0 2px 6px rgba(7, 87, 68, 0.25)',
                         }}
                       >
-                        📞 {o.phone}
+                        📞 কল করুন ({o.phone})
                       </a>
                       <a
-                        href={`https://wa.me/88${o.phone.replace(/[^0-9]/g, '').replace(/^88/, '')}?text=${encodeURIComponent(`আসসালামু আলাইকুম ${o.name}, হালাল সেবা থেকে আপনার অর্ডার #${o.reference.slice(0, 8).toUpperCase()} এর বিষয়ে যোগাযোগ করা হচ্ছে।`)}`}
+                        href={`https://wa.me/88${String(o.phone).replace(/[^0-9]/g, '').replace(/^88/, '')}?text=${encodeURIComponent(`আসসালামু আলাইকুম ${o.name}, হালাল সেবা থেকে আপনার অর্ডার #${o.reference.slice(0, 8).toUpperCase()} এর বিষয়ে যোগাযোগ করা হচ্ছে।`)}`}
                         target="_blank"
                         rel="noreferrer"
                         style={{
@@ -228,10 +229,11 @@ export function Orders() {
                           alignItems: 'center',
                           gap: 4,
                           fontSize: 13,
-                          fontWeight: 600,
+                          fontWeight: 700,
                           color: '#047857',
                           background: '#dcfce7',
-                          padding: '5px 10px',
+                          border: '1px solid #86efac',
+                          padding: '6px 10px',
                           borderRadius: 6,
                           textDecoration: 'none',
                         }}
@@ -267,20 +269,71 @@ export function Orders() {
 
           {/* Desktop Table View */}
           <div className="desktop-orders-table">
-            <Table headers={['রেফারেন্স ID', 'গ্রাহকের নাম ও ফোন', 'অর্ডারের তারিখ', 'মোট টাকা', 'পেমেন্ট অবস্থা', 'অর্ডার স্ট্যাটাস', 'অ্যাকশন']} empty={!rows?.length}>
+            <Table headers={['রেফারেন্স ID', 'গ্রাহকের নাম ও মোবাইল নম্বর', 'অর্ডারের তারিখ', 'মোট টাকা', 'পেমেন্ট অবস্থা', 'অর্ডার স্ট্যাটাস', 'কনফার্মেশন অ্যাকশন']} empty={!rows?.length}>
               {rows?.map((o) => {
                 const st = statusMap[o.status] || { label: o.status, bg: '#f1f5f9', color: '#475569' };
                 const isPaid = o.payment_status === 'paid';
+                const isUnconfirmed = o.status === 'new' || o.status === 'pending';
+                const cleanPhone = String(o.phone || '').replace(/[^0-9]/g, '');
+                const waPhone = cleanPhone.startsWith('88') ? cleanPhone : '88' + cleanPhone;
                 return (
-                  <tr key={o.id}>
+                  <tr key={o.id} style={isUnconfirmed ? { background: '#fdfbf6' } : undefined}>
                     <td>
                       <strong style={{ fontFamily: 'monospace', letterSpacing: '0.5px' }}>
                         #{o.reference.slice(0, 8).toUpperCase()}
                       </strong>
+                      {isUnconfirmed && (
+                        <div style={{ marginTop: 4 }}>
+                          <span style={{ fontSize: 10, background: '#fef3c7', color: '#92400e', padding: '2px 6px', borderRadius: 4, fontWeight: 700 }}>
+                            🔔 কল করুন
+                          </span>
+                        </div>
+                      )}
                     </td>
                     <td>
-                      <div style={{ fontWeight: 600, color: '#1e293b' }}>{o.name}</div>
-                      <div className="muted" style={{ fontSize: 12 }}>{o.phone}</div>
+                      <div style={{ fontWeight: 700, fontSize: 14, color: '#0f172a' }}>{o.name}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
+                        <a
+                          href={`tel:${o.phone}`}
+                          title="গ্রাহককে সরাসরি কল দিন"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            fontSize: 12,
+                            fontWeight: 800,
+                            color: '#065f46',
+                            background: '#ecfdf5',
+                            border: '1.5px solid #059669',
+                            padding: '3px 8px',
+                            borderRadius: 6,
+                            textDecoration: 'none',
+                          }}
+                        >
+                          📞 {o.phone}
+                        </a>
+                        <a
+                          href={`https://wa.me/${waPhone}?text=${encodeURIComponent(`আসসালামু আলাইকুম ${o.name}, হালাল সেবা থেকে আপনার অর্ডার #${o.reference.slice(0, 8).toUpperCase()} এর বিষয়ে কনফার্মেশনের জন্য যোগাযোগ করা হচ্ছে।`)}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          title="WhatsApp মেসেজ দিন"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 3,
+                            fontSize: 11,
+                            fontWeight: 700,
+                            color: '#047857',
+                            background: '#dcfce7',
+                            border: '1px solid #86efac',
+                            padding: '3px 6px',
+                            borderRadius: 6,
+                            textDecoration: 'none',
+                          }}
+                        >
+                          💬 WA
+                        </a>
+                      </div>
                     </td>
                     <td style={{ fontSize: 13, color: '#475569' }}>
                       {new Date(o.created_at).toLocaleDateString('bn-BD', {
@@ -325,9 +378,29 @@ export function Orders() {
                       </span>
                     </td>
                     <td>
-                      <Link className="button secondary" href={'/admin/orders/' + o.id}>
-                        ইনভয়েস ও অ্যাকশন ↗
-                      </Link>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <a
+                          href={`tel:${o.phone}`}
+                          className="button"
+                          style={{
+                            background: '#075744',
+                            color: '#fff',
+                            fontSize: 12,
+                            padding: '6px 10px',
+                            textDecoration: 'none',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            fontWeight: 700,
+                            borderRadius: 6,
+                          }}
+                        >
+                          📞 কল দিন
+                        </a>
+                        <Link className="button secondary" href={'/admin/orders/' + o.id} style={{ fontSize: 12, padding: '6px 8px' }}>
+                          ইনভয়েস ↗
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 );
