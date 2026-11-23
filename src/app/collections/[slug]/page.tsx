@@ -365,37 +365,37 @@ function CollectionViewInner() {
 
   return (
     <div className="mx-auto max-w-[1320px] px-3 sm:px-6 py-6">
-      <div className="flex flex-wrap items-center justify-between gap-2 mb-5">
-        <h1 className="text-[22px] sm:text-[26px] font-semibold text-[#222831]">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4 sm:mb-5">
+        <h1 className="text-[19px] sm:text-[26px] font-bold text-[#222831] break-words">
           {title}
         </h1>
-        <nav className="text-[13px] text-gray-500 flex items-center gap-1.5">
-          <Link href="/" className="hover:text-[#f48721]">
+        <nav className="text-[12px] sm:text-[13px] text-gray-500 flex items-center gap-1.5">
+          <Link href="/" className="hover:text-[#065f46]">
             Home
           </Link>
           <span>&gt;</span>
-          <span className="text-[#222831] font-medium">{title}</span>
+          <span className="text-[#222831] font-medium truncate max-w-[200px]">{title}</span>
         </nav>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
         <aside className="hidden lg:block lg:col-span-3">{sidebarContent}</aside>
 
-        <div className="lg:col-span-9 space-y-5">
-          <div className="rounded-[8px] border border-[#e5e7eb] bg-white px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3 flex-wrap">
+        <div className="lg:col-span-9 space-y-4 sm:space-y-5 min-w-0">
+          <div className="rounded-xl border border-slate-200 bg-white p-2.5 sm:px-4 sm:py-3 flex flex-wrap items-center justify-between gap-2 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap min-w-0">
               <button
                 type="button"
                 onClick={() => setMobileFilterOpen(true)}
-                className="lg:hidden rounded-md border border-[#f48721] px-3 py-1.5 text-xs font-semibold text-[#f48721]"
+                className="lg:hidden rounded-lg border border-[#065f46] bg-emerald-50/60 px-3 py-1.5 text-xs font-bold text-[#065f46] hover:bg-[#065f46] hover:text-white transition-colors shrink-0"
               >
                 Filters
               </button>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 min-w-0">
                 <label
                   htmlFor="sort-select"
-                  className="text-[13.5px] font-medium text-[#222831]"
+                  className="text-[12px] sm:text-[13.5px] font-medium text-slate-700 shrink-0"
                 >
                   Sort By :
                 </label>
@@ -403,7 +403,7 @@ function CollectionViewInner() {
                   id="sort-select"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="rounded-[5px] border border-gray-300 bg-white px-3 py-1.5 text-[13px] text-[#222831] outline-none focus:border-[#f48721]"
+                  className="rounded-lg border border-slate-200 bg-white px-2 sm:px-3 py-1.5 text-[11.5px] sm:text-[13px] text-[#222831] outline-none focus:border-[#065f46] max-w-[140px] sm:max-w-none"
                 >
                   <option value="default">Default Sorting</option>
                   <option value="latest">Sort by Latest</option>
@@ -415,7 +415,7 @@ function CollectionViewInner() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 shrink-0">
               <span className="text-xs text-gray-500 hidden sm:inline">
                 {filteredProducts.length} items found
               </span>
@@ -426,9 +426,9 @@ function CollectionViewInner() {
                   setPerPage(Number(e.target.value));
                   setPage(1);
                 }}
-                className="rounded-[5px] border border-[#f48721]/60 bg-white px-3 py-1.5 text-[13px] font-medium text-[#f48721] outline-none"
+                className="rounded-lg border border-slate-200 bg-white px-2 sm:px-3 py-1.5 text-[11.5px] sm:text-[13px] font-medium text-slate-700 outline-none focus:border-[#065f46]"
               >
-                <option value={16}>Default (16)</option>
+                <option value={16}>Show 16</option>
                 <option value={20}>Show 20</option>
                 <option value={24}>Show 24</option>
                 <option value={36}>Show 36</option>
@@ -437,7 +437,7 @@ function CollectionViewInner() {
           </div>
 
           {pagedProducts.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-4">
               {pagedProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

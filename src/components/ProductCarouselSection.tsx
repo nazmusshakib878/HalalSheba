@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Product } from "@/data/catalog";
 import { ProductCard } from "@/components/ProductCard";
@@ -19,6 +19,7 @@ export function ProductCarouselSection({
 }: ProductCarouselSectionProps) {
   const [perView, setPerView] = useState(5);
   const [startIndex, setStartIndex] = useState(0);
+  const touchStartX = useRef<number | null>(null);
 
   useEffect(() => {
     const updatePerView = () => {
@@ -41,32 +42,44 @@ export function ProductCarouselSection({
   const next = () => setStartIndex((s) => (s >= maxStart ? 0 : s + 1));
 
   return (
-    <section className="mx-auto max-w-[1320px] px-3 sm:px-6 pb-11">
+    <section className="mx-auto max-w-[1320px] px-3 sm:px-6 pb-8 sm:pb-11">
       {/* Section Header */}
-      <div className="flex items-center justify-between mb-6 border-b border-slate-200 pb-3">
+      <div className="flex items-center justify-between mb-4 sm:mb-6 border-b border-slate-200 pb-2.5 sm:pb-3">
         <div className="relative">
-          <h2 className="text-[20px] sm:text-[23px] font-black text-slate-800 tracking-tight">
+          <h2 className="text-[18px] sm:text-[23px] font-black text-slate-800 tracking-tight">
             {title}
           </h2>
-          <span className="absolute left-0 -bottom-[13px] h-[3px] w-20 bg-[#065f46] rounded-full" />
+          <span className="absolute left-0 -bottom-[11px] sm:-bottom-[13px] h-[3px] w-16 sm:w-20 bg-[#065f46] rounded-full" />
         </div>
         <Link
           href={viewAllHref}
-          className="inline-flex items-center gap-1.5 text-[13px] font-bold uppercase tracking-wide text-[#065f46] hover:text-[#d97706] transition-colors"
+          className="inline-flex items-center gap-1 text-[12px] sm:text-[13px] font-bold uppercase tracking-wide text-[#065f46] hover:text-[#d97706] transition-colors"
         >
           <span>সকল পণ্য দেখুন</span>
           <span aria-hidden="true">→</span>
         </Link>
       </div>
 
-      {/* Smooth Sliding Track */}
-      <div className="relative group/slider">
+      {/* Smooth Sliding Track with Touch Swipe */}
+      <div
+        className="relative group/slider"
+        onTouchStart={(e) => {
+          touchStartX.current = e.touches[0].clientX;
+        }}
+        onTouchEnd={(e) => {
+          if (touchStartX.current === null) return;
+          const delta = e.changedTouches[0].clientX - touchStartX.current;
+          if (delta > 40) prev();
+          if (delta < -40) next();
+          touchStartX.current = null;
+        }}
+      >
         {products.length > perView && (
           <button
             type="button"
             onClick={prev}
             aria-label={`Previous ${title}`}
-            className="flex absolute -left-2 sm:-left-3.5 top-1/2 -translate-y-1/2 z-20 h-9 w-9 rounded-full bg-white border border-gray-200 text-[#222831] hover:bg-[#f48721] hover:text-white hover:border-[#f48721] items-center justify-center shadow-md lg:opacity-0 lg:group-hover/slider:opacity-100 transition-all cursor-pointer"
+            className="hidden sm:flex absolute -left-2 sm:-left-3.5 top-1/2 -translate-y-1/2 z-20 h-9 w-9 rounded-full bg-white border border-gray-200 text-[#222831] hover:bg-[#065f46] hover:text-white hover:border-[#065f46] items-center justify-center shadow-md lg:opacity-0 lg:group-hover/slider:opacity-100 transition-all cursor-pointer"
           >
             <ChevronLeftIcon className="h-5 w-5" />
           </button>
@@ -96,7 +109,7 @@ export function ProductCarouselSection({
             type="button"
             onClick={next}
             aria-label={`Next ${title}`}
-            className="flex absolute -right-2 sm:-right-3.5 top-1/2 -translate-y-1/2 z-20 h-9 w-9 rounded-full bg-white border border-gray-200 text-[#222831] hover:bg-[#f48721] hover:text-white hover:border-[#f48721] items-center justify-center shadow-md lg:opacity-0 lg:group-hover/slider:opacity-100 transition-all cursor-pointer"
+            className="hidden sm:flex absolute -right-2 sm:-right-3.5 top-1/2 -translate-y-1/2 z-20 h-9 w-9 rounded-full bg-white border border-gray-200 text-[#222831] hover:bg-[#065f46] hover:text-white hover:border-[#065f46] items-center justify-center shadow-md lg:opacity-0 lg:group-hover/slider:opacity-100 transition-all cursor-pointer"
           >
             <ChevronRightIcon className="h-5 w-5" />
           </button>
@@ -105,17 +118,17 @@ export function ProductCarouselSection({
 
       {/* Pagination Dots */}
       {totalDots > 1 && (
-        <div className="mt-5 flex items-center justify-center gap-2">
+        <div className="mt-4 sm:mt-5 flex items-center justify-center gap-1.5 sm:gap-2">
           {Array.from({ length: totalDots }).map((_, idx) => (
             <button
               key={idx}
               type="button"
               onClick={() => setStartIndex(idx)}
               aria-label={`${title} slide ${idx + 1}`}
-              className={`h-2.5 w-2.5 rounded-full transition-colors cursor-pointer ${
+              className={`h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full transition-colors cursor-pointer ${
                 idx === safeStart
-                  ? "bg-[#f48721]"
-                  : "border border-[#f48721] bg-transparent hover:bg-[#f48721]/30"
+                  ? "bg-[#065f46] w-5 sm:w-6"
+                  : "border border-slate-300 bg-slate-200 hover:bg-slate-300"
               }`}
             />
           ))}

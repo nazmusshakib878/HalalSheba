@@ -1,6 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 :root {
+  --font-open-sans: 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-bengali: 'Noto Sans Bengali', 'Hind Siliguri', sans-serif;
   --primary-color: #d97706;
   --primary-hover: #b45309;
   --secondary-color: #064e3b;

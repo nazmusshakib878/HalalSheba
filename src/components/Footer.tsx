@@ -309,12 +309,12 @@ export function Footer() {
 
         {/* Bottom Copyright + Pay With Row */}
         <div className="border-t border-gray-200 pt-5 flex flex-col lg:flex-row items-center justify-between gap-4">
-          <div className="text-[13.5px] text-[#6b7280] shrink-0">
+          <div className="text-[13px] sm:text-[13.5px] text-[#6b7280] text-center lg:text-left">
             Copyright &copy; 2026 Halal Sheba (হালাল সেবা). All rights reserved.
           </div>
 
-          <div className="flex flex-wrap items-center justify-center lg:justify-end gap-3">
-            <span className="text-sm font-semibold text-[#222831] shrink-0">
+          <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-2 sm:gap-3 max-w-full">
+            <span className="text-xs sm:text-sm font-semibold text-[#222831] shrink-0">
               Pay With
             </span>
             {payImgError ? (
@@ -337,7 +337,7 @@ export function Footer() {
                 alt="Pay With VISA, Mastercard, American Express, bKash, Nagad, Rocket, SSLCOMMERZ"
                 referrerPolicy="no-referrer"
                 onError={() => setPayImgError(true)}
-                className="max-h-[72px] w-auto object-contain"
+                className="max-h-[32px] sm:max-h-[40px] max-w-full object-contain"
               />
             )}
           </div>

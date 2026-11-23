@@ -24,12 +24,12 @@ export function HeroSection() {
     setActive((prev) => (prev + 1) % HERO_SLIDES.length);
 
   return (
-    <section className="mx-auto max-w-[1320px] px-3 sm:px-6 pt-4 sm:pt-6 pb-6">
+    <section className="mx-auto max-w-[1320px] px-3 sm:px-6 pt-3 sm:pt-6 pb-4 sm:pb-6">
       {/* Top Grid: Hero Slider (8 cols) + 2 Luxury Promo Cards (4 cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-5 items-stretch">
         {/* Main Hero Slider (8 Columns) */}
         <div
-          className="lg:col-span-8 relative group rounded-2xl overflow-hidden bg-gradient-to-br from-[#fdfbf7] via-[#faf6ed] to-[#f5eedb] border border-amber-900/10 shadow-[0_8px_30px_rgba(0,0,0,0.06)] min-h-[380px] sm:min-h-[420px] flex items-center select-none"
+          className="lg:col-span-8 relative group rounded-2xl overflow-hidden bg-gradient-to-br from-[#fdfbf7] via-[#faf6ed] to-[#f5eedb] border border-amber-900/10 shadow-[0_8px_30px_rgba(0,0,0,0.06)] min-h-[330px] sm:min-h-[400px] lg:min-h-[430px] flex items-center select-none"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
           onTouchStart={(e) => {
@@ -51,7 +51,7 @@ export function HeroSection() {
             {HERO_SLIDES.map((slide, idx) => (
               <div
                 key={slide.id}
-                className="w-full h-full shrink-0 relative flex flex-col justify-center p-6 sm:p-9 lg:p-10"
+                className="w-full h-full shrink-0 relative flex flex-col justify-center p-4 sm:p-8 lg:p-10"
               >
                 {/* Background visual with subtle gradient blend */}
                 <div className="absolute inset-0 z-0 pointer-events-none">
@@ -62,24 +62,24 @@ export function HeroSection() {
                     className="w-full h-full object-cover object-right sm:object-center opacity-85 sm:opacity-90"
                   />
                   {/* Gradient overlay to ensure text readability */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#fefbf6] via-[#fefbf6]/90 sm:via-[#fefbf6]/80 to-transparent sm:w-[70%]" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#fefbf6] via-[#fefbf6]/92 sm:via-[#fefbf6]/80 to-transparent sm:w-[70%]" />
                 </div>
 
                 {/* Content Overlay */}
-                <div className="relative z-10 max-w-[500px] flex flex-col space-y-3 sm:space-y-4">
+                <div className="relative z-10 max-w-[500px] flex flex-col space-y-2.5 sm:space-y-4">
                   {slide.badge && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11.5px] sm:text-[12.5px] font-bold bg-[#065f46] text-white shadow-xs w-fit">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[11px] sm:text-[12.5px] font-bold bg-[#065f46] text-white shadow-xs w-fit">
                       <span>✨</span>
                       <span>{slide.badge}</span>
                     </span>
                   )}
 
-                  <h2 className="text-[23px] sm:text-[30px] lg:text-[34px] font-black text-slate-900 leading-[1.2] tracking-tight">
+                  <h2 className="text-[20px] sm:text-[28px] lg:text-[34px] font-black text-slate-900 leading-[1.25] tracking-tight">
                     {slide.title}
                   </h2>
 
                   {slide.subtitle && (
-                    <p className="text-[13px] sm:text-[14.5px] text-slate-700 leading-relaxed line-clamp-2">
+                    <p className="text-[12.5px] sm:text-[14.5px] text-slate-700 leading-relaxed line-clamp-2">
                       {slide.subtitle}
                     </p>
                   )}
@@ -90,7 +90,7 @@ export function HeroSection() {
                       {slide.chips.map((chip) => (
                         <span
                           key={chip}
-                          className="inline-flex items-center text-[11.5px] font-semibold text-emerald-950 bg-white/95 backdrop-blur-xs px-2.5 py-1 rounded-md border border-emerald-300/80 shadow-xs"
+                          className="inline-flex items-center text-[11px] sm:text-[11.5px] font-semibold text-emerald-950 bg-white/95 backdrop-blur-xs px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md border border-emerald-300/80 shadow-xs"
                         >
                           <span className="text-emerald-700 mr-1 font-bold">✓</span>
                           <span>{chip}</span>
@@ -100,17 +100,17 @@ export function HeroSection() {
                   )}
 
                   {/* CTA Buttons */}
-                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-1.5 sm:pt-2">
                     <Link
                       href={slide.href}
-                      className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-[#065f46] via-[#047857] to-[#022c22] hover:from-[#047857] hover:to-[#065f46] text-white text-[13.5px] sm:text-[14.5px] font-bold shadow-[0_4px_14px_rgba(6,95,70,0.35)] hover:shadow-[0_6px_20px_rgba(6,95,70,0.45)] transition-all transform hover:-translate-y-0.5"
+                      className="inline-flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-[#065f46] via-[#047857] to-[#022c22] hover:from-[#047857] hover:to-[#065f46] text-white text-[13px] sm:text-[14.5px] font-bold shadow-[0_4px_14px_rgba(6,95,70,0.35)] hover:shadow-[0_6px_20px_rgba(6,95,70,0.45)] transition-all transform hover:-translate-y-0.5"
                     >
                       <span>{slide.primaryBtnText || "অর্ডার করুন"}</span>
                       <span aria-hidden="true">→</span>
                     </Link>
 
                     {slide.priceTag && (
-                      <span className="text-[13px] sm:text-[14px] font-bold text-amber-800 bg-amber-100/80 px-3.5 py-2 rounded-xl border border-amber-300/60 shadow-2xs">
+                      <span className="text-[12px] sm:text-[14px] font-bold text-amber-800 bg-amber-100/80 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border border-amber-300/60 shadow-2xs">
                         {slide.priceTag}
                       </span>
                     )}
@@ -120,12 +120,12 @@ export function HeroSection() {
             ))}
           </div>
 
-          {/* Left & Right Chevrons */}
+          {/* Left & Right Chevrons: hidden on mobile touch, visible on sm and up */}
           <button
             type="button"
             onClick={prevSlide}
             aria-label="Previous slide"
-            className="absolute left-3 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-white/95 text-slate-800 hover:bg-[#065f46] hover:text-white flex items-center justify-center shadow-md opacity-90 lg:opacity-0 lg:group-hover:opacity-100 transition-all cursor-pointer border border-slate-200/60"
+            className="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-white/95 text-slate-800 hover:bg-[#065f46] hover:text-white items-center justify-center shadow-md opacity-90 lg:opacity-0 lg:group-hover:opacity-100 transition-all cursor-pointer border border-slate-200/60"
           >
             <ChevronLeftIcon className="h-5 w-5" />
           </button>
@@ -133,23 +133,23 @@ export function HeroSection() {
             type="button"
             onClick={nextSlide}
             aria-label="Next slide"
-            className="absolute right-3 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-white/95 text-slate-800 hover:bg-[#065f46] hover:text-white flex items-center justify-center shadow-md opacity-90 lg:opacity-0 lg:group-hover:opacity-100 transition-all cursor-pointer border border-slate-200/60"
+            className="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-white/95 text-slate-800 hover:bg-[#065f46] hover:text-white items-center justify-center shadow-md opacity-90 lg:opacity-0 lg:group-hover:opacity-100 transition-all cursor-pointer border border-slate-200/60"
           >
             <ChevronRightIcon className="h-5 w-5" />
           </button>
 
           {/* Bottom Indicators */}
-          <div className="absolute bottom-3.5 left-6 z-20 flex items-center gap-2">
+          <div className="absolute bottom-3 left-4 sm:left-6 z-20 flex items-center gap-1.5 sm:gap-2">
             {HERO_SLIDES.map((slide, idx) => (
               <button
                 key={slide.id}
                 type="button"
                 onClick={() => setActive(idx)}
                 aria-label={`Go to slide ${idx + 1}`}
-                className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                className={`h-2 sm:h-2.5 rounded-full transition-all cursor-pointer ${
                   idx === active
-                    ? "w-7 bg-[#065f46] ring-2 ring-white/90"
-                    : "w-2.5 bg-slate-300 hover:bg-slate-400"
+                    ? "w-6 sm:w-7 bg-[#065f46] ring-2 ring-white/90"
+                    : "w-2 sm:w-2.5 bg-slate-300 hover:bg-slate-400"
                 }`}
               />
             ))}
@@ -157,32 +157,32 @@ export function HeroSection() {
         </div>
 
         {/* Right Side 2 Feature Promo Cards (4 Columns) */}
-        <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-4 sm:gap-5">
+        <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 sm:gap-5">
           {/* Card 1: Artisanal Ghee & Butter */}
           <Link
             href="/products/gawa-ghee"
-            className="group relative rounded-2xl overflow-hidden bg-gradient-to-br from-[#78350f] via-[#451a03] to-[#1c1917] p-5 text-white flex items-center justify-between shadow-[0_8px_25px_rgba(120,53,15,0.2)] border border-amber-500/25 hover:border-amber-400/60 transition-all flex-1 min-h-[180px]"
+            className="group relative rounded-2xl overflow-hidden bg-gradient-to-br from-[#78350f] via-[#451a03] to-[#1c1917] p-4 sm:p-5 text-white flex items-center justify-between shadow-[0_8px_25px_rgba(120,53,15,0.2)] border border-amber-500/25 hover:border-amber-400/60 transition-all flex-1 min-h-[140px] sm:min-h-[180px]"
           >
-            <div className="flex-1 pr-3 z-10">
-              <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-400 text-amber-950 uppercase tracking-wide shadow-2xs">
+            <div className="flex-1 min-w-0 pr-2 sm:pr-3 z-10">
+              <span className="inline-block px-2.5 py-0.5 rounded-full text-[10.5px] sm:text-[11px] font-bold bg-amber-400 text-amber-950 uppercase tracking-wide shadow-2xs">
                 হাতে তৈরি ঘি
               </span>
-              <h3 className="text-[19px] sm:text-[20px] font-black text-white mt-1.5 leading-tight group-hover:text-amber-200 transition-colors">
+              <h3 className="text-[17px] sm:text-[20px] font-black text-white mt-1 leading-tight group-hover:text-amber-200 transition-colors">
                 খাঁটি গাওয়া ঘি
               </h3>
-              <p className="text-[12px] text-amber-100/80 mt-0.5 line-clamp-1">
+              <p className="text-[11.5px] sm:text-[12px] text-amber-100/80 mt-0.5 truncate">
                 ঐতিহ্যবাহী সুবাস ও সেরা স্বাদ
               </p>
-              <div className="mt-2 flex items-center gap-2">
-                <span className="text-[18px] font-black text-amber-300">৳১,৫০০</span>
-                <span className="text-[11px] text-amber-200/70">/ ১ কেজি বোতল</span>
+              <div className="mt-1.5 sm:mt-2 flex items-center gap-1.5 sm:gap-2">
+                <span className="text-[16px] sm:text-[18px] font-black text-amber-300">৳১,৫০০</span>
+                <span className="text-[10.5px] sm:text-[11px] text-amber-200/70">/ ১ কেজি বোতল</span>
               </div>
-              <span className="inline-flex items-center gap-1 text-[12px] font-bold text-amber-300 mt-2 group-hover:translate-x-1 transition-transform">
+              <span className="inline-flex items-center gap-1 text-[11.5px] sm:text-[12px] font-bold text-amber-300 mt-1.5 sm:mt-2 group-hover:translate-x-1 transition-transform">
                 অর্ডার করুন →
               </span>
             </div>
 
-            <div className="relative w-[115px] h-[115px] sm:w-[130px] sm:h-[130px] shrink-0">
+            <div className="relative w-[90px] h-[90px] sm:w-[125px] sm:h-[125px] shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/products/gawa-ghee.jpg"
@@ -195,28 +195,28 @@ export function HeroSection() {
           {/* Card 2: Satkhira Authentic Chui Jhal */}
           <Link
             href="/products/chui-jhal"
-            className="group relative rounded-2xl overflow-hidden bg-gradient-to-br from-[#064e3b] via-[#022c22] to-[#0f172a] p-5 text-white flex items-center justify-between shadow-[0_8px_25px_rgba(6,78,59,0.2)] border border-emerald-500/25 hover:border-emerald-400/60 transition-all flex-1 min-h-[180px]"
+            className="group relative rounded-2xl overflow-hidden bg-gradient-to-br from-[#064e3b] via-[#022c22] to-[#0f172a] p-4 sm:p-5 text-white flex items-center justify-between shadow-[0_8px_25px_rgba(6,78,59,0.2)] border border-emerald-500/25 hover:border-emerald-400/60 transition-all flex-1 min-h-[140px] sm:min-h-[180px]"
           >
-            <div className="flex-1 pr-3 z-10">
-              <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-400 text-emerald-950 uppercase tracking-wide shadow-2xs">
+            <div className="flex-1 min-w-0 pr-2 sm:pr-3 z-10">
+              <span className="inline-block px-2.5 py-0.5 rounded-full text-[10.5px] sm:text-[11px] font-bold bg-emerald-400 text-emerald-950 uppercase tracking-wide shadow-2xs">
                 সাতক্ষীরার ঐতিহ্য
               </span>
-              <h3 className="text-[19px] sm:text-[20px] font-black text-white mt-1.5 leading-tight group-hover:text-emerald-200 transition-colors">
+              <h3 className="text-[17px] sm:text-[20px] font-black text-white mt-1 leading-tight group-hover:text-emerald-200 transition-colors">
                 সাতক্ষীরার চুইঝাল
               </h3>
-              <p className="text-[12px] text-emerald-100/80 mt-0.5 line-clamp-1">
+              <p className="text-[11.5px] sm:text-[12px] text-emerald-100/80 mt-0.5 truncate">
                 মাংস ও তরকারির আসল স্বাদ
               </p>
-              <div className="mt-2 flex items-center gap-2">
-                <span className="text-[18px] font-black text-emerald-300">৳৪৫০</span>
-                <span className="text-[11px] text-emerald-200/70">/ ২৫০ গ্রাম</span>
+              <div className="mt-1.5 sm:mt-2 flex items-center gap-1.5 sm:gap-2">
+                <span className="text-[16px] sm:text-[18px] font-black text-emerald-300">৳৪৫০</span>
+                <span className="text-[10.5px] sm:text-[11px] text-emerald-200/70">/ ২৫০ গ্রাম</span>
               </div>
-              <span className="inline-flex items-center gap-1 text-[12px] font-bold text-emerald-300 mt-2 group-hover:translate-x-1 transition-transform">
+              <span className="inline-flex items-center gap-1 text-[11.5px] sm:text-[12px] font-bold text-emerald-300 mt-1.5 sm:mt-2 group-hover:translate-x-1 transition-transform">
                 কালেকশন দেখুন →
               </span>
             </div>
 
-            <div className="relative w-[115px] h-[115px] sm:w-[130px] sm:h-[130px] shrink-0">
+            <div className="relative w-[90px] h-[90px] sm:w-[125px] sm:h-[125px] shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/products/chui-jhal.jpg"
@@ -229,59 +229,59 @@ export function HeroSection() {
       </div>
 
       {/* 4-Pillar Trust / Value Proposition Bar Directly Below Hero */}
-      <div className="mt-5 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-        <div className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-emerald-300 transition-colors">
-          <div className="h-10 w-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 text-[18px]">
+      <div className="mt-3.5 sm:mt-5 grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        <div className="flex items-center gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-emerald-300 transition-colors min-w-0">
+          <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 text-[15px] sm:text-[18px]">
             🌿
           </div>
-          <div>
-            <h4 className="text-[13px] sm:text-[14px] font-bold text-slate-800 leading-tight">
+          <div className="min-w-0 flex-1">
+            <h4 className="text-[12px] sm:text-[14px] font-bold text-slate-800 leading-tight truncate">
               ১০০% খাঁটি ও অর্গানিক
             </h4>
-            <p className="text-[11.5px] text-slate-500 mt-0.5 line-clamp-1">
+            <p className="text-[10.5px] sm:text-[11.5px] text-slate-500 mt-0.5 truncate">
               সরাসরি প্রাকৃতিক উৎস থেকে
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-emerald-300 transition-colors">
-          <div className="h-10 w-10 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 text-[18px]">
+        <div className="flex items-center gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-emerald-300 transition-colors min-w-0">
+          <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 text-[15px] sm:text-[18px]">
             🚚
           </div>
-          <div>
-            <h4 className="text-[13px] sm:text-[14px] font-bold text-slate-800 leading-tight">
+          <div className="min-w-0 flex-1">
+            <h4 className="text-[12px] sm:text-[14px] font-bold text-slate-800 leading-tight truncate">
               ক্যাশ অন ডেলিভারি
             </h4>
-            <p className="text-[11.5px] text-slate-500 mt-0.5 line-clamp-1">
-              সারা দেশে পণ্য হাতে পেয়ে পরিশোধ
+            <p className="text-[10.5px] sm:text-[11.5px] text-slate-500 mt-0.5 truncate">
+              পণ্য দেখে মূল্য পরিশোধ
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-emerald-300 transition-colors">
-          <div className="h-10 w-10 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center shrink-0 text-[18px]">
+        <div className="flex items-center gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-emerald-300 transition-colors min-w-0">
+          <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center shrink-0 text-[15px] sm:text-[18px]">
             🛡️
           </div>
-          <div>
-            <h4 className="text-[13px] sm:text-[14px] font-bold text-slate-800 leading-tight">
+          <div className="min-w-0 flex-1">
+            <h4 className="text-[12px] sm:text-[14px] font-bold text-slate-800 leading-tight truncate">
               মানিব্যাক গ্যারান্টি
             </h4>
-            <p className="text-[11.5px] text-slate-500 mt-0.5 line-clamp-1">
+            <p className="text-[10.5px] sm:text-[11.5px] text-slate-500 mt-0.5 truncate">
               ভেজাল প্রমাণে ১০০% রিফান্ড
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-emerald-300 transition-colors">
-          <div className="h-10 w-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 text-[18px]">
+        <div className="flex items-center gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-emerald-300 transition-colors min-w-0">
+          <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 text-[15px] sm:text-[18px]">
             📞
           </div>
-          <div>
-            <h4 className="text-[13px] sm:text-[14px] font-bold text-slate-800 leading-tight">
-              ফোন ও হোয়াটসঅ্যাপ
+          <div className="min-w-0 flex-1">
+            <h4 className="text-[12px] sm:text-[14px] font-bold text-slate-800 leading-tight truncate">
+              সরাসরি কল করুন
             </h4>
-            <p className="text-[11.5px] text-slate-500 mt-0.5 line-clamp-1">
-              ০১৩১৩-৯৪৬৪০২ নম্বরে কল দিন
+            <p className="text-[10.5px] sm:text-[11.5px] text-slate-500 mt-0.5 truncate">
+              ০১৩১৩-৯৪৬৪০২
             </p>
           </div>
         </div>

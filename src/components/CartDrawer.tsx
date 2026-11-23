@@ -40,14 +40,14 @@ export function CartDrawer() {
             <h2 className="text-[15px] font-bold tracking-wide text-[#222831]">
               SHOPPING CART
             </h2>
-            <span className="rounded-full bg-[#f48721] px-2 py-0.5 text-xs font-bold text-white">
+            <span className="rounded-full bg-[#065f46] px-2 py-0.5 text-xs font-bold text-white">
               {totalItems}
             </span>
           </div>
           <button
             type="button"
             onClick={closeCart}
-            className="inline-flex items-center gap-1 text-[13px] font-semibold text-[#6b7280] hover:text-[#f48721] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1 text-[13px] font-semibold text-[#6b7280] hover:text-[#065f46] transition-colors cursor-pointer"
           >
             <span>Close</span>
             <span>→</span>
@@ -170,7 +170,7 @@ export function CartDrawer() {
           <div className="border-t border-gray-200 p-5 bg-[#f8fafc] space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-[#222831]">Subtotal:</span>
-              <span className="text-lg font-bold text-[#f48721]">
+              <span className="text-lg font-bold text-[#065f46]">
                 {formatTakaDecimals(subtotal)}
               </span>
             </div>
@@ -181,14 +181,14 @@ export function CartDrawer() {
               <button
                 type="button"
                 onClick={closeCart}
-                className="rounded-md border border-[#f48721] bg-white py-2.5 px-3 text-sm font-semibold text-[#f48721] hover:bg-[#fff8f1] transition-colors cursor-pointer"
+                className="rounded-xl border border-slate-300 bg-white py-2.5 px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
               >
                 Continue Shop
               </button>
               <Link
                 href="/checkout"
                 onClick={closeCart}
-                className="inline-flex items-center justify-center rounded-md bg-[#f48721] py-2.5 px-3 text-sm font-semibold text-white hover:bg-[#df7412] transition-colors"
+                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-[#065f46] to-[#047857] hover:from-[#047857] hover:to-[#065f46] py-2.5 px-3 text-sm font-bold text-white shadow-md transition-all"
               >
                 Checkout →
               </Link>

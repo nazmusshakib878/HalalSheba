@@ -49,26 +49,26 @@ export function FloatingWidgets() {
 
   return (
     <>
-      {/* Fixed Right-Edge Floating Cart Badge */}
+      {/* Fixed Right-Edge Floating Cart Badge (visible on tablet & desktop, hidden on mobile) */}
       <button
         type="button"
         onClick={openCart}
         aria-label="Open floating cart"
-        className="fixed right-0 top-1/2 -translate-y-1/2 z-[80] flex flex-col overflow-hidden rounded-l-[6px] shadow-[0_4px_14px_rgba(0,0,0,0.18)] border border-r-0 border-[#f48721] cursor-pointer group"
+        className="hidden md:flex fixed right-0 top-1/2 -translate-y-1/2 z-[80] flex-col overflow-hidden rounded-l-[6px] shadow-[0_4px_14px_rgba(0,0,0,0.18)] border border-r-0 border-[#065f46] cursor-pointer group"
       >
-        <div className="bg-[#f48721] group-hover:bg-[#df7412] text-white px-2.5 py-2 flex flex-col items-center justify-center transition-colors min-w-[68px]">
+        <div className="bg-[#065f46] group-hover:bg-[#043d2e] text-white px-2.5 py-2 flex flex-col items-center justify-center transition-colors min-w-[68px]">
           <BagIcon className="h-5 w-5 mb-0.5" />
           <span className="text-[11.5px] font-bold leading-tight">
             {totalItems} {totalItems === 1 ? "Item" : "Items"}
           </span>
         </div>
-        <div className="bg-white px-2 py-1 text-center text-[11.5px] font-bold text-[#f48721]">
+        <div className="bg-white px-2 py-1 text-center text-[11.5px] font-bold text-[#065f46]">
           {formatTakaDecimals(subtotal)}
         </div>
       </button>
 
-      {/* Bottom-Right Controls: Scroll To Top + Live Support Chat */}
-      <div className="fixed bottom-5 right-5 z-[85] flex flex-col items-end gap-3">
+      {/* Bottom-Right Controls: Scroll To Top + Live Support Chat (elevated above mobile bottom nav) */}
+      <div className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-[85] flex flex-col items-end gap-2.5 sm:gap-3">
         {chatOpen && (
           <div className="w-[310px] sm:w-[330px] rounded-xl bg-white border border-gray-200 shadow-[0_16px_40px_rgba(0,0,0,0.18)] overflow-hidden mb-1">
             <div className="bg-[#041f1e] text-white px-4 py-3 flex items-center justify-between">
