@@ -20,6 +20,7 @@ export default function ProductDetailPage() {
   const router = useRouter();
   const { addToCart, toggleWishlist, isWishlisted, reviews, addReview } =
     useStore();
+  const [chuiSize, setChuiSize] = useState<"thick" | "medium" | "thin">("thick");
 
   const product = useMemo(() => {
     const requestedSlug = params?.slug;
@@ -28,6 +29,22 @@ export default function ProductDetailPage() {
         ? PRODUCTS.find((p) => p.slug === "sorishar-tel")
         : undefined)
       || PRODUCTS[0];
+    if (requestedSlug === "chui-jhal") {
+      const variants = {
+        thick: { id: 1901, label: "মোটা", price: 1200, image: "/images/products/chui-jhal.jpg", imageIndex: 0 },
+        medium: { id: 1902, label: "মাঝামাঝি", price: 900, image: "/images/products/chui-jhal-medium.png", imageIndex: 1 },
+        thin: { id: 1903, label: "চিকন", price: 800, image: "/images/products/chui-jhal-thin.png", imageIndex: 2 },
+      } as const;
+      const variant = variants[chuiSize];
+      return {
+        ...baseProduct,
+        id: variant.id,
+        price: variant.price,
+        regularPrice: undefined,
+        weight: `১ কেজি — ${variant.label}`,
+        image: variant.image,
+      };
+    }
     if (requestedSlug !== "sorishar-tel-5-liter" || baseProduct.slug !== "sorishar-tel") return baseProduct;
     return {
       ...baseProduct,
@@ -40,7 +57,7 @@ export default function ProductDetailPage() {
       image: "/images/products/sorishar-tel-5l.jpg",
       gallery: ["/images/products/sorishar-tel-5l.jpg", "/images/products/sorishar-tel.jpg"],
     };
-  }, [params?.slug]);
+  }, [params?.slug, chuiSize]);
 
   const images =
     product.gallery && product.gallery.length > 0
@@ -48,7 +65,10 @@ export default function ProductDetailPage() {
       : [product.image];
 
   const [selectedImage, setSelectedImage] = useState(0);
-  useEffect(() => setSelectedImage(0), [params?.slug]);
+  useEffect(() => {
+    setSelectedImage(0);
+    setChuiSize("thick");
+  }, [params?.slug]);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<"description" | "reviews">(
     "description"
@@ -76,7 +96,8 @@ export default function ProductDetailPage() {
     ).slice(0, 5);
   }, [product.id, product.categorySlug]);
 
-  const wishlisted = isWishlisted(product.id);
+  const wishlistProduct = product.slug === "chui-jhal" ? { ...product, id: 19 } : product;
+  const wishlisted = isWishlisted(wishlistProduct.id);
 
   const whatsappUrl = `https://api.whatsapp.com/send/?phone=8801313946402&text=${encodeURIComponent(
     `Hello Halal Sheba, I want to order: ${product.name} (Qty: ${quantity}) - Price: ${formatTaka(
@@ -127,7 +148,10 @@ export default function ProductDetailPage() {
                 key={idx}
                 type="button"
                 onClick={() => {
-                  if (product.slug === "sorishar-tel" && idx === 1) {
+                  if (product.slug === "chui-jhal") {
+                    setChuiSize((["thick", "medium", "thin"] as const)[idx]);
+                    setSelectedImage(idx);
+                  } else if (product.slug === "sorishar-tel" && idx === 1) {
                     router.push("/products/sorishar-tel-5-liter");
                   } else if (product.slug === "sorishar-tel-5-liter" && idx === 1) {
                     router.push("/products/sorishar-tel");
@@ -218,6 +242,29 @@ export default function ProductDetailPage() {
               {product.shortDescription}
             </p>
 
+            {product.slug === "chui-jhal" && (
+              <div className="space-y-2 pt-1">
+                <span className="text-xs font-bold text-slate-700">সাইজ বেছে নিন:</span>
+                <div className="flex flex-wrap gap-2">
+                  {([
+                    ["thick", "মোটা", 1200],
+                    ["medium", "মাঝামাঝি", 900],
+                    ["thin", "চিকন", 800],
+                  ] as const).map(([size, label, price], idx) => (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() => { setChuiSize(size); setSelectedImage(idx); }}
+                      aria-pressed={chuiSize === size}
+                      className={`rounded-lg border px-3.5 py-2 text-xs font-bold transition-all ${chuiSize === size ? "border-[#f48721] bg-[#fffaf5] text-[#f48721] ring-1 ring-[#f48721]/30" : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"}`}
+                    >
+                      {label} · {formatTaka(price)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Available Pack Sizes for Mustard Oil */}
             {(product.slug === "sorishar-tel" || product.slug === "sorishar-tel-5-liter") && (
               <div className="space-y-1.5 pt-1">
@@ -290,7 +337,7 @@ export default function ProductDetailPage() {
 
               <button
                 type="button"
-                onClick={() => toggleWishlist(product)}
+                onClick={() => toggleWishlist(wishlistProduct)}
                 className={`inline-flex items-center gap-1.5 text-xs font-bold cursor-pointer transition-colors ${
                   wishlisted ? "text-[#f48721]" : "text-slate-500 hover:text-[#f48721]"
                 }`}
@@ -315,9 +362,7 @@ export default function ProductDetailPage() {
                 type="button"
                 onClick={() =>
                   router.push(
-                    `/checkout?buyNow=${encodeURIComponent(
-                      product.slug
-                    )}&qty=${quantity}`
+                    `/checkout?buyNow=${encodeURIComponent(product.slug)}${product.slug === "chui-jhal" ? `&size=${chuiSize}` : ""}&qty=${quantity}`
                   )
                 }
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#f48721] hover:bg-[#ea580c] py-3.5 px-5 text-[16px] font-bold text-white shadow-md hover:shadow-lg transition-all cursor-pointer"

@@ -99,6 +99,7 @@ function BkashIcon({ className = "h-6 w-6" }: { className?: string }) {
 function CheckoutInner() {
   const searchParams = useSearchParams();
   const buyNowSlug = searchParams.get("buyNow");
+  const buyNowSize = searchParams.get("size");
   const buyNowQty = Math.max(1, Number(searchParams.get("qty") || "1") || 1);
 
   const { cart, clearCart, placeOrder, user, showToast, updateQuantity, removeFromCart } = useStore();
@@ -107,6 +108,23 @@ function CheckoutInner() {
     () => {
       if (!buyNowSlug) return undefined;
       const catalogProduct = PRODUCTS.find((p) => p.slug === buyNowSlug);
+      if (catalogProduct?.slug === "chui-jhal") {
+        const variants = {
+          thick: { id: 1901, label: "মোটা", price: 1200, image: "/images/products/chui-jhal.jpg" },
+          medium: { id: 1902, label: "মাঝামাঝি", price: 900, image: "/images/products/chui-jhal-medium.png" },
+          thin: { id: 1903, label: "চিকন", price: 800, image: "/images/products/chui-jhal-thin.png" },
+        } as const;
+        const variant = variants[buyNowSize === "medium" || buyNowSize === "thin" ? buyNowSize : "thick"];
+        return {
+          ...catalogProduct,
+          id: variant.id,
+          price: variant.price,
+          regularPrice: undefined,
+          weight: `১ কেজি — ${variant.label}`,
+          image: variant.image,
+          name: `${catalogProduct.name} (${variant.label})`,
+        };
+      }
       if (catalogProduct || buyNowSlug !== "sorishar-tel-5-liter") return catalogProduct;
       const mustardOil = PRODUCTS.find((p) => p.slug === "sorishar-tel");
       return mustardOil ? {
@@ -119,7 +137,7 @@ function CheckoutInner() {
         image: "/images/products/sorishar-tel-5l.jpg",
       } : undefined;
     },
-    [buyNowSlug]
+    [buyNowSlug, buyNowSize]
   );
 
   const [buyNowCount, setBuyNowCount] = useState(buyNowQty);
