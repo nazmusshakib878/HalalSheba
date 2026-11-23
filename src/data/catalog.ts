@@ -351,8 +351,8 @@ export const PRODUCTS: Product[] = [
     image: "/images/products/sundarban-chaker-modhu.jpg",
     gallery: [
       "/images/products/sundarban-chaker-modhu.jpg",
-      "/images/products/bulk-honey-canister.jpg",
-      "/images/products/sundarban-chaker-modhu-bottle.jpg",
+      "/images/products/chak-shoho-modhu.jpg",
+      "/images/products/sundarban-mix-modhu.jpg",
     ],
     category: "Natural Honey",
     categorySlug: "honey",
