@@ -5,7 +5,6 @@ import { TopSellingSection } from "@/components/TopSellingSection";
 import { BrandCarousel } from "@/components/BrandCarousel";
 import { ProductCarouselSection } from "@/components/ProductCarouselSection";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
-import { CollectionSpotlight } from "@/components/CollectionSpotlight";
 
 export default function HomePage() {
   const naturalHoney = PRODUCTS.filter((p) =>
@@ -41,7 +40,6 @@ export default function HomePage() {
       {/* 2x2 Top Selling Products Showcase */}
       <TopSellingSection />
 
-      <CollectionSpotlight />
 
 
       {/* All Natural Honey */}

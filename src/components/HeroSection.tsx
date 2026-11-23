@@ -41,32 +41,26 @@ export function HeroSection() {
         onTouchStart={(event) => { touch.current = { x: event.touches[0].clientX, y: event.touches[0].clientY }; }}
         onTouchEnd={(event) => { if (!touch.current) return; const dx = event.changedTouches[0].clientX - touch.current.x; const dy = event.changedTouches[0].clientY - touch.current.y; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) move(dx > 0 ? -1 : 1); touch.current = null; }}>
         <div className="store-hero-copy" key={`copy-${active}`}>
-          <p className="store-eyebrow"><span /> HALAL SHEBA · {slide.label}</p>
           <h1>{slide.title}<br /><em>{slide.emphasis}</em></h1>
-          <p className="store-hero-description">{slide.description}</p>
+          <p className="store-hero-description">{active === 0 ? "আপনার পছন্দের মধু বেছে নিন।" : active === 1 ? "প্রতিদিনের রান্নায় ঘি ও তেলের সংগ্রহ।" : "খেজুরের গুড় ও দেশি মিষ্টির সংগ্রহ।"}</p>
           <div className="store-hero-actions">
             <Link href={slide.href} className="store-primary-link">{slide.action}<span aria-hidden="true">↗</span></Link>
-            <Link href="/collections/all-products" className="store-text-link">সব পণ্য দেখুন <span aria-hidden="true">→</span></Link>
           </div>
-          <p className="store-hero-note">সারা দেশে ডেলিভারি · ক্যাশ অন ডেলিভারি</p>
         </div>
         <div className="store-hero-visual" key={`image-${active}`}>
           <img src={slide.image} alt={slide.alt} fetchPriority={active === 0 ? "high" : "auto"} className="store-hero-photo" />
-          <div className="store-photo-caption"><span>HALAL SHEBA COLLECTION</span><strong>{slide.caption}</strong></div>
         </div>
         <div className="store-slider-controls">
           <div className="store-slide-dots">{slides.map((item, index) => <button key={item.number} type="button" aria-label={`${item.caption} দেখুন`} aria-pressed={index === active} onClick={() => setActive(index)}><span className={index === active ? "is-active" : ""} /></button>)}</div>
-          <span className="store-slide-count">{slide.number} <span>/ 03</span></span>
           <button type="button" aria-label="Previous slide" onClick={() => move(-1)}><ChevronLeftIcon className="h-4 w-4" /></button>
           <button type="button" aria-label="Next slide" onClick={() => move(1)}><ChevronRightIcon className="h-4 w-4" /></button>
           {!reduced && <button type="button" aria-label={paused ? "Resume slideshow" : "Pause slideshow"} aria-pressed={paused} onClick={() => setPaused(!paused)}>{paused ? "▶" : "Ⅱ"}</button>}
         </div>
       </div>
       <div className="store-service-strip">
-        <div><span>01</span><p><strong>দেশজ স্বাদের সংগ্রহ</strong><small>মধু, ঘি, গুড় ও আরও অনেক কিছু</small></p></div>
-        <div><span>02</span><p><strong>সারা দেশে ডেলিভারি</strong><small>আপনার ঠিকানায় পৌঁছে যাবে</small></p></div>
-        <div><span>03</span><p><strong>ক্যাশ অন ডেলিভারি</strong><small>হাতে পেয়ে মূল্য পরিশোধ</small></p></div>
-        <a href="tel:+8801313946402"><span>04</span><p><strong>অর্ডারে সাহায্য লাগবে?</strong><small>কল করুন: 01313-946402</small></p></a>
+        <div><p><strong>সারা দেশে ডেলিভারি</strong></p></div>
+        <div><p><strong>ক্যাশ অন ডেলিভারি</strong></p></div>
+        <a href="tel:+8801313946402"><p><strong>কল করুন: 01313-946402</strong></p></a>
       </div>
     </section>
   );

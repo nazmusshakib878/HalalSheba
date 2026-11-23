@@ -67,6 +67,19 @@ export function BottomNav() {
             </div>
 
             <div className="grid grid-cols-2 gap-2.5 pt-4">
+              <Link
+                href="/collections/all-products"
+                onClick={() => setCategoriesOpen(false)}
+                className="flex items-center gap-2.5 p-2.5 rounded-xl border border-emerald-200 bg-emerald-50/50 hover:border-emerald-500 transition-colors"
+              >
+                <span className="h-10 w-10 shrink-0 flex items-center justify-center rounded-lg bg-white text-[#065f46]">
+                  <MenuLinesIcon className="h-6 w-6" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[13px] font-bold text-slate-800">সকল পণ্য</p>
+                  <p className="text-[11px] text-emerald-700 font-semibold">সব দেখুন →</p>
+                </div>
+              </Link>
               {CATEGORIES.map((cat) => (
                 <Link
                   key={cat.id}
