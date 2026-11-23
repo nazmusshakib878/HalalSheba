@@ -3,20 +3,22 @@ set -e
 
 echo "=== Initializing Halal Sheba Backend ==="
 
-# Wait for database if DATABASE_URL or DB_HOST is provided
-if [ -n "$DB_HOST" ] || [ -n "$DATABASE_URL" ]; then
-    echo "Running database migrations..."
-    php artisan migrate --force --isolated || true
+# Fallback APP_KEY if empty or invalid
+if [ -z "$APP_KEY" ] || [[ "$APP_KEY" != base64:* ]]; then
+    export APP_KEY="base64:zEaFh3kbooR+9eZEAfhQ/v/LeLqrZlKgVo3IBevX9oI="
 fi
 
-# Ensure catalog products are imported if database is fresh
+# Run database migrations and seeding
+echo "Running database migrations..."
+php artisan migrate --force || true
+
+# Seed catalog if empty
+echo "Importing catalog..."
 php artisan catalog:import || true
 
-# Cache configs and routes for production performance
-if [ "$APP_ENV" = "production" ]; then
-    php artisan config:cache || true
-    php artisan route:cache || true
-fi
+# Ensure super admin exists
+echo "Checking admin account..."
+php artisan tinker --execute="if(!App\Models\User::where('email','halalsheba878@gmail.com')->exists()) { \$u=new App\Models\User; \$u->forceFill(['name'=>'Halal Sheba','email'=>'halalsheba878@gmail.com','password'=>Illuminate\Support\Facades\Hash::make('HalalSheba@2026'),'role'=>'super_admin','active'=>true])->save(); echo 'Admin created'; }" || true
 
 PORT_NUMBER="${PORT:-8000}"
 echo "=== Starting Server on 0.0.0.0:${PORT_NUMBER} ==="

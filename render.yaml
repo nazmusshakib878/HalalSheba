@@ -11,12 +11,16 @@ services:
         value: "Halal Sheba"
       - key: APP_ENV
         value: production
-      - key: APP_DEBUG
-        value: "false"
       - key: APP_KEY
-        generateValue: true
+        value: "base64:zEaFh3kbooR+9eZEAfhQ/v/LeLqrZlKgVo3IBevX9oI="
+      - key: LOG_CHANNEL
+        value: stderr
       - key: DB_CONNECTION
         value: pgsql
+      - key: DB_URL
+        fromDatabase:
+          name: halalsheba-db
+          property: connectionString
       - key: DATABASE_URL
         fromDatabase:
           name: halalsheba-db
