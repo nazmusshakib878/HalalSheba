@@ -158,10 +158,17 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed.cart)) setCart(parsed.cart);
+        const refreshItemName = (item: CartItem): CartItem => ({
+          ...item,
+          name: PRODUCTS.find((product) => product.id === item.productId)?.name || item.name,
+        });
+        if (Array.isArray(parsed.cart)) setCart(parsed.cart.map(refreshItemName));
         if (Array.isArray(parsed.wishlist)) setWishlist(parsed.wishlist);
         if (Array.isArray(parsed.orders) && parsed.orders.length > 0) {
-          setOrders(parsed.orders);
+          setOrders(parsed.orders.map((order: CustomerOrder) => ({
+            ...order,
+            items: Array.isArray(order.items) ? order.items.map(refreshItemName) : [],
+          })));
         }
         if (Array.isArray(parsed.reviews) && parsed.reviews.length > 0) {
           setReviews(parsed.reviews);

@@ -133,7 +133,7 @@ export const HERO_SLIDES: HeroSlide[] = [
 export const CATEGORIES: Category[] = [
   {
     id: "cat-honey",
-    name: "খাঁটি মধু (Natural Honey)",
+    name: "খাঁটি মধু",
     slug: "honey",
     image: "/images/products/sundarban-chaker-modhu.jpg",
     subcategories: [
@@ -149,7 +149,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     id: "cat-oil-ghee",
-    name: "তেল ও ঘি (Oil & Ghee)",
+    name: "তেল ও ঘি",
     slug: "oil-ghee",
     image: "/images/products/sorishar-tel.jpg",
     subcategories: [
@@ -162,7 +162,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     id: "cat-gur-sweets",
-    name: "গুড় ও মিষ্টান্ন (Gur & Sweets)",
+    name: "গুড় ও মিষ্টান্ন",
     slug: "gur-sweets",
     image: "/images/products/khejurer-gur.jpg",
     subcategories: [
@@ -179,7 +179,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     id: "cat-spices-seeds",
-    name: "মসলা ও বীজ (Spices & Seeds)",
+    name: "মসলা ও বীজ",
     slug: "spices-seeds",
     image: "/images/products/chui-jhal.jpg",
     subcategories: [
@@ -195,7 +195,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     id: "cat-organic-food",
-    name: "অর্গানিক ও মৌসুমি ফল (Organic & Fruits)",
+    name: "অর্গানিক ও মৌসুমি ফল",
     slug: "organic-food",
     image: "/images/products/satkhira-aam.jpg",
     subcategories: [
@@ -344,7 +344,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 1,
     slug: "sundarban-chaker-modhu",
-    name: "সুন্দরবনের চাকের মধু (Sundarban Raw Comb Honey)",
+    name: "সুন্দরবনের চাকের মধু",
     price: 1800,
     regularPrice: 1950,
     weight: "১ কেজি",
@@ -375,7 +375,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 2,
     slug: "sundarban-mix-modhu",
-    name: "সুন্দরবনের মিক্স মধু (Sundarban Mix Flower Honey)",
+    name: "সুন্দরবনের মিক্স মধু",
     price: 1000,
     regularPrice: 1100,
     weight: "১ কেজি",
@@ -401,7 +401,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 3,
     slug: "gramyo-mix-modhu",
-    name: "গ্রাম্য মিক্স মধু (Natural Village Multi-Flower Honey)",
+    name: "গ্রাম্য মিক্স মধু",
     price: 1000,
     regularPrice: 1100,
     weight: "১ কেজি",
@@ -427,7 +427,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 4,
     slug: "kalojira-modhu",
-    name: "কালোজিরা ফুলের মধু (Black Seed Honey)",
+    name: "কালোজিরা ফুলের মধু",
     price: 1200,
     regularPrice: 1350,
     weight: "১ কেজি",
@@ -456,7 +456,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 5,
     slug: "sorisha-modhu",
-    name: "সরিষা ফুলের মধু (Pure Mustard Flower Honey)",
+    name: "সরিষা ফুলের মধু",
     price: 500,
     regularPrice: 580,
     weight: "১ কেজি",
@@ -484,7 +484,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 6,
     slug: "lichu-modhu",
-    name: "লিচু ফুলের মধু (Lychee Flower Honey)",
+    name: "লিচু ফুলের মধু",
     price: 600,
     regularPrice: 700,
     weight: "১ কেজি",
@@ -511,7 +511,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 7,
     slug: "boroi-modhu",
-    name: "বরই ফুলের মধু (Plum / Jujube Flower Honey)",
+    name: "বরই ফুলের মধু",
     price: 700,
     regularPrice: 800,
     weight: "১ কেজি",
@@ -538,7 +538,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 8,
     slug: "cream-honey",
-    name: "প্রিমিয়াম ক্রিম হানি (Special Cream Honey)",
+    name: "প্রিমিয়াম ক্রিম হানি",
     price: 950,
     regularPrice: 1100,
     weight: "১ কেজি",
@@ -567,7 +567,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 9,
     slug: "khejurer-gur",
-    name: "খেজুরের খাঁটি পাটালি গুড় (Authentic Date Palm Patali Gur)",
+    name: "খেজুরের খাঁটি পাটালি গুড়",
     price: 390,
     regularPrice: 450,
     weight: "১ কেজি",
@@ -596,7 +596,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 10,
     slug: "khejurer-beej-gur",
-    name: "খেজুরের স্পেশাল বীজগুড় (Special Date Palm Beej Gur)",
+    name: "খেজুরের স্পেশাল বীজগুড়",
     price: 490,
     regularPrice: 550,
     weight: "১ কেজি",
@@ -623,7 +623,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 11,
     slug: "khejurer-jhola-gur",
-    name: "খেজুরের খাঁটি ঝোলা গুড় (Pure Date Palm Jhola Gur)",
+    name: "খেজুরের খাঁটি ঝোলা গুড়",
     price: 390,
     regularPrice: 450,
     weight: "১ কেজি",
@@ -650,7 +650,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 12,
     slug: "gawa-ghee",
-    name: "খাঁটি গাওয়া ঘি (Pure Artisanal Gawa Ghee)",
+    name: "খাঁটি গাওয়া ঘি",
     price: 1500,
     regularPrice: 1650,
     weight: "১ কেজি",
@@ -678,7 +678,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 13,
     slug: "butter-makhon",
-    name: "খাঁটি বাটার / মাখন (Pure Handchurned Butter)",
+    name: "খাঁটি বাটার / মাখন",
     price: 900,
     regularPrice: 1000,
     weight: "১ কেজি",
@@ -706,7 +706,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 14,
     slug: "sorishar-tel",
-    name: "ঘানি ভাঙা খাঁটি সরিষার তেল (Cold-Pressed Mustard Oil)",
+    name: "ঘানি ভাঙা খাঁটি সরিষার তেল",
     price: 330,
     regularPrice: 360,
     weight: "১ লিটার",
@@ -734,7 +734,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 15,
     slug: "narikel-tel",
-    name: "কোল্ড প্রেসড খাঁটি নারিকেল তেল (Extra Virgin Coconut Oil)",
+    name: "কোল্ড প্রেসড খাঁটি নারিকেল তেল",
     price: 1200,
     regularPrice: 1350,
     weight: "১ লিটার",
@@ -760,7 +760,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 16,
     slug: "kalojira-tel",
-    name: "কোল্ড প্রেসড খাঁটি কালোজিরা তেল (Pure Black Seed Oil)",
+    name: "কোল্ড প্রেসড খাঁটি কালোজিরা তেল",
     price: 1800,
     regularPrice: 2000,
     weight: "১ লিটার",
@@ -786,7 +786,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 17,
     slug: "tal-michri",
-    name: "শ্রী দুলাল চন্দ্র ভড়ের খাঁটি তাল মিছরি (Authentic Dulal Chandra Bhar Palm Candy)",
+    name: "শ্রী দুলাল চন্দ্র ভড়ের খাঁটি তাল মিছরি",
     price: 350,
     regularPrice: 400,
     weight: "১ কেজি",
@@ -812,7 +812,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 18,
     slug: "chia-seed",
-    name: "প্রিমিয়াম অর্গানিক চিয়া সিড (Premium Organic Chia Seed)",
+    name: "প্রিমিয়াম অর্গানিক চিয়া সিড",
     price: 600,
     regularPrice: 700,
     weight: "১ কেজি",
@@ -839,7 +839,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 19,
     slug: "chui-jhal",
-    name: "সাতক্ষীরার খাঁটি চুইঝাল (Fresh Authentic Chui Jhal Roots)",
+    name: "সাতক্ষীরার খাঁটি চুইঝাল",
     price: 750,
     regularPrice: 900,
     weight: "১ কেজি (সাইজ ও গ্রেড ভেদে ৬০০৳ - ১০০০৳)",
@@ -867,7 +867,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 20,
     slug: "pera-sandesh",
-    name: "ঐতিহ্যবাহী সুস্বাদু প্যারা সন্দেশ (Traditional Milk Pera Sandesh)",
+    name: "ঐতিহ্যবাহী সুস্বাদু প্যারা সন্দেশ",
     price: 800,
     regularPrice: 900,
     weight: "১ কেজি",
@@ -893,7 +893,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 21,
     slug: "mishtir-chhana",
-    name: "খাঁটি মিষ্টির ছানা (Pure Milk Chhana for Artisanal Sweets)",
+    name: "খাঁটি মিষ্টির ছানা",
     price: 650,
     regularPrice: 750,
     weight: "১ কেজি",
@@ -919,7 +919,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 22,
     slug: "dheki-chhata-chaler-gura",
-    name: "ঢেঁকি ছাঁটা চালের গুঁড়া (Traditional Dheki-Husked Rice Flour)",
+    name: "ঢেঁকি ছাঁটা চালের গুঁড়া",
     price: 220,
     regularPrice: 260,
     weight: "১ কেজি (1 Kg Premium Pack)",
@@ -947,7 +947,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 23,
     slug: "beetroot-powder",
-    name: "অর্গানিক বিটরুট গুঁড়া (Pure Organic Beetroot Powder)",
+    name: "অর্গানিক বিটরুট গুঁড়া",
     price: 350,
     regularPrice: 420,
     weight: "২০০ গ্রাম (200g Jar)",
@@ -975,7 +975,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 24,
     slug: "chak-shoho-modhu",
-    name: "সুন্দরবনের প্রাকৃতিক চাক সহ মধু (Pure Honey with Raw Honeycomb)",
+    name: "সুন্দরবনের প্রাকৃতিক চাক সহ মধু",
     price: 1200,
     regularPrice: 1400,
     weight: "১ কেজি (1 Kg Box Pack)",
@@ -1003,7 +1003,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 25,
     slug: "twin-fol",
-    name: "প্রিমিয়াম ত্বীন ফল (Premium Organic Dried Figs / Tin Fol)",
+    name: "প্রিমিয়াম ত্বীন ফল",
     price: 1250,
     regularPrice: 1450,
     weight: "১ কেজি (1 Kg Premium Box)",
@@ -1031,7 +1031,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 26,
     slug: "dry-food-mix",
-    name: "প্রিমিয়াম মিক্সড ড্রাই ফুড ও বাদাম (Premium Mixed Dry Fruits & Nuts)",
+    name: "প্রিমিয়াম মিক্সড ড্রাই ফুড ও বাদাম",
     price: 1350,
     regularPrice: 1550,
     weight: "১ কেজি (1 Kg Family Pack)",
@@ -1059,7 +1059,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 27,
     slug: "akher-lal-chini",
-    name: "দেশি খাঁটি আখের লাল চিনি (Pure Deshi Sugarcane Red Sugar)",
+    name: "দেশি খাঁটি আখের লাল চিনি",
     price: 160,
     regularPrice: 190,
     weight: "১ কেজি (1 Kg Pack)",
@@ -1087,7 +1087,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 28,
     slug: "akher-chini-seed-mixer",
-    name: "আখের লাল চিনি ও সিড মিক্সার (Sugarcane Red Sugar & Seed Mixer Combo)",
+    name: "আখের লাল চিনি ও সিড মিক্সার",
     price: 480,
     regularPrice: 560,
     weight: "১ সেট (Red Sugar + Mixed Seeds)",
@@ -1115,7 +1115,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 29,
     slug: "sharbat-seed-mixer",
-    name: "পুষ্টিকর স্পেশাল শরবত সিড মিক্সার (Nutritious Sharbat Seed Mixer)",
+    name: "পুষ্টিকর স্পেশাল শরবত সিড মিক্সার",
     price: 380,
     regularPrice: 450,
     weight: "২৫০ গ্রাম জার (250g Multi-Seed Jar)",
@@ -1143,7 +1143,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 30,
     slug: "akher-gur",
-    name: "খাঁটি দেশি আখের গুড় (Pure Deshi Sugarcane Jaggery)",
+    name: "খাঁটি দেশি আখের গুড়",
     price: 260,
     regularPrice: 300,
     weight: "১ কেজি জার (1 Kg Jar)",
@@ -1171,7 +1171,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 31,
     slug: "satkhira-aam",
-    name: "সাতক্ষীরার ফরমালিনমুক্ত তাজা আম (Fresh Formalin-Free Satkhira Mango)",
+    name: "সাতক্ষীরার ফরমালিনমুক্ত তাজা আম",
     price: 120,
     regularPrice: 150,
     weight: "১ কেজি (ন্যূনতম ৫ কেজি অর্ডার)",
@@ -1199,7 +1199,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 32,
     slug: "kumra-bori",
-    name: "ঐতিহ্যবাহী চালকুমড়া বড়ি (Traditional Handmade Ash Gourd Bori)",
+    name: "ঐতিহ্যবাহী চালকুমড়া বড়ি",
     price: 420,
     regularPrice: 480,
     weight: "৫০০ গ্রাম (500g Pack)",

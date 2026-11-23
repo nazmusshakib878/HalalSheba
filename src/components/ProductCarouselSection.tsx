@@ -10,15 +10,20 @@ interface ProductCarouselSectionProps {
   title: string;
   viewAllHref: string;
   products: Product[];
+  direction?: "left" | "right";
 }
 
 export function ProductCarouselSection({
   title,
   viewAllHref,
   products,
+  direction = "left",
 }: ProductCarouselSectionProps) {
   const [perView, setPerView] = useState(4);
   const [startIndex, setStartIndex] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [interacting, setInteracting] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
   const touchStartX = useRef<number | null>(null);
 
   useEffect(() => {
@@ -36,23 +41,54 @@ export function ProductCarouselSection({
   const maxStart = Math.max(0, products.length - perView);
   const safeStart = Math.min(startIndex, maxStart);
   const totalDots = Math.max(1, maxStart + 1);
+  const travelDirection = useRef(direction === "left" ? 1 : -1);
+
+  useEffect(() => {
+    travelDirection.current = direction === "left" ? 1 : -1;
+    setStartIndex(direction === "right" ? maxStart : 0);
+  }, [direction, maxStart]);
+
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setPlaying(!preference.matches);
+    update();
+    preference.addEventListener("change", update);
+    return () => preference.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (!playing || interacting || maxStart === 0) return;
+    const timer = window.setInterval(() => {
+      const bounds = sectionRef.current?.getBoundingClientRect();
+      if (document.hidden || !bounds || bounds.bottom <= 0 || bounds.top >= window.innerHeight) return;
+      // Reverse at the edge instead of jumping across the entire row.
+      if (safeStart >= maxStart) travelDirection.current = -1;
+      else if (safeStart <= 0) travelDirection.current = 1;
+      setStartIndex(safeStart + travelDirection.current);
+    }, 4500);
+    return () => window.clearInterval(timer);
+  }, [playing, interacting, maxStart, safeStart]);
 
   const prev = () => setStartIndex((s) => (s <= 0 ? maxStart : s - 1));
   const next = () => setStartIndex((s) => (s >= maxStart ? 0 : s + 1));
 
   return (
-    <section className="mx-auto max-w-[1320px] px-3 sm:px-6 pb-8 sm:pb-11">
+    <section ref={sectionRef} className="mx-auto max-w-[1320px] px-3 sm:px-6 pb-8 sm:pb-11"
+      onFocusCapture={() => setInteracting(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node)) setInteracting(false);
+      }}>
       {/* Section Header */}
-      <div className="flex items-center justify-between mb-4 sm:mb-6 border-b border-slate-200 pb-2.5 sm:pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4 sm:mb-6 border-b border-slate-200 pb-2.5 sm:pb-3">
         <div className="relative">
-          <h2 className="text-[18px] sm:text-[23px] font-black text-slate-800 tracking-tight">
+          <h2 className="text-[18px] sm:text-[23px] font-semibold text-[#244333] tracking-tight">
             {title}
           </h2>
           <span className="absolute left-0 -bottom-[11px] sm:-bottom-[13px] h-[3px] w-16 sm:w-20 bg-[#065f46] rounded-full" />
         </div>
         <Link
           href={viewAllHref}
-          className="inline-flex items-center gap-1 text-[12px] sm:text-[13px] font-bold uppercase tracking-wide text-[#065f46] hover:text-[#d97706] transition-colors"
+          className="shrink-0 inline-flex items-center gap-1 text-[12px] sm:text-[13px] font-bold uppercase tracking-wide text-[#065f46] hover:text-[#d97706] transition-colors"
         >
           <span>সকল পণ্য দেখুন</span>
           <span aria-hidden="true">→</span>
@@ -63,15 +99,18 @@ export function ProductCarouselSection({
       <div
         className="relative group/slider"
         onTouchStart={(e) => {
+          setInteracting(true);
           touchStartX.current = e.touches[0].clientX;
         }}
         onTouchEnd={(e) => {
+          setInteracting(false);
           if (touchStartX.current === null) return;
           const delta = e.changedTouches[0].clientX - touchStartX.current;
           if (delta > 40) prev();
           if (delta < -40) next();
           touchStartX.current = null;
         }}
+        onTouchCancel={() => { touchStartX.current = null; setInteracting(false); }}
       >
         {products.length > perView && (
           <button
@@ -86,7 +125,7 @@ export function ProductCarouselSection({
 
         <div className="overflow-hidden py-1">
           <div
-            className="flex transition-transform duration-500 ease-out"
+            className="flex transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
             style={{
               transform: `translateX(-${(safeStart * 100) / perView}%)`,
             }}
@@ -131,6 +170,18 @@ export function ProductCarouselSection({
               }`}
             />
           ))}
+          <button
+            type="button"
+            onClick={() => {
+              setPlaying((value) => !value);
+              setInteracting(false);
+            }}
+            aria-label={playing ? `Pause ${title} slideshow` : `Play ${title} slideshow`}
+            aria-pressed={playing}
+            className="ml-3 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-[#065f46] hover:bg-emerald-50 cursor-pointer"
+          >
+            <span aria-hidden="true">{playing ? "Ⅱ" : "▶"}</span>
+          </button>
         </div>
       )}
     </section>

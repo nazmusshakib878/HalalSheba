@@ -16,7 +16,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const wishlisted = isWishlisted(product.id);
 
   return (
-    <div className="group relative flex h-full min-w-0 flex-col rounded border border-slate-300 bg-white p-2 transition-colors hover:border-slate-300">
+    <div className="premium-product group relative flex h-full min-w-0 flex-col">
       <div className="relative">
         {/* Wishlist toggle button: visible on mobile touch (opacity-90), on desktop hover (group-hover) */}
         <button
@@ -38,7 +38,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <Link
           href={`/products/${product.slug}`}
-          className="aspect-square w-full overflow-hidden bg-white mb-3 sm:mb-4 flex items-center justify-center"
+          className="premium-product-image aspect-square w-full overflow-hidden flex items-center justify-center"
         >
           <SafeImage
             src={product.image}
@@ -49,17 +49,17 @@ export function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Product Info + Add To Cart */}
-      <div className="flex flex-col flex-1 justify-between">
+      <div className="premium-product-info flex flex-col flex-1 justify-between">
         <div>
           <Link
             href={`/products/${product.slug}`}
-            className="block text-[13px] sm:text-[15px] font-medium leading-[1.5] text-slate-800 hover:text-[#065f46] line-clamp-2 min-h-[35px] sm:min-h-[39px] transition-colors"
+            className="block font-bengali text-[14px] sm:text-[16px] font-medium leading-[1.65] text-slate-800 hover:text-[#065f46] line-clamp-2 min-h-[47px] sm:min-h-[53px] transition-colors"
           >
             {product.name}
           </Link>
 
           <div className="mt-1.5 sm:mt-2 flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
-            <span className="text-[15px] sm:text-[17px] font-semibold text-[#d97706]">
+            <span className="text-[15px] sm:text-[18px] font-semibold text-[#254b39]">
               {formatTaka(product.price)}
             </span>
             {product.regularPrice && (
@@ -73,10 +73,10 @@ export function ProductCard({ product }: ProductCardProps) {
         <button
           type="button"
           onClick={() => addToCart(product, 1, true)}
-          className="mt-2 sm:mt-3 w-full inline-flex items-center justify-center gap-1 sm:gap-1.5 min-h-10 rounded border border-[#d97706] bg-white py-2 px-1 sm:px-3 text-[11px] sm:text-[13px] font-medium text-[#b45309] hover:bg-amber-50 transition-colors cursor-pointer whitespace-nowrap"
+          className="premium-cart-button mt-3 sm:mt-4 w-full inline-flex items-center justify-center gap-1.5 min-h-11 py-2 px-2 text-[12px] sm:text-[13px] font-medium cursor-pointer"
         >
           <CartIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-          <span className="truncate">Add To Cart</span>
+          <span className="font-bengali">কার্টে যোগ করুন</span>
         </button>
       </div>
     </div>

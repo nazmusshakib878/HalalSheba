@@ -1,12 +1,11 @@
-import Link from "next/link";
-import { PRODUCTS, SITE_ASSETS } from "@/data/catalog";
+import { PRODUCTS } from "@/data/catalog";
 import { HeroSection } from "@/components/HeroSection";
 import { FeaturedCategories } from "@/components/FeaturedCategories";
 import { TopSellingSection } from "@/components/TopSellingSection";
 import { BrandCarousel } from "@/components/BrandCarousel";
 import { ProductCarouselSection } from "@/components/ProductCarouselSection";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
-import { SafeImage } from "@/components/SafeImage";
+import { CollectionSpotlight } from "@/components/CollectionSpotlight";
 
 export default function HomePage() {
   const naturalHoney = PRODUCTS.filter((p) =>
@@ -32,7 +31,7 @@ export default function HomePage() {
   );
 
   return (
-    <div className="bg-[#f8fafc]">
+    <div className="storefront">
       {/* Hero Slider + Promo Banner */}
       <HeroSection />
 
@@ -42,43 +41,47 @@ export default function HomePage() {
       {/* 2x2 Top Selling Products Showcase */}
       <TopSellingSection />
 
-      {/* Our Brands Carousel */}
-      <BrandCarousel />
+      <CollectionSpotlight />
+
 
       {/* All Natural Honey */}
       <ProductCarouselSection
-        title="খাঁটি প্রাকৃতিক মধু (All Natural Honey)"
+        title="খাঁটি প্রাকৃতিক মধু"
         viewAllHref="/collections/honey"
         products={naturalHoney}
       />
 
       {/* Gur & Sweets */}
       <ProductCarouselSection
-        title="খেজুরের গুড় ও ঐতিহ্যবাহী মিষ্টি (Gur & Traditional Sweets)"
+        title="খেজুরের গুড় ও ঐতিহ্যবাহী মিষ্টি"
         viewAllHref="/collections/gur-sweets"
         products={gurAndSweets}
+        direction="right"
       />
 
       {/* Cooking Essentials: Pure Oil & Gawa Ghee */}
       <ProductCarouselSection
-        title="খাঁটি তেল ও গাওয়া ঘি (Pure Oil & Ghee)"
+        title="খাঁটি তেল ও গাওয়া ঘি"
         viewAllHref="/collections/oil-ghee"
         products={cookingEssentials}
       />
 
       {/* Spices & Seeds */}
       <ProductCarouselSection
-        title="মসলা, চুইঝাল ও ভেষজ পণ্য (Spices & Organic Seeds)"
+        title="মসলা, চুইঝাল ও ভেষজ পণ্য"
         viewAllHref="/collections/spices-seeds"
         products={spicesAndSeeds}
+        direction="right"
       />
 
       {/* Organic Food, Dry Fruits & Fresh Seasonal Fruits */}
       <ProductCarouselSection
-        title="অর্গানিক ফুড, ড্রাই ফ্রুটস ও মৌসুমি ফল (Organic Food & Fruits)"
+        title="অর্গানিক ফুড, ড্রাই ফ্রুটস ও মৌসুমি ফল"
         viewAllHref="/collections/organic-food"
         products={organicFood}
       />
+
+      <BrandCarousel />
 
       {/* Customer Testimonials Carousel */}
       <TestimonialsSection />
