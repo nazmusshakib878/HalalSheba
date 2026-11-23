@@ -250,10 +250,10 @@ export default function ProductDetailPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <button
                 type="button"
-                onClick={() => addToCart(product, quantity, true)}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-[#f48721] bg-white py-3.5 px-5 text-[15px] font-bold text-[#f48721] hover:bg-orange-50 transition-all shadow-xs cursor-pointer"
+                onClick={() => addToCart(product, quantity, false)}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-[#065f46] bg-white py-3.5 px-5 text-[15px] font-bold text-[#065f46] hover:bg-emerald-50 transition-all shadow-xs cursor-pointer"
               >
-                <CartIcon className="h-5 w-5 text-[#f48721]" />
+                <CartIcon className="h-5 w-5 text-[#065f46]" />
                 <span>Add to Cart</span>
               </button>
 

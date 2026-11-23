@@ -72,7 +72,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <button
           type="button"
-          onClick={() => addToCart(product, 1, true)}
+          onClick={() => addToCart(product, 1, false)}
           className="premium-cart-button mt-3 sm:mt-4 w-full inline-flex items-center justify-center gap-1.5 min-h-11 py-2 px-2 text-[12px] sm:text-[13px] font-medium cursor-pointer"
         >
           <CartIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />

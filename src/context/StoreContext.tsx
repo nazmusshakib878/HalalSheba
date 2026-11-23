@@ -209,7 +209,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const closeCart = useCallback(() => setIsCartOpen(false), []);
 
   const addToCart = useCallback(
-    (product: Product, quantity = 1, openDrawer = true) => {
+    (product: Product, quantity = 1, openDrawer = false) => {
       setCart((prev) => {
         const existing = prev.find((item) => item.productId === product.id);
         if (existing) {
@@ -233,7 +233,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           },
         ];
       });
-      showToast(`${product.name} added to cart`);
+      showToast("Added to Cart");
       if (openDrawer) setIsCartOpen(true);
     },
     [showToast]
@@ -395,20 +395,32 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   return (
     <StoreContext.Provider value={value}>
       {children}
-      {/* Toast Notifications */}
+      {/* Exact Green "Added to Cart" Toast Notification matching user screenshot */}
       <div
         aria-live="polite"
-        className="fixed bottom-5 left-1/2 z-[1200] flex -translate-x-1/2 flex-col gap-2 pointer-events-none"
+        className="fixed top-16 sm:top-20 right-3 sm:right-6 z-[1300] flex flex-col gap-2.5 pointer-events-none"
       >
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`pointer-events-auto flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-white shadow-lg transition-all ${
-              t.type === "success" ? "bg-[#041f1e] border border-[#f48721]/40" : "bg-[#222831]"
-            }`}
+            onClick={openCart}
+            title="Click to view cart"
+            className="pointer-events-auto flex items-center gap-2.5 sm:gap-3 rounded-lg bg-[#4ea84b] hover:bg-[#439640] text-white px-4 sm:px-5 py-3 sm:py-3.5 shadow-[0_8px_25px_rgba(78,168,75,0.4)] transition-all animate-in slide-in-from-top-2 duration-200 cursor-pointer select-none"
           >
-            <span className="inline-block h-2 w-2 rounded-full bg-[#f48721]" />
-            <span>{t.text}</span>
+            {/* Bold white checkmark matching screenshot */}
+            <svg
+              className="h-6 w-6 shrink-0 text-white stroke-[3.2]"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            <span className="text-[15px] sm:text-[16px] font-semibold text-white tracking-tight">
+              {t.text}
+            </span>
           </div>
         ))}
       </div>
