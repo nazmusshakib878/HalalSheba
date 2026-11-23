@@ -1,5 +1,15 @@
 # dependencies
 /node_modules
+**/node_modules/
+**/.next/
+**/vendor/
+**/test-results/
+**/playwright-report/
+**/.env
+**/.env.*
+!**/.env.example
+**/database/*.sqlite*
+**/storage/*.key
 /.pnp
 .pnp.*
 .yarn/*
