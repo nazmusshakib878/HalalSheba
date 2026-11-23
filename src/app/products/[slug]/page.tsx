@@ -193,6 +193,35 @@ export default function ProductDetailPage() {
               {product.shortDescription}
             </p>
 
+            {/* Available Pack Sizes for Mustard Oil */}
+            {(product.slug === "sorishar-tel" || product.slug === "sorishar-tel-5-liter") && (
+              <div className="space-y-1.5 pt-1">
+                <span className="text-xs font-bold text-slate-700">প্যাক সাইজ নির্বাচন করুন:</span>
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <Link
+                    href="/products/sorishar-tel"
+                    className={`rounded-lg border px-3.5 py-1.5 text-xs font-bold transition-all ${
+                      product.slug === "sorishar-tel"
+                        ? "border-[#f48721] bg-[#fffaf5] text-[#f48721] ring-1 ring-[#f48721]/30 shadow-2xs"
+                        : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+                    }`}
+                  >
+                    ১ লিটার বোতল (৳৩৩০)
+                  </Link>
+                  <Link
+                    href="/products/sorishar-tel-5-liter"
+                    className={`rounded-lg border px-3.5 py-1.5 text-xs font-bold transition-all ${
+                      product.slug === "sorishar-tel-5-liter"
+                        ? "border-[#f48721] bg-[#fffaf5] text-[#f48721] ring-1 ring-[#f48721]/30 shadow-2xs"
+                        : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+                    }`}
+                  >
+                    ৫ কেজি বোতল (৳১,৬০০)
+                  </Link>
+                </div>
+              </div>
+            )}
+
             {/* Quick specs */}
             <div className="grid grid-cols-2 gap-3 rounded-xl bg-slate-50 p-4 text-xs border border-slate-100">
               <div>
