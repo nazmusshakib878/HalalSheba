@@ -14,6 +14,7 @@ const links = [
   ['customers', 'Customers'],
   ['analytics', 'Analytics'],
   ['coupons', 'Coupons'],
+  ['reviews', 'Reviews'],
   ['settings', 'Settings'],
   ['audit', 'Activity log'],
   ['account', 'My account']

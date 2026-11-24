@@ -82,7 +82,27 @@ export default function ProductDetailPage() {
 
   const handleReviewSubmit = async (e:React.FormEvent) => {
     e.preventDefault();
-    try{const r=await api<{message:string}>('reviews',{method:'POST',body:JSON.stringify({product_id:base.id,reference:reviewReference,phone:reviewPhone,author:reviewerName,rating,comment})});setReviewMessage(r.message);setComment('');}catch(e){setReviewMessage((e as Error).message);}
+    setReviewMessage("");
+    try {
+      const r = await api<{message:string}>('reviews', {
+        method: 'POST',
+        body: JSON.stringify({
+          product_id: base.id,
+          reference: reviewReference.trim() || undefined,
+          phone: reviewPhone.trim(),
+          author: reviewerName.trim(),
+          rating,
+          comment: comment.trim(),
+        }),
+      });
+      setReviewMessage(r.message);
+      setComment('');
+      api<{id:number;author:string;rating:number;comment:string;created_at:string}[]>(`products/${base.id}/reviews`)
+        .then(rows => setReviews(rows.map(rw => ({ ...rw, id: String(rw.id), productSlug: base.slug, createdAt: rw.created_at }))))
+        .catch(() => {});
+    } catch(err) {
+      setReviewMessage((err as Error).message);
+    }
   };
 
   return (
@@ -551,13 +571,42 @@ export default function ProductDetailPage() {
                     className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-[#f48721]"
                   />
                 </div>
+                <div>
+                  <label className="block text-xs font-semibold text-[#222831] mb-1">
+                    Order Phone Number <span className="text-[#f48721]">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    value={reviewPhone}
+                    onChange={(e) => setReviewPhone(e.target.value)}
+                    placeholder="অর্ডারে ব্যবহৃত মোবাইল নম্বর (e.g. 01716333670)"
+                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-[#f48721]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1">
+                    Order Reference / ID (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={reviewReference}
+                    onChange={(e) => setReviewReference(e.target.value)}
+                    placeholder="অর্ডার রেফারেন্স বা আইডি (যদি থাকে)"
+                    className="w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:border-[#f48721]"
+                  />
+                </div>
+                {reviewMessage && (
+                  <div className={`p-3 rounded-lg text-xs font-semibold ${reviewMessage.includes('ধন্যবাদ') || reviewMessage.includes('সফল') ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
+                    {reviewMessage}
+                  </div>
+                )}
                 <button
                   type="submit"
                   className="w-full rounded-md bg-[#f48721] hover:bg-[#df7412] py-2.5 text-sm font-bold text-white transition-colors cursor-pointer"
                 >
                   Submit Review
                 </button>
-                <label className="block text-sm">Order reference<input className="w-full border rounded p-2" required value={reviewReference} onChange={e=>setReviewReference(e.target.value)}/></label><label className="block text-sm">Order phone number<input className="w-full border rounded p-2" required value={reviewPhone} onChange={e=>setReviewPhone(e.target.value)}/></label>
               </form>
             </div>
           )}

@@ -173,6 +173,7 @@ class OrderService {
             $state = $o->stock_state;
             foreach (DB::table('order_items')->where('order_id', $id)->orderBy('variant_id')->get() as $item) {
                 $v = DB::table('variants')->lockForUpdate()->find($item->variant_id);
+                if (!$v) continue;
                 $delta = 0;
                 if (in_array($next, ['shipped', 'out_for_delivery', 'delivered']) && $o->stock_state === 'reserved') {
                     $delta = -$item->quantity;

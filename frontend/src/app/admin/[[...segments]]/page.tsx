@@ -20,7 +20,7 @@ export default function AdminPage() {
   else if (section === 'orders') content = id ? <OrderDetail id={id} /> : <Orders />;
   else if (section === 'settings') content = <Settings />;
   else if (section === 'account') content = <Account />;
-  else if (['categories', 'brands', 'customers', 'coupons', 'audit'].includes(section)) {
+  else if (['categories', 'brands', 'customers', 'coupons', 'audit', 'reviews'].includes(section)) {
     content = <Management key={section} section={section} />;
   } else {
     content = <h1>Page not found</h1>;

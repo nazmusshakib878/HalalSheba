@@ -32,8 +32,11 @@ class OrderController extends Controller {
         }
     }
     public function update(Request $r,int $id,OrderService $service) {
-        $d=$r->validate(['status'=>'required|in:'.implode(',',OrderService::STATUSES),'reason'=>'required|string|min:3|max:2000',
+        $d=$r->validate(['status'=>'required|in:'.implode(',',OrderService::STATUSES),'reason'=>'nullable|string|max:2000',
             'payment_status'=>'nullable|in:paid,unpaid','courier'=>'nullable|string|max:255','tracking_number'=>'nullable|string|max:255','delivery_cost'=>'nullable|integer|min:0']);
+        if (empty($d['reason'])) {
+            $d['reason'] = 'Status updated by Admin';
+        }
         return $service->transition($id,$d);
     }
     public function track(Request $r) {
