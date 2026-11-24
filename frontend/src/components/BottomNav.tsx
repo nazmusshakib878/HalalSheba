@@ -140,7 +140,7 @@ export function BottomNav() {
                 isHome ? "font-bold text-[#065f46]" : "font-semibold"
               }`}
             >
-              হোম
+              Home
             </span>
           </Link>
 
@@ -152,7 +152,7 @@ export function BottomNav() {
           >
             <MenuLinesIcon className="h-5 w-5 mb-0.5" />
             <span className="text-[10.5px] font-semibold tracking-tight">
-              ক্যাটাগরি
+              Categories
             </span>
           </button>
 
@@ -166,7 +166,7 @@ export function BottomNav() {
               <PhoneIcon className="h-5 w-5 animate-pulse" />
             </div>
             <span className="text-[10.5px] font-bold text-[#065f46] mt-0.5 tracking-tight">
-              কল দিন
+              Call
             </span>
           </a>
 
@@ -195,7 +195,7 @@ export function BottomNav() {
                 isWishlist ? "font-bold text-[#d97706]" : "font-semibold"
               }`}
             >
-              পছন্দ
+              Wishlist
             </span>
           </Link>
 
@@ -215,7 +215,7 @@ export function BottomNav() {
               )}
             </div>
             <span className="text-[10.5px] font-semibold tracking-tight">
-              কার্ট
+              Cart
             </span>
           </button>
         </div>

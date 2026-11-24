@@ -73,10 +73,10 @@ export function ProductCard({ product }: ProductCardProps) {
         <button
           type="button"
           onClick={() => addToCart(product, 1, true)}
-          className="premium-cart-button mt-3 sm:mt-4 w-full inline-flex items-center justify-center gap-1.5 min-h-11 py-2 px-2 text-[12px] sm:text-[13px] font-medium cursor-pointer active:scale-95 transition-transform"
+          className="premium-cart-button mt-3 sm:mt-4 w-full inline-flex items-center justify-center gap-1.5 min-h-11 py-2 px-2 text-[12px] sm:text-[13px] font-semibold cursor-pointer active:scale-95 transition-transform"
         >
           <CartIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-          <span className="font-bengali">কার্টে যোগ করুন</span>
+          <span>Add to Cart</span>
         </button>
       </div>
     </div>

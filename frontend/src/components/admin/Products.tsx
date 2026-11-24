@@ -61,22 +61,22 @@ export function Products(){
   <Notice text={error||message}/>
   <div className="toolbar">
    <input placeholder="Search product or SKU…" value={q} onChange={e=>setQ(e.target.value)}/>
-   <Link className="button" href="/admin/products/add" style={{background:'#075744',color:'#fff',fontWeight:'600'}}>+ নতুন প্রোডাক্ট যোগ করুন</Link>
+   <Link className="button" href="/admin/products/add" style={{background:'#075744',color:'#fff',fontWeight:'600'}}>+ Add Product</Link>
   </div>
 
   {selected.length>0&&<div className="toolbar" style={{background:'#f8fafc',padding:'10px 16px',borderRadius:'8px',border:'1px solid #e2e8f0'}}>
-   <span style={{fontWeight:'600'}}>{selected.length} টি সিলেক্ট করা হয়েছে</span>
+   <span style={{fontWeight:'600'}}>{selected.length} selected</span>
    <div className="row" style={{gap:'8px'}}>
     <button type="button" className="secondary" style={{color:'#047857',borderColor:'#10b981',fontWeight:'700'}} onClick={()=>bulkToggleActive(true)}>
-     ✓ ওয়েবসাইটে চালু করুন (Show on Store)
+     ✓ Show on Store (Active)
     </button>
     <button type="button" className="secondary" style={{color:'#64748b',borderColor:'#cbd5e1',fontWeight:'700'}} onClick={()=>bulkToggleActive(false)}>
-     ✕ ওয়েবসাইট থেকে লুকান (Hide from Store)
+     ✕ Hide from Store (Inactive)
     </button>
    </div>
   </div>}
 
-  <Table headers={['','Product','SKU / Variants','Price','Available','ওয়েবসাইটে শো / অন-অফ (Store Status)','অ্যাকশন']} empty={!rows.length}>
+  <Table headers={['','Product','SKU / Variants','Price','Available','Store Status (Live)','Actions']} empty={!rows.length}>
    {rows.map(p=><tr key={p.id}>
     <td>
      <input type="checkbox" checked={selected.includes(p.id)} onChange={e=>setSelected(e.target.checked?[...selected,p.id]:selected.filter(i=>i!==p.id))}/>
@@ -95,7 +95,7 @@ export function Products(){
       type="button"
       onClick={()=>toggleActive(p)}
       disabled={togglingId===p.id}
-      title={p.active?"ক্লিক করে বন্ধ করুন (ওয়েবসাইট থেকে লুকান)":"ক্লিক করে চালু করুন (ওয়েবসাইটে লাইভ দেখান)"}
+      title={p.active?"Click to hide from store":"Click to show on store"}
       style={{
        display:'inline-flex',
        alignItems:'center',
@@ -145,13 +145,13 @@ export function Products(){
        userSelect:'none',
        letterSpacing:'0.3px'
       }}>
-       {p.active?'চালু (ON)':'বন্ধ (OFF)'}
+       {p.active?'Active (ON)':'Inactive (OFF)'}
       </span>
      </button>
     </td>
     <td style={{whiteSpace:'nowrap'}}>
      <Link className="button" href={'/admin/products/'+p.id} style={{padding:'7px 16px',fontSize:'13px',background:'#075744',color:'#fff',borderRadius:'6px',fontWeight:'600'}}>
-      ✏️ এডিট (Edit)
+      Edit
      </Link>
     </td>
    </tr>)}

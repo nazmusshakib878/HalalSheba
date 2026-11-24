@@ -225,7 +225,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           },
         ];
       });
-      showToast("কার্টে যোগ করা হয়েছে");
+      showToast("Added to cart");
       if (openDrawer) setIsCartOpen(true);
     },
     [showToast]
