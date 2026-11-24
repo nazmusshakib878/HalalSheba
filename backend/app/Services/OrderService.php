@@ -219,7 +219,7 @@ class OrderService {
                 }
             }
             $update = ['status' => $next, 'stock_state' => $state, 'updated_at' => now()];
-            foreach (['courier', 'tracking_number', 'delivery_cost'] as $key) {
+            foreach (['courier', 'tracking_number', 'delivery_cost', 'delivery_cost_confirmed'] as $key) {
                 if (array_key_exists($key, $d)) $update[$key] = $d[$key];
             }
             if (isset($d['payment_status'])) {
@@ -248,4 +248,3 @@ class OrderService {
         }, 3);
     }
 }
-

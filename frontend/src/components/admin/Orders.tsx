@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { api } from '@/lib/api';
@@ -31,10 +32,11 @@ export const statusMap: Record<string, { label: string; bg: string; color: strin
 export const statuses = mainStatuses.map(s => s.key);
 
 export function Orders() {
+  const searchParams = useSearchParams();
   const { data, error } = useData<Row[]>('admin/orders');
   const { data: variants } = useData<Row[]>('admin/inventory');
   const [q, setQ] = useState('');
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState(searchParams.get('status') || '');
   const [create, setCreate] = useState(false);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
@@ -67,6 +69,7 @@ export function Orders() {
 
       <div className="toolbar">
         <input
+          aria-label="Search orders by reference, customer or mobile number"
           placeholder="সার্চ করুন (রেফারেন্স, নাম বা মোবাইল নম্বর)..."
           value={q}
           onChange={(e) => setQ(e.target.value)}
@@ -898,6 +901,7 @@ export function OrderDetail({ id }: { id: string }) {
               body: JSON.stringify({
                 ...f,
                 delivery_cost: Math.round(Number(f.delivery_cost || 0) * 100),
+                delivery_cost_confirmed: f.delivery_cost_confirmed === 'on',
               }),
             });
             setMessage('অর্ডারের তথ্য সফলভাবে আপডেট করা হয়েছে।');
@@ -964,6 +968,10 @@ export function OrderDetail({ id }: { id: string }) {
               step=".01"
               defaultValue={o.delivery_cost ? o.delivery_cost / 100 : 0}
             />
+          </label>
+          <label className="check">
+            <input type="checkbox" name="delivery_cost_confirmed" defaultChecked={o.delivery_cost_confirmed === true || o.delivery_cost_confirmed === 1 || o.delivery_cost > 0} />
+            Courier cost is confirmed (check even when the actual cost is ?0)
           </label>
 
           <label>

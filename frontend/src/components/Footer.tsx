@@ -8,10 +8,10 @@ import { BrandLogoSvg, MailIcon, PhoneIcon, TrackPinIcon } from "@/components/Ic
 
 export function Footer() {
   const {settings}=useCatalog();
+  const facebook = String(settings.contact?.facebook || "");
+  const instagram = String(settings.contact?.instagram || "");
   const [logoError, setLogoError] = useState(false);
   const [payImgError, setPayImgError] = useState(false);
-  const [playErr, setPlayErr] = useState(false);
-  const [appErr, setAppErr] = useState(false);
 
   return (
     <footer className="bg-white border-t border-gray-200 pt-12 pb-6 text-[#4b5563]">
@@ -50,97 +50,10 @@ export function Footer() {
               </li>
             </ul>
 
-            {/* Social Media Buttons */}
-            <div className="flex items-center gap-3 pt-1">
-              <a
-                href="https://www.facebook.com/HalalSheba/"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Facebook"
-                className="h-9 w-9 rounded-full bg-[#fdf4ec] text-[#f48721] hover:bg-[#f48721] hover:text-white flex items-center justify-center transition-colors"
-              >
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.043-1.557-.14-2.857-.14C11.928 2 10 3.657 10 6.7v2.8H7v4h3V22h4v-8.5z" />
-                </svg>
-              </a>
-              <a
-                href="https://x.com"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Twitter"
-                className="h-9 w-9 rounded-full bg-[#fdf4ec] text-[#f48721] hover:bg-[#f48721] hover:text-white flex items-center justify-center transition-colors"
-              >
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.3 4.3 0 001.88-2.38 8.59 8.59 0 01-2.72 1.04 4.28 4.28 0 00-7.29 3.9A12.14 12.14 0 013.06 4.8a4.28 4.28 0 001.32 5.71 4.25 4.25 0 01-1.94-.54v.05a4.28 4.28 0 003.43 4.2 4.3 4.3 0 01-1.93.07 4.28 4.28 0 004 2.97A8.59 8.59 0 012 19.08 12.12 12.12 0 008.56 21c7.88 0 12.19-6.53 12.19-12.19l-.01-.55A8.7 8.7 0 0022.46 6z" />
-                </svg>
-              </a>
-              <a
-                href="https://www.instagram.com"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Instagram"
-                className="h-9 w-9 rounded-full bg-[#fdf4ec] text-[#f48721] hover:bg-[#f48721] hover:text-white flex items-center justify-center transition-colors"
-              >
-                <svg
-                  className="h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <rect x="3" y="3" width="18" height="18" rx="5" />
-                  <circle cx="12" cy="12" r="4" />
-                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-                </svg>
-              </a>
-            </div>
-
-            {/* Mobile App Badges */}
-            <div className="pt-2">
-              <p className="text-[13.5px] font-semibold text-[#222831] mb-2.5">
-                Download App on Mobile :
-              </p>
-              <div className="flex flex-wrap items-center gap-2.5">
-                <a
-                  href="#download-app"
-                  className="inline-block"
-                >
-                  {playErr ? (
-                    <span className="inline-flex items-center gap-2 rounded-md bg-[#111827] text-white px-3 py-1.5 text-xs font-semibold">
-                      Google Play
-                    </span>
-                  ) : (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={SITE_ASSETS.googlePlayBadge}
-                      alt="Get it on Google Play"
-                      referrerPolicy="no-referrer"
-                      onError={() => setPlayErr(true)}
-                      className="h-9 w-auto object-contain"
-                    />
-                  )}
-                </a>
-                <a
-                  href="#download-app"
-                  className="inline-block"
-                >
-                  {appErr ? (
-                    <span className="inline-flex items-center gap-2 rounded-md bg-white border border-gray-300 text-[#111827] px-3 py-1.5 text-xs font-semibold">
-                      App Store
-                    </span>
-                  ) : (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={SITE_ASSETS.appStoreBadge}
-                      alt="Download on the App Store"
-                      referrerPolicy="no-referrer"
-                      onError={() => setAppErr(true)}
-                      className="h-9 w-auto object-contain"
-                    />
-                  )}
-                </a>
-              </div>
-            </div>
+            {(facebook || instagram) && <div className="flex items-center gap-3 pt-1">
+              {facebook && <a href={facebook} target="_blank" rel="noreferrer" aria-label="Facebook" className="text-[#f48721]">Facebook</a>}
+              {instagram && <a href={instagram} target="_blank" rel="noreferrer" aria-label="Instagram" className="text-[#f48721]">Instagram</a>}
+            </div>}
           </div>
 
           {/* Column 2: Information */}

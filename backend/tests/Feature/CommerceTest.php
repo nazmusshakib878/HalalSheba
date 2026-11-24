@@ -132,6 +132,9 @@ class CommerceTest extends TestCase {
         DB::table('orders')->where('id',$o->id)->update(['status'=>'delivered','payment_status'=>'paid','delivery_cost'=>0,'refunded_amount'=>0]);
         $response=$this->actingAs(User::factory()->create())->getJson('/api/admin/reports?from='.now()->toDateString().'&to='.now()->toDateString())->assertOk();
         $response->assertJsonPath('revenue',33000)->assertJsonPath('cogs',20000)->assertJsonPath('gross_profit',13000)->assertJsonPath('delivery_fees_collected',0)->assertJsonPath('delivery_cost_unknown_orders',1)->assertJsonPath('estimated_net_profit',13000);
+        DB::table('orders')->where('id',$o->id)->update(['delivery_cost_confirmed'=>true]);
+        $zero=$this->getJson('/api/admin/reports?from='.now()->toDateString().'&to='.now()->toDateString())->assertOk();
+        $zero->assertJsonPath('delivery_cost_recorded_orders',1)->assertJsonPath('delivery_cost_unknown_orders',0);
     }
 
 }

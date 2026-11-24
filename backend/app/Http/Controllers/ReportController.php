@@ -12,9 +12,9 @@ class ReportController extends Controller {
         $cogs=$items->sum(fn($i)=>$i->cost*$i->quantity);
         $revenue=$paid->sum('subtotal')-$paid->sum('discount');
         $deliveryFees=$paid->sum('delivery_charge');
-        $actualDeliveryCosts=$paid->sum('delivery_cost');
+        $actualDeliveryCosts=$paid->filter(fn($o)=>$o->delivery_cost_confirmed === true || (int)$o->delivery_cost_confirmed === 1 || $o->delivery_cost > 0)->sum('delivery_cost');
         $refunds=$paid->sum('refunded_amount');
-        $knownDeliveryCostOrders=$paid->filter(fn($o)=>$o->delivery_cost>0)->count();
+        $knownDeliveryCostOrders=$paid->filter(fn($o)=>$o->delivery_cost_confirmed === true || (int)$o->delivery_cost_confirmed === 1 || $o->delivery_cost > 0)->count();
         $products=DB::table('products')->whereNull('deleted_at');
         $stock=DB::table('variants')->where('active',true)->get();
         return [

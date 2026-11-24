@@ -176,7 +176,7 @@ function CheckoutInner() {
     if (buyNowProduct) {
       if (newQty <= 0) return;
       const min = buyNowProduct?.slug === "satkhira-aam" ? 5 : 1;
-      if (newQty < min) { showToast(`?? ?????? ????????? ?????? ${min} ?????`, "error"); return; }
+      if (newQty < min) { showToast(`Minimum order quantity is ${min} kg.`, "error"); return; }
       setBuyNowCount(newQty);
     } else {
       updateQuantity(productId, newQty);
@@ -194,7 +194,7 @@ function CheckoutInner() {
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (checkoutItems.some((item) => item.slug === "satkhira-aam" && item.quantity < 5)) {
-      showToast("?????????? ???? ????????? ?????? ? ?????", "error");
+      showToast("Minimum order quantity is 5 kg.", "error");
       return;
     }
     if (checkoutItems.length === 0) {
@@ -327,10 +327,6 @@ function CheckoutInner() {
     );
   }
 
-  if (checkoutItems.some((item) => item.slug === "satkhira-aam" && item.quantity < 5)) {
-      showToast("?????????? ???? ????????? ?????? ? ?????", "error");
-      return;
-    }
     if (checkoutItems.length === 0) {
     return (
       <div className="mx-auto max-w-xl px-4 py-14 text-center">
@@ -474,12 +470,12 @@ function CheckoutInner() {
             <div className="rounded-lg border border-gray-200 bg-white p-4 sm:p-5 space-y-3.5 shadow-2xs">
               {/* Row 1: Name and Phone with Bangladesh Prefix */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <label className="block text-xs font-medium text-gray-700">???????? ???<input
+                <label className="block text-xs font-medium text-gray-700">{"\u0997\u09cd\u09b0\u09be\u09b9\u0995\u09c7\u09b0 \u09a8\u09be\u09ae"}<input
                   type="text"
                   required
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  aria-label="Customer name" placeholder="????? ????? ??? *"
+                  aria-label="Customer name" placeholder={"\u0986\u09aa\u09a8\u09be\u09b0 \u09aa\u09c2\u09b0\u09cd\u09a3 \u09a8\u09be\u09ae *"}
                   className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-[#f48721] transition-colors"
                 /></label>
 
@@ -489,14 +485,15 @@ function CheckoutInner() {
                       <span>🇧🇩</span>
                       <span>88</span>
                     </div>
-                    <input
+                    <label className="block text-xs font-medium text-gray-700">{"\u09ab\u09cb\u09a8 \u09a8\u09ae\u09cd\u09ac\u09b0 (\u09e7\u09e7 \u09b8\u0982\u0996\u09cd\u09af\u09be\u09b0 \u09b8\u099a\u09b2 \u09ac\u09be\u0982\u09b2\u09be\u09a6\u09c7\u09b6\u09bf \u09ae\u09cb\u09ac\u09be\u0987\u09b2)"}
+                    <input aria-label="Mobile phone (valid 11-digit Bangladesh mobile number)"
                       type="tel"
                       required
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="017******** (১১ ডিজিটের মোবাইল নম্বর) *"
                       className="w-full px-3 py-2.5 text-sm outline-none bg-transparent"
-                    />
+                    /></label>
                   </div>
                   <p className="text-[11.5px] text-[#065f46] font-medium mt-1 flex items-center gap-1">
                     <span>📞</span>
@@ -507,13 +504,14 @@ function CheckoutInner() {
 
               {/* Row 2: Email (Optional) */}
               <div>
-                <input
+                <label className="block text-xs font-medium text-gray-700">{"\u0987\u09ae\u09c7\u0987\u09b2 (\u0987\u099a\u09cd\u099b\u09c7\u0995)"}
+                <input aria-label="Email (optional)"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="example@gmail.com (Optional)"
+                  placeholder="example@gmail.com (optional)"
                   className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-[#f48721] transition-colors"
-                />
+                /></label>
               </div>
 
               {/* Row 3: Street Address */}
@@ -523,7 +521,7 @@ function CheckoutInner() {
                   required
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  aria-label="Full delivery address" placeholder="?????, ???, ?????, ???? ? ???? ?? ???????? ?????? *"
+                  aria-label="Full delivery address (house, road, area, thana and district)" placeholder="House, road, area, thana and district *"
                   className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-[#f48721] transition-colors"
                 />
               </div>
@@ -533,6 +531,7 @@ function CheckoutInner() {
                 <div className="relative">
                   <select
                     value={district}
+                    aria-label="District"
                     onChange={(e) => {
                       setDistrict(e.target.value);
                       setThana("");
@@ -541,7 +540,7 @@ function CheckoutInner() {
                   >
                     {DISTRICTS.map((d) => (
                       <option key={d} value={d}>
-                        {d} (Delivery ?{formatTakaDecimals(Number(districtFees[d] ?? (d === "Dhaka" ? delivery.dhaka ?? 0 : delivery.outside ?? 0)) / 100)})
+                        {d} (Delivery: {formatTakaDecimals(Number(districtFees[d] ?? (d === "Dhaka" ? delivery.dhaka ?? 0 : delivery.outside ?? 0)) / 100)})
                       </option>
                     ))}
                   </select>
@@ -569,7 +568,7 @@ function CheckoutInner() {
                       type="text"
                       value={thana}
                       onChange={(e) => setThana(e.target.value)}
-                      placeholder="Select Thana / Area (Optional)"
+                      aria-label="Thana or area (optional)" placeholder="Enter thana or area (optional)"
                       className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-[#f48721]"
                     />
                   )}
@@ -710,7 +709,7 @@ function CheckoutInner() {
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    aria-label="Coupon code" placeholder="???? ??? ?????"
+                    aria-label="Coupon code" placeholder="Coupon code"
                     className="flex-1 rounded-md border border-gray-300 px-3.5 py-2 text-sm outline-none focus:border-[#f48721]"
                   />
                   <button

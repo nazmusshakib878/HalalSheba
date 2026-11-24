@@ -1,7 +1,7 @@
 "use client";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { api } from '@/lib/api';
 
 const links = [
@@ -23,16 +23,9 @@ const links = [
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const [open, setOpen] = useState(false);
+  const menuTrigger = useRef<HTMLButtonElement>(null);
   const [unreadOrderCount, setUnreadOrderCount] = useState<number>(0);
-  const [user, setUser] = useState<{ name: string; role: string } | null>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const stored = sessionStorage.getItem('admin_user_cache');
-        if (stored) return JSON.parse(stored);
-      } catch {}
-    }
-    return null;
-  });
+  const [user, setUser] = useState<{ name: string; role: string } | null>(null);
 
   const markOrdersAsSeen = useCallback(() => {
     setUnreadOrderCount(0);
@@ -93,6 +86,18 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     }
   }, [path, markOrdersAsSeen]);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        requestAnimationFrame(() => menuTrigger.current?.focus());
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [open]);
+
   // Periodically check for new orders
   useEffect(() => {
     checkNewOrders();
@@ -117,7 +122,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         />
       )}
 
-      <aside className={'admin-sidebar ' + (open ? 'open' : '')} style={{ zIndex: 50 }}>
+      <aside id="admin-sidebar" className={'admin-sidebar ' + (open ? 'open' : '')} style={{ zIndex: 50 }} role={open ? 'dialog' : undefined} aria-modal={open || undefined} aria-label={open ? 'Admin navigation' : undefined}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 12px 20px' }}>
           <div className="admin-brand" style={{ padding: 0 }}>
             HALAL SHEBA
@@ -196,9 +201,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <div style={{ position: 'relative', display: 'inline-flex' }}>
               <button
                 className="mobile-menu secondary"
+                ref={menuTrigger}
                 onClick={() => setOpen(!open)}
                 style={{ minHeight: 40, minWidth: 40, fontSize: 18 }}
                 aria-label="Open navigation menu"
+                aria-expanded={open}
+                aria-controls="admin-sidebar"
               >
                 ☰
               </button>
