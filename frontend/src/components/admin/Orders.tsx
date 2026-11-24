@@ -193,22 +193,47 @@ export function Orders() {
                 const isPaid = o.payment_status === 'paid';
                 return (
                   <div key={o.id} className="mobile-order-card panel" style={{ marginBottom: 14 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
                       <strong style={{ fontFamily: 'monospace', fontSize: 15, color: '#075744', letterSpacing: '0.5px' }}>
                         #{o.reference.slice(0, 8).toUpperCase()}
                       </strong>
-                      <span
-                        style={{
-                          padding: '3px 10px',
-                          borderRadius: 20,
-                          fontSize: 11,
-                          fontWeight: 700,
-                          background: st.bg,
-                          color: st.color,
-                        }}
-                      >
-                        {st.label}
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        {(() => {
+                          const risk = o.fraud_risk || ((o.fraud_score ?? 0) >= 50 ? 'high' : (o.fraud_score ?? 0) >= 25 ? 'medium' : 'low');
+                          const score = o.fraud_score ?? (risk === 'high' ? 70 : risk === 'medium' ? 35 : 5);
+                          if (risk === 'high') {
+                            return (
+                              <span style={{ padding: '2px 8px', borderRadius: 12, fontSize: 10, fontWeight: 800, background: '#fee2e2', color: '#b91c1c', border: '1px solid #fca5a5' }}>
+                                🔴 ভুয়া ঝুঁকি ({score}%)
+                              </span>
+                            );
+                          }
+                          if (risk === 'medium') {
+                            return (
+                              <span style={{ padding: '2px 8px', borderRadius: 12, fontSize: 10, fontWeight: 700, background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' }}>
+                                🟡 যাচাই ({score}%)
+                              </span>
+                            );
+                          }
+                          return (
+                            <span style={{ padding: '2px 8px', borderRadius: 12, fontSize: 10, fontWeight: 700, background: '#dcfce7', color: '#15803d', border: '1px solid #86efac' }}>
+                              🟢 নিরাপদ
+                            </span>
+                          );
+                        })()}
+                        <span
+                          style={{
+                            padding: '3px 10px',
+                            borderRadius: 20,
+                            fontSize: 11,
+                            fontWeight: 700,
+                            background: st.bg,
+                            color: st.color,
+                          }}
+                        >
+                          {st.label}
+                        </span>
+                      </div>
                     </div>
 
                     <div style={{ fontSize: 15, fontWeight: 700, color: '#1e293b' }}>
@@ -282,7 +307,7 @@ export function Orders() {
 
           {/* Desktop Table View */}
           <div className="desktop-orders-table">
-            <Table headers={['রেফারেন্স ID', 'গ্রাহকের নাম ও মোবাইল নম্বর', 'অর্ডারের তারিখ', 'মোট টাকা', 'পেমেন্ট অবস্থা', 'অর্ডার স্ট্যাটাস', 'কনফার্মেশন অ্যাকশন']} empty={!rows?.length}>
+            <Table headers={['রেফারেন্স ID', 'গ্রাহকের নাম ও মোবাইল নম্বর', 'অর্ডারের তারিখ', 'মোট টাকা', 'পেমেন্ট অবস্থা', 'ভুয়া ঝুঁকি (Fake Risk)', 'অর্ডার স্ট্যাটাস', 'কনফার্মেশন অ্যাকশন']} empty={!rows?.length}>
               {rows?.map((o) => {
                 const st = statusMap[o.status] || { label: o.status, bg: '#f1f5f9', color: '#475569' };
                 const isPaid = o.payment_status === 'paid';
@@ -374,6 +399,78 @@ export function Orders() {
                       >
                         {isPaid ? 'পরিশোধিত (Paid)' : 'বাকি (Unpaid / COD)'}
                       </span>
+                    </td>
+                    <td>
+                      {(() => {
+                        const risk = o.fraud_risk || ((o.fraud_score ?? 0) >= 50 ? 'high' : (o.fraud_score ?? 0) >= 25 ? 'medium' : 'low');
+                        const score = o.fraud_score ?? (risk === 'high' ? 70 : risk === 'medium' ? 35 : 5);
+                        if (risk === 'high') {
+                          return (
+                            <div>
+                              <span
+                                style={{
+                                  display: 'inline-block',
+                                  padding: '3px 10px',
+                                  borderRadius: 20,
+                                  fontSize: 11,
+                                  fontWeight: 800,
+                                  background: '#fee2e2',
+                                  color: '#b91c1c',
+                                  border: '1px solid #fca5a5',
+                                }}
+                              >
+                                🔴 ভুয়া সন্দেহ ({score}%)
+                              </span>
+                              {o.fraud_reasons && o.fraud_reasons[0] && (
+                                <div style={{ fontSize: 10, color: '#dc2626', marginTop: 3, fontWeight: 600, maxWidth: 130 }}>
+                                  {o.fraud_reasons[0]}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        }
+                        if (risk === 'medium') {
+                          return (
+                            <div>
+                              <span
+                                style={{
+                                  display: 'inline-block',
+                                  padding: '3px 10px',
+                                  borderRadius: 20,
+                                  fontSize: 11,
+                                  fontWeight: 700,
+                                  background: '#fef3c7',
+                                  color: '#92400e',
+                                  border: '1px solid #fde68a',
+                                }}
+                              >
+                                🟡 যাচাই করুন ({score}%)
+                              </span>
+                              {o.fraud_reasons && o.fraud_reasons[0] && (
+                                <div style={{ fontSize: 10, color: '#b45309', marginTop: 3, fontWeight: 600, maxWidth: 130 }}>
+                                  {o.fraud_reasons[0]}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        }
+                        return (
+                          <span
+                            style={{
+                              display: 'inline-block',
+                              padding: '3px 10px',
+                              borderRadius: 20,
+                              fontSize: 11,
+                              fontWeight: 700,
+                              background: '#dcfce7',
+                              color: '#15803d',
+                              border: '1px solid #86efac',
+                            }}
+                          >
+                            🟢 নিরাপদ
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td>
                       <span
@@ -707,6 +804,102 @@ export function OrderDetail({ id }: { id: string }) {
           </div>
         </div>
       </div>
+
+      {/* FRAUD RISK & FAKE ORDER DETECTION ANALYSIS */}
+      {(() => {
+        const fraud = data.fraud || {
+          risk_score: 0,
+          risk_level: 'low',
+          reasons: [],
+          history: { total_orders: 1, delivered: 0, cancelled: 0 },
+        };
+        const isHigh = fraud.risk_level === 'high' || fraud.risk_score >= 50;
+        const isMed = fraud.risk_level === 'medium' || (fraud.risk_score >= 25 && fraud.risk_score < 50);
+
+        return (
+          <div
+            className="panel no-print"
+            style={{
+              marginTop: 24,
+              border: isHigh ? '2px solid #ef4444' : isMed ? '2px solid #f59e0b' : '1.5px solid #10b981',
+              background: isHigh ? '#fff5f5' : isMed ? '#fffbeb' : '#f0fdf4',
+              borderRadius: 10,
+              padding: 20,
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={{ fontSize: 28 }}>
+                  {isHigh ? '🚨' : isMed ? '⚠️' : '🛡️'}
+                </span>
+                <div>
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: 18,
+                      fontWeight: 800,
+                      color: isHigh ? '#991b1b' : isMed ? '#92400e' : '#166534',
+                    }}
+                  >
+                    {isHigh
+                      ? 'ভুয়া অর্ডার ঝুঁকি বিশ্লেষণ: উচ্চ সন্দেহজনক (High Fraud Risk)'
+                      : isMed
+                      ? 'ভুয়া অর্ডার ঝুঁকি বিশ্লেষণ: মাঝারি (Medium Risk - কল দিয়ে নিশ্চিত করুন)'
+                      : 'ভুয়া অর্ডার ঝুঁকি বিশ্লেষণ: নিরাপদ ও জেনুইন গ্রাহক (Safe Order)'}
+                  </h3>
+                  <div style={{ fontSize: 13, color: '#475569', marginTop: 3 }}>
+                    স্বয়ংক্রিয় ফ্রড ডিটেকশন ঝুঁকি স্কোর: <strong style={{ color: isHigh ? '#dc2626' : isMed ? '#b45309' : '#15803d' }}>{fraud.risk_score}%</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <span
+                  style={{
+                    display: 'inline-block',
+                    padding: '6px 14px',
+                    borderRadius: 20,
+                    fontWeight: 800,
+                    fontSize: 13,
+                    background: isHigh ? '#fee2e2' : isMed ? '#fef3c7' : '#dcfce7',
+                    color: isHigh ? '#b91c1c' : isMed ? '#92400e' : '#15803d',
+                    border: `1.5px solid ${isHigh ? '#fca5a5' : isMed ? '#fde68a' : '#86efac'}`,
+                  }}
+                >
+                  {isHigh ? '🔴 ভুয়া অর্ডার সন্দেহ' : isMed ? '🟡 ফোন দিয়ে নিশ্চিত করুন' : '🟢 ভেরিফায়েড / নিরাপদ'}
+                </span>
+              </div>
+            </div>
+
+            {fraud.reasons && fraud.reasons.length > 0 && (
+              <div style={{ marginTop: 12, padding: '12px 16px', background: '#ffffff', borderRadius: 8, border: '1px solid #f1f5f9' }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#334155', marginBottom: 8 }}>
+                  শনাক্তকৃত সম্ভাব্য ঝুঁকির কারণসমূহ (Risk Factors):
+                </div>
+                <ul style={{ margin: 0, paddingLeft: 22, fontSize: 13, color: isHigh ? '#dc2626' : '#b45309', lineHeight: 1.6 }}>
+                  {fraud.reasons.map((r: string, idx: number) => (
+                    <li key={idx} style={{ fontWeight: 600 }}>
+                      {r}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: 24, marginTop: 14, flexWrap: 'wrap', fontSize: 13, color: '#475569' }}>
+              <div>📊 মোট অর্ডার হিস্ট্রি: <strong>{fraud.history?.total_orders || 1} টি</strong></div>
+              <div>✅ সফল ডেলিভারি: <strong style={{ color: '#166534' }}>{fraud.history?.delivered || 0} টি</strong></div>
+              <div>❌ অতীত বাতিল/রিটার্ন: <strong style={{ color: '#dc2626' }}>{fraud.history?.cancelled || 0} টি</strong></div>
+            </div>
+
+            {isHigh && (
+              <div style={{ marginTop: 14, padding: '12px 14px', background: '#fee2e2', borderRadius: 8, fontSize: 13, color: '#991b1b', lineHeight: 1.5, border: '1px solid #fca5a5' }}>
+                <strong>⚠️ জরুরি মার্চেন্ট সতর্কতা:</strong> এই অর্ডারে পণ্য পাঠানোর পূর্বে অবশ্যই কাস্টমারের নম্বরে (<strong>{c.phone}</strong>) সরাসরি কল দিন অথবা অগ্রিম কুরিয়ার ডেলিভারি চার্জ গ্রহণ করুন। ফোন বন্ধ থাকলে বা ঠিকানা অস্পষ্ট হলে অর্ডার বাতিল (Cancel) করুন, অন্যথায় কুরিয়ার পার্সেল রিটার্ন চার্জ লোকসান হবে।
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* UPDATE ORDER FORM - Only visible on screen */}
       <form

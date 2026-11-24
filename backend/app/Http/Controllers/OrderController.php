@@ -5,13 +5,29 @@ use Illuminate\Support\Facades\DB;
 use App\Services\OrderService;
 class OrderController extends Controller {
     public function index(Request $r) {
-        return DB::table('orders')->join('customers','customers.id','=','orders.customer_id')
+        $orders = DB::table('orders')->join('customers','customers.id','=','orders.customer_id')
             ->select('orders.*','customers.name','customers.phone')->orderByDesc('orders.id')->limit(500)->get();
+
+        return $orders->map(function($o) {
+            $eval = \App\Services\FraudService::evaluate($o, (object)['name' => $o->name, 'phone' => $o->phone]);
+            $o->fraud_risk = $eval['risk_level'];
+            $o->fraud_score = $eval['risk_score'];
+            $o->fraud_reasons = $eval['reasons'];
+            return $o;
+        });
     }
     public function detail(int $id) {
-        $o=DB::table('orders')->find($id); abort_unless($o,404);
-        return ['order'=>$o,'customer'=>DB::table('customers')->find($o->customer_id),'items'=>DB::table('order_items')->where('order_id',$id)->get(),
-            'history'=>DB::table('audit_logs')->where('entity','order')->where('entity_id',$id)->orderByDesc('id')->get()];
+        $o = DB::table('orders')->find($id); abort_unless($o, 404);
+        $cust = DB::table('customers')->find($o->customer_id);
+        $eval = \App\Services\FraudService::evaluate($o, $cust);
+
+        return [
+            'order' => $o,
+            'customer' => $cust,
+            'items' => DB::table('order_items')->where('order_id', $id)->get(),
+            'history' => DB::table('audit_logs')->where('entity', 'order')->where('entity_id', $id)->orderByDesc('id')->get(),
+            'fraud' => $eval,
+        ];
     }
     public function create(Request $r,OrderService $service) {
         try {
@@ -20,6 +36,12 @@ class OrderController extends Controller {
                 'note'=>'nullable|string|max:2000','payment_method'=>'required|in:cod','source'=>'nullable|in:phone,whatsapp,manual,web',
                 'coupon'=>'nullable|string|max:100','items'=>'required|array|min:1|max:100','items.*.variant_id'=>'required|integer',
                 'items.*.quantity'=>'required|integer|min:1|max:10000']);
+
+            // Validate against fake repeating numbers or insufficient courier address
+            $cleanP = preg_replace('/[^0-9]/', '', $d['phone']);
+            if (str_starts_with($cleanP, '880')) $cleanP = '0' . substr($cleanP, 3);
+            abort_if(preg_match('/^01[3-9](\d)\1{7}$/', $cleanP) || in_array($cleanP, ['01700000000', '01711111111', '01800000000', '01900000000']), 422, 'অনুগ্রহ করে আপনার সঠিক ও সচল মোবাইল নম্বর দিন (ভুয়া নম্বর গ্রহণযোগ্য নয়)।');
+            abort_if(strlen(trim(preg_replace('/[\s,.-]/', '', $d['address']))) < 8 || preg_match('/^(asdf|dsadv|test|demo|none|null)$/i', trim($d['address'])), 422, 'কুরিয়ার ডেলিভারির জন্য সম্পূর্ণ ঠিকানা লিখুন (যেমন: বাড়ি/রোড/এলাকা/গ্রাম/থানা)।');
             $o=$service->create($d,$r->is('api/admin/*'),$r->is('api/quote'));
             return ['reference'=>$o->reference,'status'=>$o->status,'subtotal'=>$o->subtotal,'discount'=>$o->discount,'delivery_charge'=>$o->delivery_charge,'total'=>$o->total,'created_at'=>$o->created_at];
         } catch (\Illuminate\Validation\ValidationException $ve) {

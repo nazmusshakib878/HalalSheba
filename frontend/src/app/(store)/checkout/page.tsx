@@ -195,8 +195,9 @@ function CheckoutInner() {
       showToast("Your cart is empty!", "info");
       return;
     }
-    if (!customerName.trim()) {
-      showToast("আপনার সম্পূর্ণ নাম লিখুন (Full name is required)", "info");
+    const trimmedName = customerName.trim();
+    if (trimmedName.length < 2 || /^(asdf|test|fake|xxx|null|none)$/i.test(trimmedName)) {
+      showToast("অনুগ্রহ করে আপনার সঠিক নাম লিখুন", "error");
       return;
     }
     const cleanPhone = phone.trim().replace(/[\s-]/g, "");
@@ -211,8 +212,14 @@ function CheckoutInner() {
       return;
     }
     const validPhone = phoneMatch[1];
-    if (!address.trim()) {
-      showToast("সম্পূর্ণ ডেলিভারি ঠিকানা লিখুন (Address is required)", "info");
+    if (/^01[3-9](\d)\1{7}$/.test(validPhone) || validPhone === '01712345678' || validPhone === '01234567890' || validPhone === '01700000000' || validPhone === '01711111111') {
+      showToast("অনুগ্রহ করে আপনার সচল ও সঠিক মোবাইল নম্বর দিন (ভুয়া নম্বর গ্রহণযোগ্য নয়)", "error");
+      return;
+    }
+
+    const trimmedAddress = address.trim();
+    if (trimmedAddress.length < 8 || /^(asdf|test|dsadv|demo|xyz|none|na|dhaka)$/i.test(trimmedAddress)) {
+      showToast("কুরিয়ারে ডেলিভারির জন্য সম্পূর্ণ ঠিকানা লিখুন (যেমন: বাড়ি/রোড/এলাকা/গ্রাম/থানা)", "error");
       return;
     }
     if (!agreedTerms) {
