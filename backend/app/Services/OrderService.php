@@ -156,18 +156,19 @@ class OrderService {
             }
 
             Audit::record('order.create', 'order', $oid);
-            $newOrder = DB::table('orders')->find($oid);
-
-            try {
-                $cust = DB::table('customers')->find($cid);
-                $oItems = DB::table('order_items')->where('order_id', $oid)->get()->toArray();
-                NotificationService::sendNewOrderAlert($newOrder, $cust, $oItems);
-            } catch (\Throwable $ne) {
-                \Illuminate\Support\Facades\Log::warning("Order notification trigger error: " . $ne->getMessage());
-            }
-
-            return $newOrder;
+            return DB::table('orders')->find($oid);
         }, 3);
+
+        // Dispatch notification safely AFTER database transaction is fully committed
+        try {
+            $cust = DB::table('customers')->find($newOrder->customer_id ?? null);
+            $oItems = DB::table('order_items')->where('order_id', $newOrder->id)->get()->toArray();
+            NotificationService::sendNewOrderAlert($newOrder, $cust, $oItems);
+        } catch (\Throwable $ne) {
+            \Illuminate\Support\Facades\Log::warning("Order notification trigger error: " . $ne->getMessage());
+        }
+
+        return $newOrder;
     }
 
     public function place(array $d): object {

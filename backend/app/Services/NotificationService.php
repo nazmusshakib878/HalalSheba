@@ -36,22 +36,25 @@ class NotificationService {
                 $smtpUser = !empty($config['smtp_user']) ? trim($config['smtp_user']) : (!empty(env('MAIL_USERNAME')) ? env('MAIL_USERNAME') : $adminEmail);
                 $smtpPass = !empty($config['smtp_pass']) ? trim($config['smtp_pass']) : env('MAIL_PASSWORD');
 
-                if (!empty($smtpPass)) {
-                    config([
-                        'mail.default' => 'smtp',
-                        'mail.mailers.smtp.transport' => 'smtp',
-                        'mail.mailers.smtp.host' => $config['smtp_host'] ?? env('MAIL_HOST', 'smtp.gmail.com'),
-                        'mail.mailers.smtp.port' => (int)($config['smtp_port'] ?? env('MAIL_PORT', 587)),
-                        'mail.mailers.smtp.encryption' => $config['smtp_encryption'] ?? env('MAIL_ENCRYPTION', 'tls'),
-                        'mail.mailers.smtp.username' => $smtpUser,
-                        'mail.mailers.smtp.password' => $smtpPass,
-                        'mail.from.address' => $smtpUser,
-                        'mail.from.name' => 'Halal Sheba (নতুন অর্ডার)',
-                    ]);
-                    try {
-                        Mail::purge('smtp');
-                    } catch (\Throwable $te) {}
+                if (empty($smtpPass)) {
+                    Log::info("Order email alert skipped: Google App Password not configured yet.");
+                    return ['email' => false, 'error' => 'App password not configured'];
                 }
+
+                config([
+                    'mail.default' => 'smtp',
+                    'mail.mailers.smtp.transport' => 'smtp',
+                    'mail.mailers.smtp.host' => $config['smtp_host'] ?? env('MAIL_HOST', 'smtp.gmail.com'),
+                    'mail.mailers.smtp.port' => (int)($config['smtp_port'] ?? env('MAIL_PORT', 587)),
+                    'mail.mailers.smtp.encryption' => $config['smtp_encryption'] ?? env('MAIL_ENCRYPTION', 'tls'),
+                    'mail.mailers.smtp.username' => $smtpUser,
+                    'mail.mailers.smtp.password' => $smtpPass,
+                    'mail.from.address' => $smtpUser,
+                    'mail.from.name' => 'Halal Sheba (নতুন অর্ডার)',
+                ]);
+                try {
+                    Mail::purge('smtp');
+                } catch (\Throwable $te) {}
 
                 $subject = "🔔 নতুন অর্ডার #{$ref} পেয়েছেন - Halal Sheba (৳{$totalAmount})";
                 $itemRowsHtml = '';
