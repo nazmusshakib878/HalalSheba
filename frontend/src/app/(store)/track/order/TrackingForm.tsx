@@ -4,6 +4,25 @@ import { useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 
+function formatBdDate(dateStr: string | null | undefined, options?: Intl.DateTimeFormatOptions) {
+  if (!dateStr) return '—';
+  let iso = String(dateStr).trim();
+  if (!iso.includes('T') && iso.includes(' ')) iso = iso.replace(' ', 'T');
+  if (!iso.endsWith('Z') && !/[+-]\d{2}(?::?\d{2})?$/.test(iso)) iso += 'Z';
+  const date = new Date(iso);
+  if (isNaN(date.getTime())) return String(dateStr);
+  return date.toLocaleString('bn-BD', {
+    timeZone: 'Asia/Dhaka',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+    ...options,
+  });
+}
+
 interface OrderItem {
   id: number;
   name: string;
@@ -295,13 +314,7 @@ export function TrackingForm() {
                       Order #{currentOrder.id || currentOrder.reference.slice(0, 8)}
                     </span>
                     <span className="text-xs text-emerald-200">
-                      {new Date(currentOrder.created_at).toLocaleDateString("bn-BD", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {formatBdDate(currentOrder.created_at, { month: 'long' })}
                     </span>
                   </div>
                   <h2 className="text-xl sm:text-2xl font-black mt-1">

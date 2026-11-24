@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { api } from '@/lib/api';
-import { useData, money, Notice, Table, Loading } from './shared';
+import { useData, money, Notice, Table, Loading, formatBdDate } from './shared';
 import type { Row } from './Products';
 
 export const mainStatuses = [
@@ -283,12 +283,7 @@ export function Orders() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 10, borderTop: '1px solid #f1f5f9' }}>
                       <div>
                         <div className="muted" style={{ fontSize: 11 }}>
-                          {new Date(o.created_at).toLocaleDateString('bn-BD', {
-                            day: 'numeric',
-                            month: 'short',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
+                          {formatBdDate(o.created_at, { year: undefined })}
                         </div>
                         <div style={{ fontSize: 16, fontWeight: 800, color: '#075744', marginTop: 2 }}>
                           {money(o.total)}
@@ -374,13 +369,7 @@ export function Orders() {
                       </div>
                     </td>
                     <td style={{ fontSize: 13, color: '#475569' }}>
-                      {new Date(o.created_at).toLocaleDateString('bn-BD', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
+                      {formatBdDate(o.created_at)}
                     </td>
                     <td>
                       <strong style={{ color: '#075744', fontSize: 15 }}>{money(o.total)}</strong>
@@ -611,13 +600,7 @@ export function OrderDetail({ id }: { id: string }) {
                 <tr>
                   <th>তারিখ ও সময়:</th>
                   <td>
-                    {new Date(o.created_at).toLocaleString('bn-BD', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
+                    {formatBdDate(o.created_at)}
                   </td>
                 </tr>
                 <tr>
@@ -1027,7 +1010,7 @@ export function OrderDetail({ id }: { id: string }) {
               >
                 <strong style={{ color: '#073f32' }}>{h.action}</strong>
                 <span className="muted" style={{ marginLeft: 12 }}>
-                  {new Date(h.created_at).toLocaleString('bn-BD')}
+                  {formatBdDate(h.created_at)}
                 </span>
               </div>
             ))}
