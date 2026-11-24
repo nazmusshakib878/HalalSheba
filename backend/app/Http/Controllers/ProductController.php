@@ -56,8 +56,23 @@ class ProductController extends Controller {
         });
     }
     public function action(Request $r, int $id) {
-        $r->validate(['action'=>'required|in:archive,restore,duplicate']); $p=$this->detail($id);
+        $r->validate(['action'=>'required|in:archive,restore,duplicate,toggle-active,activate,deactivate']); $p=$this->detail($id);
         return DB::transaction(function() use($r,$id,$p) {
+            if (in_array($r->action, ['toggle-active', 'activate', 'deactivate'])) {
+                $newActive = match($r->action) {
+                    'activate' => true,
+                    'deactivate' => false,
+                    default => !$p->active,
+                };
+                DB::table('products')->where('id', $id)->update([
+                    'active' => $newActive,
+                    'deleted_at' => null,
+                    'updated_at' => now(),
+                ]);
+                Audit::record('product.' . ($newActive ? 'activate' : 'deactivate'), 'product', $id);
+                CatalogController::clearCache();
+                return ['message' => 'Product ' . ($newActive ? 'activated' : 'deactivated'), 'active' => $newActive];
+            }
             if($r->action==='duplicate') {
                 $data=(array)DB::table('products')->find($id); unset($data['id']);
                 $data['slug'].='-copy-'.strtolower(\Illuminate\Support\Str::random(6)); $data['name'].=' (Copy)';
