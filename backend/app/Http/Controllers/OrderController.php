@@ -37,9 +37,88 @@ class OrderController extends Controller {
         return $service->transition($id,$d);
     }
     public function track(Request $r) {
-        $r->validate(['reference'=>'required|uuid','phone'=>'required|string']);
-        $o=DB::table('orders')->join('customers','customers.id','=','orders.customer_id')->where('reference',$r->reference)->where('phone',$r->phone)
-            ->select('reference','orders.status','courier','tracking_number','orders.created_at')->first();
-        abort_unless($o,404,'Order not found.'); return $o;
+        $r->validate([
+            'phone' => 'nullable|string',
+            'reference' => 'nullable|string',
+        ]);
+
+        if (empty(trim($r->phone ?? '')) && empty(trim($r->reference ?? ''))) {
+            return response()->json(['message' => 'অনুগ্রহ করে মোবাইল নম্বর অথবা অর্ডার নম্বর লিখুন।'], 422);
+        }
+
+        $query = DB::table('orders')->join('customers', 'customers.id', '=', 'orders.customer_id');
+
+        if (!empty(trim($r->phone ?? ''))) {
+            $rawPhone = trim($r->phone);
+            $cleanPhone = preg_replace('/[^0-9]/', '', $rawPhone);
+            $phone10 = strlen($cleanPhone) >= 10 ? substr($cleanPhone, -10) : $cleanPhone;
+            $query->where(function($q) use ($rawPhone, $cleanPhone, $phone10) {
+                $q->where('customers.phone', $rawPhone)
+                  ->orWhere('customers.phone', $cleanPhone);
+                if (!empty($phone10)) {
+                    $q->orWhere('customers.phone', 'like', "%{$phone10}");
+                }
+            });
+        }
+
+        if (!empty(trim($r->reference ?? ''))) {
+            $ref = trim($r->reference);
+            $numericId = preg_replace('/[^0-9]/', '', $ref);
+            $query->where(function($q) use ($ref, $numericId) {
+                $q->where('orders.reference', $ref);
+                if (!empty($numericId)) {
+                    $q->orWhere('orders.id', (int)$numericId);
+                }
+            });
+        }
+
+        $orders = $query->select(
+            'orders.id',
+            'orders.reference',
+            'orders.status',
+            'orders.subtotal',
+            'orders.delivery_charge',
+            'orders.discount',
+            'orders.total',
+            'orders.payment_method',
+            'orders.payment_status',
+            'orders.address',
+            'orders.district',
+            'orders.courier',
+            'orders.tracking_number',
+            'orders.created_at',
+            'customers.name as customer_name',
+            'customers.phone as customer_phone'
+        )->orderByDesc('orders.id')->limit(10)->get();
+
+        abort_if($orders->isEmpty(), 404, 'এই তথ্য দিয়ে কোনো অর্ডার পাওয়া যায়নি। অনুগ্রহ করে সঠিক মোবাইল নম্বর অথবা অর্ডার আইডি দিন।');
+
+        $orderIds = $orders->pluck('id')->toArray();
+        $items = DB::table('order_items')->whereIn('order_id', $orderIds)->get()->groupBy('order_id');
+
+        $ordersWithItems = $orders->map(function($o) use ($items) {
+            $o->items = $items->get($o->id) ?? [];
+            return $o;
+        });
+
+        $latest = $ordersWithItems->first();
+        return response()->json([
+            'orders' => $ordersWithItems,
+            'count' => $ordersWithItems->count(),
+            'id' => $latest->id,
+            'reference' => $latest->reference,
+            'status' => $latest->status,
+            'courier' => $latest->courier,
+            'tracking_number' => $latest->tracking_number,
+            'subtotal' => $latest->subtotal,
+            'delivery_charge' => $latest->delivery_charge,
+            'total' => $latest->total,
+            'address' => $latest->address,
+            'district' => $latest->district,
+            'created_at' => $latest->created_at,
+            'customer_name' => $latest->customer_name,
+            'customer_phone' => $latest->customer_phone,
+            'items' => $latest->items,
+        ]);
     }
 }

@@ -12,7 +12,7 @@ Route::prefix('api')->group(function() {
     Route::post('reviews',[\App\Http\Controllers\ReviewController::class,'create'])->middleware('throttle:5,1');
     Route::post('orders',[OrderController::class,'create'])->middleware('throttle:10,1');
     Route::post('quote',[OrderController::class,'create'])->middleware('throttle:30,1');
-    Route::post('track',[OrderController::class,'track'])->middleware('throttle:10,1');
+    Route::post('track',[OrderController::class,'track'])->middleware('throttle:30,1');
     Route::get('media/products/{file}',function(string $file) {
         abort_unless(preg_match('/^[A-Za-z0-9]+\.(jpg|jpeg|png|webp)$/',$file),404);
         $path=storage_path('app/public/products/'.$file); abort_unless(is_file($path),404);
