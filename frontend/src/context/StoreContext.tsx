@@ -279,7 +279,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       const result=await api<{reference:string;subtotal:number;discount:number;delivery_charge:number;total:number;created_at:string}>('orders',{method:'POST',body:JSON.stringify({
         idempotency_key:key,name:orderData.customerName,phone:orderData.phone,address:orderData.address,
         district:orderData.district || (orderData.area==='inside-dhaka'?'Dhaka':orderData.address.split(',').at(-1)?.trim()||'Outside Dhaka'),
-        payment_method:'cod',note:orderData.note,coupon:orderData.coupon,items:orderData.items.map(i=>({variant_id:i.variantId,quantity:i.quantity}))
+        source:'web',payment_method:'cod',note:orderData.note,coupon:orderData.coupon,items:orderData.items.map(i=>({variant_id:i.variantId || i.productId,quantity:i.quantity}))
       })});
       sessionStorage.removeItem('checkout-request-key');
       sessionStorage.removeItem('checkout-request-data');

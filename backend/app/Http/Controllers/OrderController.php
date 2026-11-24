@@ -14,13 +14,22 @@ class OrderController extends Controller {
             'history'=>DB::table('audit_logs')->where('entity','order')->where('entity_id',$id)->orderByDesc('id')->get()];
     }
     public function create(Request $r,OrderService $service) {
-        $d=$r->validate(['idempotency_key'=>'required|uuid','name'=>'required|string|max:255','phone'=>'required|regex:/^\+?[0-9]{10,15}$/',
-            'email'=>'nullable|email','address'=>'required|string|max:2000','district'=>'required|string|max:100',
-            'note'=>'nullable|string|max:2000','payment_method'=>'required|in:cod','source'=>'nullable|in:phone,whatsapp,manual',
-            'coupon'=>'nullable|string|max:100','items'=>'required|array|min:1|max:100','items.*.variant_id'=>'required|integer|exists:variants,id',
-            'items.*.quantity'=>'required|integer|min:1|max:10000']);
-        $o=$service->create($d,$r->is('api/admin/*'),$r->is('api/quote'));
-        return ['reference'=>$o->reference,'status'=>$o->status,'subtotal'=>$o->subtotal,'discount'=>$o->discount,'delivery_charge'=>$o->delivery_charge,'total'=>$o->total,'created_at'=>$o->created_at];
+        try {
+            $d=$r->validate(['idempotency_key'=>'required|uuid','name'=>'required|string|max:255','phone'=>'required|regex:/^\+?[0-9]{10,15}$/',
+                'email'=>'nullable|email','address'=>'required|string|max:2000','district'=>'required|string|max:100',
+                'note'=>'nullable|string|max:2000','payment_method'=>'required|in:cod','source'=>'nullable|in:phone,whatsapp,manual,web',
+                'coupon'=>'nullable|string|max:100','items'=>'required|array|min:1|max:100','items.*.variant_id'=>'required|integer',
+                'items.*.quantity'=>'required|integer|min:1|max:10000']);
+            $o=$service->create($d,$r->is('api/admin/*'),$r->is('api/quote'));
+            return ['reference'=>$o->reference,'status'=>$o->status,'subtotal'=>$o->subtotal,'discount'=>$o->discount,'delivery_charge'=>$o->delivery_charge,'total'=>$o->total,'created_at'=>$o->created_at];
+        } catch (\Illuminate\Validation\ValidationException $ve) {
+            throw $ve;
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $he) {
+            return response()->json(['message' => $he->getMessage()], $he->getStatusCode());
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Order creation failed: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json(['message' => $e->getMessage() ?: 'Server Error'], 422);
+        }
     }
     public function update(Request $r,int $id,OrderService $service) {
         $d=$r->validate(['status'=>'required|in:'.implode(',',OrderService::STATUSES),'reason'=>'required|string|min:3|max:2000',

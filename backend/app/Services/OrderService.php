@@ -14,6 +14,9 @@ class OrderService {
         $items = [];
         foreach ($d['items'] as $item) {
             $v = DB::table('variants')->where('id', $item['variant_id'])->where('active', true)->first();
+            if (!$v) {
+                $v = DB::table('variants')->where('product_id', $item['variant_id'])->where('active', true)->first();
+            }
             abort_unless($v, 422, 'Product variant unavailable.');
             $qty = (int)$item['quantity'];
             abort_unless($qty > 0, 422, 'Quantity must be positive.');

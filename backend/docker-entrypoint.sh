@@ -12,6 +12,10 @@ fi
 echo "Running database migrations..."
 php artisan migrate --force || true
 
+# Ensure all variants have opening physical stock of at least 100
+echo "Ensuring opening physical stock..."
+php artisan tinker --execute="DB::table('variants')->where('physical', '<=', 0)->update(['physical' => 100]);" || true
+
 # Seed catalog if empty
 echo "Importing catalog..."
 php artisan catalog:import || true
