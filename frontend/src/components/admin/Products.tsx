@@ -26,12 +26,14 @@ export function Products(){
  const toggleActive=async(p:Row)=>{
   setTogglingId(p.id);
   const nextActive=!p.active;
+  if(data){const t=data.find((item:Row)=>item.id===p.id);if(t)t.active=nextActive;}
   try{
    await api(`admin/products/${p.id}/action`,{method:'POST',body:JSON.stringify({action:nextActive?'activate':'deactivate'})});
    notifyCatalogUpdated();
    await reload();
-   setMessage(`'${p.name}' পণ্যটি ${nextActive?'এখন ওয়েবসাইটে লাইভ দেখাচ্ছে (Live)':'ওয়েবসাইট থেকে হাইড করা হয়েছে (Hidden)'}।`);
+   setMessage(`'${p.name}' পণ্যটি সফলভাবে ${nextActive?'ওয়েবসাইটে চালু (Live) করা হয়েছে':'ওয়েবসাইট থেকে বন্ধ (Hidden) করা হয়েছে'}।`);
   }catch(e){
+   if(data){const t=data.find((item:Row)=>item.id===p.id);if(t)t.active=!nextActive;}
    setMessage((e as Error).message);
   }finally{
    setTogglingId(null);
@@ -60,37 +62,29 @@ export function Products(){
   <div className="toolbar">
    <input placeholder="Search product or SKU…" value={q} onChange={e=>setQ(e.target.value)}/>
    <div className="row">
-    <select value={status} onChange={e=>setStatus(e.target.value)}>
-     <option value="active">Active (Live on Store)</option>
-     <option value="inactive">Inactive (Hidden)</option>
-     <option value="archived">Archived</option>
-     <option value="all">All Products</option>
+    <select value={status} onChange={e=>setStatus(e.target.value)} style={{fontWeight:'600',padding:'8px 12px',borderRadius:'6px',border:'1px solid #cbd5e1'}}>
+     <option value="all">সব প্রোডাক্ট (All Products)</option>
+     <option value="active">✓ চালু / লাইভ প্রোডাক্ট (Live on Store)</option>
+     <option value="inactive">✕ বন্ধ / লুকানো প্রোডাক্ট (Hidden from Store)</option>
+     <option value="archived">আর্কাইভড (Archived)</option>
     </select>
-    <Link className="button" href="/admin/products/add">+ Add product</Link>
+    <Link className="button" href="/admin/products/add" style={{background:'#075744',color:'#fff',fontWeight:'600'}}>+ নতুন প্রোডাক্ট যোগ করুন</Link>
    </div>
   </div>
 
   {selected.length>0&&<div className="toolbar" style={{background:'#f8fafc',padding:'10px 16px',borderRadius:'8px',border:'1px solid #e2e8f0'}}>
    <span style={{fontWeight:'600'}}>{selected.length} টি সিলেক্ট করা হয়েছে</span>
    <div className="row" style={{gap:'8px'}}>
-    <button type="button" className="secondary" style={{color:'#047857',borderColor:'#10b981'}} onClick={()=>bulkToggleActive(true)}>
-     ✓ Show on Store (Active)
+    <button type="button" className="secondary" style={{color:'#047857',borderColor:'#10b981',fontWeight:'700'}} onClick={()=>bulkToggleActive(true)}>
+     ✓ ওয়েবসাইটে চালু করুন (Show on Store)
     </button>
-    <button type="button" className="secondary" style={{color:'#64748b',borderColor:'#cbd5e1'}} onClick={()=>bulkToggleActive(false)}>
-     ✕ Hide from Store (Inactive)
-    </button>
-    <button type="button" className="danger" onClick={async()=>{
-     if(confirm('Archive all selected products?')){
-      for(const id of selected)await action(id,'archive');
-      setSelected([]);
-     }
-    }}>
-     Archive selected
+    <button type="button" className="secondary" style={{color:'#64748b',borderColor:'#cbd5e1',fontWeight:'700'}} onClick={()=>bulkToggleActive(false)}>
+     ✕ ওয়েবসাইট থেকে লুকান (Hide from Store)
     </button>
    </div>
   </div>}
 
-  <Table headers={['','Product','SKU / Variants','Price','Available','Store Visibility (লাইভ / শো)','Actions']} empty={!rows.length}>
+  <Table headers={['','Product','SKU / Variants','Price','Available','ওয়েবসাইটে শো / অন-অফ (Store Status)','অ্যাকশন']} empty={!rows.length}>
    {rows.map(p=><tr key={p.id}>
     <td>
      <input type="checkbox" checked={selected.includes(p.id)} onChange={e=>setSelected(e.target.checked?[...selected,p.id]:selected.filter(i=>i!==p.id))}/>
@@ -104,28 +98,29 @@ export function Products(){
     <td>{p.variants.length} variants</td>
     <td>{money(p.variants[0]?.price)}</td>
     <td>{p.variants.reduce((s:number,v:Row)=>s+v.physical-v.reserved,0)}</td>
-    <td>
+    <td style={{whiteSpace:'nowrap'}}>
      <button
       type="button"
       onClick={()=>toggleActive(p)}
       disabled={togglingId===p.id}
-      title={p.active?"ক্লিক করে ওয়েবসাইট থেকে লুকান (Hide from Store)":"ক্লিক করে ওয়েবসাইটে লাইভ করুন (Show on Store)"}
+      title={p.active?"ক্লিক করে বন্ধ করুন (ওয়েবসাইট থেকে লুকান)":"ক্লিক করে চালু করুন (ওয়েবসাইটে লাইভ দেখান)"}
       style={{
        display:'inline-flex',
        alignItems:'center',
        gap:'8px',
-       background:p.active?'#eaf6ef':'#f1f5f9',
-       border:`1.5px solid ${p.active?'#10b981':'#cbd5e1'}`,
+       background:p.active?'#ecfdf5':'#f8fafc',
+       border:`2px solid ${p.active?'#10b981':'#cbd5e1'}`,
        borderRadius:'24px',
-       padding:'4px 12px 4px 5px',
+       padding:'5px 14px 5px 6px',
        cursor:togglingId===p.id?'wait':'pointer',
-       transition:'all 0.2s ease',
+       boxShadow:p.active?'0 2px 8px rgba(16,185,129,0.25)':'none',
+       transition:'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
        opacity:togglingId===p.id?0.6:1,
       }}
      >
       <span style={{
-       width:'36px',
-       height:'20px',
+       width:'38px',
+       height:'22px',
        background:p.active?'#10b981':'#94a3b8',
        borderRadius:'12px',
        display:'inline-flex',
@@ -134,40 +129,38 @@ export function Products(){
        transition:'background 0.2s ease',
       }}>
        <span style={{
-        width:'16px',
-        height:'16px',
+        width:'18px',
+        height:'18px',
         background:'white',
         borderRadius:'50%',
         transform:p.active?'translateX(16px)':'translateX(0)',
         transition:'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-        boxShadow:'0 1px 3px rgba(0,0,0,0.25)',
+        boxShadow:'0 2px 4px rgba(0,0,0,0.2)',
         display:'flex',
         alignItems:'center',
         justifyContent: 'center',
-        fontSize:'10px',
-        fontWeight:'bold',
-        color:p.active?'#059669':'#64748b'
+        fontSize:'11px',
+        fontWeight:'900',
+        color:p.active?'#059669':'#94a3b8'
        }}>
-        {p.active?'✓':''}
+        {p.active?'✓':'✕'}
        </span>
       </span>
       <span style={{
-       fontSize:'12px',
-       fontWeight:'700',
+       fontSize:'13px',
+       fontWeight:'800',
        color:p.active?'#047857':'#64748b',
        userSelect:'none',
-       letterSpacing:'0.2px'
+       letterSpacing:'0.3px'
       }}>
-       {p.deleted_at?'Archived':p.active?'Live (On)':'Hidden (Off)'}
+       {p.active?'চালু (ON)':'বন্ধ (OFF)'}
       </span>
      </button>
     </td>
     <td style={{whiteSpace:'nowrap'}}>
-     <Link className="button secondary" href={'/admin/products/'+p.id} style={{padding:'6px 12px',fontSize:'12px'}}>Edit</Link>
-     <button className="secondary" onClick={()=>action(p.id,'duplicate')} style={{padding:'6px 12px',fontSize:'12px'}}>Duplicate</button>
-     <button className="danger" onClick={()=>{if(confirm(p.deleted_at?'Restore this product as inactive?':'Archive this product? It will be hidden from the store.'))action(p.id,p.deleted_at?'restore':'archive');}} style={{padding:'6px 12px',fontSize:'12px'}}>
-      {p.deleted_at?'Restore':'Archive'}
-     </button>
+     <Link className="button" href={'/admin/products/'+p.id} style={{padding:'7px 16px',fontSize:'13px',background:'#075744',color:'#fff',borderRadius:'6px',fontWeight:'600'}}>
+      ✏️ এডিট (Edit)
+     </Link>
     </td>
    </tr>)}
   </Table>
