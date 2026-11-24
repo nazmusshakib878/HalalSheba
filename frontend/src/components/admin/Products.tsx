@@ -7,10 +7,10 @@ import {notifyCatalogUpdated} from '@/context/CatalogContext';
 export type Row=Record<string,any>;
 export function Products(){
  const {data,error,reload}=useData<Row[]>('admin/products?archived=1');
- const [q,setQ]=useState(''),[status,setStatus]=useState('active'),[message,setMessage]=useState(''),[selected,setSelected]=useState<number[]>([]);
+ const [q,setQ]=useState(''),[message,setMessage]=useState(''),[selected,setSelected]=useState<number[]>([]);
  const [togglingId,setTogglingId]=useState<number|null>(null);
  if(!data)return <><Notice text={error} error/><Loading/></>;
- const rows=data.filter(p=>(p.name+' '+p.slug+' '+p.variants.map((v:Row)=>v.sku).join(' ')).toLowerCase().includes(q.toLowerCase())&&(status==='all'||(status==='archived'?!!p.deleted_at:!p.deleted_at&&Boolean(p.active)===(status==='active'))));
+ const rows=data.filter(p=>!p.deleted_at&&(p.name+' '+p.slug+' '+p.variants.map((v:Row)=>v.sku).join(' ')).toLowerCase().includes(q.toLowerCase()));
  
  const action=async(id:number,actionName:string)=>{
   try{
@@ -61,15 +61,7 @@ export function Products(){
   <Notice text={error||message}/>
   <div className="toolbar">
    <input placeholder="Search product or SKU…" value={q} onChange={e=>setQ(e.target.value)}/>
-   <div className="row">
-    <select value={status} onChange={e=>setStatus(e.target.value)} style={{fontWeight:'600',padding:'8px 12px',borderRadius:'6px',border:'1px solid #cbd5e1'}}>
-     <option value="all">সব প্রোডাক্ট (All Products)</option>
-     <option value="active">✓ চালু / লাইভ প্রোডাক্ট (Live on Store)</option>
-     <option value="inactive">✕ বন্ধ / লুকানো প্রোডাক্ট (Hidden from Store)</option>
-     <option value="archived">আর্কাইভড (Archived)</option>
-    </select>
-    <Link className="button" href="/admin/products/add" style={{background:'#075744',color:'#fff',fontWeight:'600'}}>+ নতুন প্রোডাক্ট যোগ করুন</Link>
-   </div>
+   <Link className="button" href="/admin/products/add" style={{background:'#075744',color:'#fff',fontWeight:'600'}}>+ নতুন প্রোডাক্ট যোগ করুন</Link>
   </div>
 
   {selected.length>0&&<div className="toolbar" style={{background:'#f8fafc',padding:'10px 16px',borderRadius:'8px',border:'1px solid #e2e8f0'}}>
