@@ -6,21 +6,29 @@ import { api } from '@/lib/api';
 import { useData, money, Notice, Table, Loading } from './shared';
 import type { Row } from './Products';
 
+export const mainStatuses = [
+  { key: 'new', label: 'নতুন অর্ডার (New)' },
+  { key: 'confirmed', label: 'কনফার্মড (Confirmed)' },
+  { key: 'shipped', label: 'কুরিয়ারে পাঠানো (Shipped)' },
+  { key: 'delivered', label: 'ডেলিভার্ড (Delivered)' },
+  { key: 'cancelled', label: 'বাতিল (Cancelled)' },
+];
+
 export const statusMap: Record<string, { label: string; bg: string; color: string }> = {
   new: { label: 'নতুন অর্ডার (New)', bg: '#fef3c7', color: '#92400e' },
-  pending: { label: 'অপেক্ষমাণ (Pending)', bg: '#fef9c3', color: '#854d0e' },
+  pending: { label: 'নতুন অর্ডার (New)', bg: '#fef3c7', color: '#92400e' },
   confirmed: { label: 'কনফার্মড (Confirmed)', bg: '#dbeafe', color: '#1e40af' },
-  processing: { label: 'প্রসেসিং (Processing)', bg: '#e0e7ff', color: '#3730a3' },
-  packed: { label: 'প্যাকড (Packed)', bg: '#f3e8ff', color: '#6b21a8' },
+  processing: { label: 'কনফার্মড (Confirmed)', bg: '#dbeafe', color: '#1e40af' },
+  packed: { label: 'কনফার্মড (Confirmed)', bg: '#dbeafe', color: '#1e40af' },
   shipped: { label: 'কুরিয়ারে পাঠানো (Shipped)', bg: '#cffafe', color: '#155e75' },
-  out_for_delivery: { label: 'ডেলিভারিতে আছে', bg: '#ccfbf1', color: '#115e59' },
+  out_for_delivery: { label: 'কুরিয়ারে পাঠানো (Shipped)', bg: '#cffafe', color: '#155e75' },
   delivered: { label: 'ডেলিভার্ড (Delivered)', bg: '#dcfce7', color: '#166534' },
   cancelled: { label: 'বাতিল (Cancelled)', bg: '#ffe4e6', color: '#9f1239' },
-  returned: { label: 'রিটার্ন (Returned)', bg: '#f1f5f9', color: '#475569' },
-  refunded: { label: 'রিফান্ড সম্পন্ন', bg: '#f1f5f9', color: '#475569' },
+  returned: { label: 'বাতিল (Cancelled)', bg: '#ffe4e6', color: '#9f1239' },
+  refunded: { label: 'বাতিল (Cancelled)', bg: '#ffe4e6', color: '#9f1239' },
 };
 
-export const statuses = Object.keys(statusMap);
+export const statuses = mainStatuses.map(s => s.key);
 
 export function Orders() {
   const { data, error } = useData<Row[]>('admin/orders');
@@ -32,11 +40,16 @@ export function Orders() {
   const [busy, setBusy] = useState(false);
   const [items, setItems] = useState([{ variant_id: '', quantity: 1 }]);
 
-  const rows = data?.filter(
-    (o) =>
-      (o.reference + ' ' + o.name + ' ' + o.phone).toLowerCase().includes(q.toLowerCase()) &&
-      (!filter || o.status === filter)
-  );
+  const rows = data?.filter((o) => {
+    const matchesQuery = (o.reference + ' ' + o.name + ' ' + o.phone).toLowerCase().includes(q.toLowerCase());
+    if (!filter) return matchesQuery;
+    if (filter === 'new') return matchesQuery && (o.status === 'new' || o.status === 'pending');
+    if (filter === 'confirmed') return matchesQuery && (o.status === 'confirmed' || o.status === 'processing' || o.status === 'packed');
+    if (filter === 'shipped') return matchesQuery && (o.status === 'shipped' || o.status === 'out_for_delivery');
+    if (filter === 'delivered') return matchesQuery && o.status === 'delivered';
+    if (filter === 'cancelled') return matchesQuery && (o.status === 'cancelled' || o.status === 'returned' || o.status === 'refunded');
+    return matchesQuery && o.status === filter;
+  });
 
   return (
     <>
@@ -60,11 +73,11 @@ export function Orders() {
           style={{ maxWidth: 360 }}
         />
         <div className="row">
-          <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+          <select value={filter} onChange={(e) => setFilter(e.target.value)} style={{ fontWeight: 600, padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
             <option value="">সব স্ট্যাটাস ({data?.length || 0})</option>
-            {statuses.map((s) => (
-              <option key={s} value={s}>
-                {statusMap[s]?.label || s}
+            {mainStatuses.map((s) => (
+              <option key={s.key} value={s.key}>
+                {s.label}
               </option>
             ))}
           </select>
@@ -729,9 +742,9 @@ export function OrderDetail({ id }: { id: string }) {
           <label>
             অর্ডার স্ট্যাটাস (Order Status)
             <select name="status" defaultValue={o.status}>
-              {statuses.map((s) => (
-                <option key={s} value={s}>
-                  {statusMap[s]?.label || s}
+              {mainStatuses.map((s) => (
+                <option key={s.key} value={s.key}>
+                  {s.label}
                 </option>
               ))}
             </select>
