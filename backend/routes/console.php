@@ -27,8 +27,8 @@ Artisan::command('catalog:import {file=database/seeders/catalog.json}', function
             $variants=[['name'=>$p['weight']??'Standard','price'=>$p['price'],'image'=>$p['image']]];
             if($p['slug']==='sorishar-tel') $variants[]=['name'=>'৫ লিটার','price'=>1600,'image'=>'/images/products/sorishar-tel-5l.jpg'];
             if($p['slug']==='chui-jhal') $variants=[['name'=>'মোটা','price'=>1200,'image'=>$p['image']],['name'=>'মাঝামাঝি','price'=>900,'image'=>$p['gallery'][1]??$p['image']],['name'=>'চিকন','price'=>800,'image'=>$p['gallery'][2]??$p['image']]];
-            foreach($variants as $i=>$v) DB::table('variants')->insert(['product_id'=>$id,'name'=>$v['name'],'sku'=>'HS-'.$id.'-'.($i+1),'price'=>(int)round($v['price']*100),'regular_price'=>isset($p['regularPrice'])&&$i===0?(int)round($p['regularPrice']*100):null,'image'=>$v['image'],'created_at'=>now(),'updated_at'=>now()]);
+            foreach($variants as $i=>$v) DB::table('variants')->insert(['product_id'=>$id,'name'=>$v['name'],'sku'=>'HS-'.$id.'-'.($i+1),'price'=>(int)round($v['price']*100),'regular_price'=>isset($p['regularPrice'])&&$i===0?(int)round($p['regularPrice']*100):null,'physical'=>100,'received'=>100,'reserved'=>0,'image'=>$v['image'],'created_at'=>now(),'updated_at'=>now()]);
         }
     });
-    $this->info('Catalog imported without overwriting existing products. Stock starts at zero; record actual opening stock in Inventory.');
+    $this->info('Catalog imported without overwriting existing products. Stock initialized to 100 units.');
 });

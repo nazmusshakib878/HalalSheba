@@ -170,7 +170,7 @@ function CheckoutInner() {
   React.useEffect(()=>{setQuote(null);setAppliedPromo(null);},[subtotal,district]);
   const handleApplyCoupon=async(e:React.FormEvent)=>{
     e.preventDefault();
-    try {const result=await api<{discount:number;delivery_charge:number;total:number}>('quote',{method:'POST',body:JSON.stringify({idempotency_key:crypto.randomUUID(),name:customerName||'Guest',phone:phone||'01000000000',address:address||'Checkout estimate',district,payment_method:'cod',coupon:couponCode.trim().toUpperCase(),items:checkoutItems.map(i=>({variant_id:i.variantId,quantity:i.quantity}))})});setQuote(result);setAppliedPromo(couponCode.trim().toUpperCase());showToast('Coupon applied.');}catch(e){setQuote(null);setAppliedPromo(null);showToast((e as Error).message,'info');}
+    try {const result=await api<{discount:number;delivery_charge:number;total:number}>('quote',{method:'POST',body:JSON.stringify({idempotency_key:crypto.randomUUID(),name:customerName||'Guest',phone:phone||'01000000000',address:address||'Checkout estimate',district,payment_method:'cod',coupon:couponCode.trim().toUpperCase(),items:checkoutItems.map(i=>({variant_id:i.variantId,quantity:i.quantity}))})});setQuote(result);setAppliedPromo(couponCode.trim().toUpperCase());showToast('Coupon applied.');}catch(e){setQuote(null);setAppliedPromo(null);showToast((e as Error).message,'error');}
   };
   const handleItemQtyChange = (productId: number, newQty: number) => {
     if (buyNowProduct) {
@@ -245,7 +245,7 @@ function CheckoutInner() {
     }
     setCompletedOrder(order);
     showToast(`Order ${order.orderId} placed successfully!`);
-    } catch (e) { showToast((e as Error).message,"info"); } finally { setSubmitting(false); }
+    } catch (e) { showToast((e as Error).message, "error"); } finally { setSubmitting(false); }
   };
 
   if (completedOrder) {

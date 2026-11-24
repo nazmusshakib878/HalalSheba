@@ -18,10 +18,8 @@ class OrderService {
             $qty = (int)$item['quantity'];
             abort_unless($qty > 0, 422, 'Quantity must be positive.');
             if (!$isAdmin && !$isQuote) {
-                if ($v->physical > 0 || $v->received > 0) {
-                    $available = max(0, (int)($v->physical - $v->reserved));
-                    abort_if($available < $qty, 422, "Insufficient stock for {$v->name}. Available: {$available}");
-                }
+                $available = max(0, (int)($v->physical - $v->reserved));
+                abort_if($available < $qty, 422, "দুঃখিত, '{$v->name}' বর্তমানে পর্যাপ্ত স্টকে নেই।");
             }
             $subtotal += $v->price * $qty;
             $items[] = ['variant' => $v, 'quantity' => $qty];

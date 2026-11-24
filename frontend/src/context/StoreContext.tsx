@@ -56,7 +56,7 @@ export interface ProductReview {
 interface ToastMessage {
   id: number;
   text: string;
-  type: "success" | "info";
+  type: "success" | "info" | "error";
 }
 
 interface StoreContextValue {
@@ -81,7 +81,7 @@ interface StoreContextValue {
   user: { name: string; phone: string; email?: string; address?: string } | null;
   signIn: (name: string, phone: string, email?: string, address?: string) => void;
   signOut: () => void;
-  showToast: (text: string, type?: "success" | "info") => void;
+  showToast: (text: string, type?: "success" | "info" | "error") => void;
 }
 
 const STORAGE_KEY = "halalsheba_store_v1";
@@ -170,12 +170,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, [hydrated, PRODUCTS]);
 
   const showToast = useCallback(
-    (text: string, type: "success" | "info" = "success") => {
+    (text: string, type: "success" | "info" | "error" = "success") => {
       const id = Date.now() + Math.floor(Math.random() * 1000);
       setToasts((prev) => [...prev, { id, text, type }]);
       setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
-      }, 2800);
+      }, 3200);
     },
     []
   );
@@ -388,34 +388,71 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   return (
     <StoreContext.Provider value={value}>
       {children}
-      {/* Exact Green "Added to Cart" Toast Notification matching user screenshot */}
+      {/* Responsive Toast Notifications with Type Support */}
       <div
         aria-live="polite"
         className="fixed top-16 sm:top-20 right-3 sm:right-6 z-[1300] flex flex-col gap-2.5 pointer-events-none"
       >
-        {toasts.map((t) => (
-          <div
-            key={t.id}
-            onClick={openCart}
-            title="Click to view cart"
-            className="pointer-events-auto flex items-center gap-2.5 sm:gap-3 rounded-lg bg-[#4ea84b] hover:bg-[#439640] text-white px-4 sm:px-5 py-3 sm:py-3.5 shadow-[0_8px_25px_rgba(78,168,75,0.4)] transition-all animate-in slide-in-from-top-2 duration-200 cursor-pointer select-none"
-          >
-            {/* Bold white checkmark matching screenshot */}
-            <svg
-              className="h-6 w-6 shrink-0 text-white stroke-[3.2]"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+        {toasts.map((t) => {
+          const isError = t.type === "error" || /error|failed|ব্যর্থ|ত্রুটি|সমস্যা/i.test(t.text);
+          const isInfo = t.type === "info" && !isError;
+          const bgClass = isError
+            ? "bg-[#dc2626] hover:bg-[#b91c1c] shadow-[0_8px_25px_rgba(220,38,38,0.4)]"
+            : isInfo
+            ? "bg-[#1e293b] hover:bg-[#0f172a] shadow-[0_8px_25px_rgba(30,41,59,0.4)]"
+            : "bg-[#4ea84b] hover:bg-[#439640] shadow-[0_8px_25px_rgba(78,168,75,0.4)]";
+
+          return (
+            <div
+              key={t.id}
+              onClick={isError ? undefined : openCart}
+              title={isError ? undefined : "Click to view cart"}
+              className={`pointer-events-auto flex items-center gap-2.5 sm:gap-3 rounded-lg ${bgClass} text-white px-4 sm:px-5 py-3 sm:py-3.5 transition-all animate-in slide-in-from-top-2 duration-200 cursor-pointer select-none`}
             >
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            <span className="text-[15px] sm:text-[16px] font-semibold text-white tracking-tight">
-              {t.text}
-            </span>
-          </div>
-        ))}
+              {isError ? (
+                <svg
+                  className="h-6 w-6 shrink-0 text-white stroke-[2.5]"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+              ) : isInfo ? (
+                <svg
+                  className="h-6 w-6 shrink-0 text-white stroke-[2.5]"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="16" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12.01" y2="8" />
+                </svg>
+              ) : (
+                <svg
+                  className="h-6 w-6 shrink-0 text-white stroke-[3.2]"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              )}
+              <span className="text-[15px] sm:text-[16px] font-semibold text-white tracking-tight">
+                {t.text}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </StoreContext.Provider>
   );
