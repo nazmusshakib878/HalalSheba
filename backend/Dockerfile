@@ -24,6 +24,12 @@ RUN docker-php-ext-install \
     intl \
     opcache
 
+# Increase PHP file upload and execution limits
+RUN echo "upload_max_filesize = 32M" > /usr/local/etc/php/conf.d/uploads.ini && \
+    echo "post_max_size = 36M" >> /usr/local/etc/php/conf.d/uploads.ini && \
+    echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/uploads.ini && \
+    echo "max_execution_time = 120" >> /usr/local/etc/php/conf.d/uploads.ini
+
 # Get Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 

@@ -94,7 +94,7 @@ class ProductController extends Controller {
         });
     }
     public function upload(Request $r) {
-        $r->validate(['image'=>'required|image|mimes:jpg,jpeg,png,webp|max:5120|dimensions:max_width=6000,max_height=6000']);
+        $r->validate(['image'=>'required|image|mimes:jpg,jpeg,png,webp,gif|max:30720|dimensions:max_width=10000,max_height=10000']);
         $path=$r->file('image')->store('products','public');
         return ['url'=>'/api/media/'.$path];
     }

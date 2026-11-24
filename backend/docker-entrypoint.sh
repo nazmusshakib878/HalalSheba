@@ -30,4 +30,4 @@ php artisan tinker --execute="Illuminate\Support\Facades\DB::table('variants')->
 
 PORT_NUMBER="${PORT:-8000}"
 echo "=== Starting Server on 0.0.0.0:${PORT_NUMBER} ==="
-exec php artisan serve --host=0.0.0.0 --port="${PORT_NUMBER}"
+exec php -d upload_max_filesize=32M -d post_max_size=36M -d memory_limit=256M artisan serve --host=0.0.0.0 --port="${PORT_NUMBER}"

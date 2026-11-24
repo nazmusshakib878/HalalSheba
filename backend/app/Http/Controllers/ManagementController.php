@@ -25,7 +25,12 @@ class ManagementController extends Controller {
             'content_pages'=>['slug'=>['required','regex:/^[a-z0-9-]+$/',Rule::unique($table)->ignore($id)],'title'=>'required|string|max:255','body'=>'required|string','active'=>'boolean'],
             'reviews'=>['status'=>'required|in:pending,approved,rejected','reply'=>'nullable|string|max:5000'],
         };
-        if($table==='categories') $rules['parent_id']='nullable|exists:categories,id';
+        if($table==='categories') {
+            if (empty($r->input('parent_id')) || $r->input('parent_id') == 0) {
+                $r->merge(['parent_id' => null]);
+            }
+            $rules['parent_id'] = 'nullable|exists:categories,id';
+        }
         if(in_array($table,['customers','reviews'])) abort_unless($id,405);
         $data=$r->validate($rules);
         if($table==='coupons' && $data['type']==='percent') abort_if($data['value']>100,422,'Percentage cannot exceed 100.');
