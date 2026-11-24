@@ -9,7 +9,7 @@ const tabs = [
   { key: 'delivery', label: '🚚 Delivery fees', title: 'Delivery fees (৳)' },
   { key: 'contact', label: '📞 Contact info', title: 'Contact information' },
   { key: 'appearance', label: '🎨 Website appearance', title: 'Website appearance' },
-  { key: 'notifications', label: '🔔 Order alerts & notifications', title: 'Order alerts & notifications (এসএমএস ও ইমেইল রিমাইন্ডার)' },
+  { key: 'notifications', label: '🔔 Order email alerts', title: 'Order email alerts (নতুন অর্ডারের ইমেইল নোটিফিকেশন)' },
 ];
 
 export function Settings() {
@@ -28,16 +28,16 @@ export function Settings() {
     setTesting(true);
     setMessage('');
     try {
-      const res = await api<{ message: string; results: { email: boolean; sms: boolean; telegram: boolean } }>(
+      const res = await api<{ message: string; success?: boolean; results: { email: boolean; error?: string } }>(
         'admin/settings/test-notification',
         {
           method: 'POST',
           body: JSON.stringify(data.notifications || {}),
         }
       );
-      setMessage(res.message || 'টেস্ট নোটিফিকেশন সফলভাবে পাঠানো হয়েছে।');
+      setMessage(res.message || 'টেস্ট ইমেইল সম্পন্ন হয়েছে।');
     } catch (err) {
-      setMessage('টেস্ট নোটিফিকেশন ব্যর্থ: ' + (err as Error).message);
+      setMessage('টেস্ট ইমেইল ব্যর্থ: ' + (err as Error).message);
     } finally {
       setTesting(false);
     }
@@ -47,7 +47,7 @@ export function Settings() {
     <>
       <h1>Store settings</h1>
       <p className="muted">
-        Configure delivery charges, store contact info, visual branding, and instant SMS / Email order alerts.
+        Configure delivery charges, store contact info, visual branding, and instant email order alerts.
       </p>
       <Notice text={message || error} />
 
@@ -107,8 +107,6 @@ export function Settings() {
 
             if (tab === 'notifications') {
               d.email_enabled = formData.get('email_enabled') === 'on';
-              d.sms_enabled = formData.get('sms_enabled') === 'on';
-              d.telegram_enabled = formData.get('telegram_enabled') === 'on';
             }
 
             const saved = await api('admin/settings/' + tab, {
@@ -131,12 +129,11 @@ export function Settings() {
         {tab === 'notifications' && (
           <div>
             <p className="muted" style={{ marginBottom: 20 }}>
-              ওয়েবসাইটে কোনো কাস্টমার নতুন অর্ডার প্লেস করলেই সাথে সাথে আপনার মোবাইলে এসএমএস, ইমেইলে নোটিফিকেশন অথবা টেলিগ্রামে সাউন্ড রিমাইন্ডার পাবেন।
+              ওয়েবসাইটে কোনো কাস্টমার নতুন অর্ডার করলেই সাথে সাথে আপনার জিমেইলে অর্ডার ও কাস্টমারের সম্পূর্ণ তথ্যসহ ফ্রি নোটিফিকেশন চলে আসবে।
             </p>
 
-            {/* Email Notification Section */}
-            <div style={{ background: '#f8fafc', padding: 18, borderRadius: 10, border: '1px solid #e2e8f0', marginBottom: 20 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+            <div style={{ background: '#f8fafc', padding: 20, borderRadius: 12, border: '1px solid #e2e8f0', marginBottom: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
                 <input
                   type="checkbox"
                   id="email_enabled"
@@ -144,113 +141,53 @@ export function Settings() {
                   defaultChecked={data.notifications?.email_enabled ?? true}
                   style={{ width: 18, height: 18, cursor: 'pointer' }}
                 />
-                <label htmlFor="email_enabled" style={{ margin: 0, fontSize: 15, fontWeight: 700, color: '#0f172a', cursor: 'pointer' }}>
-                  📧 ইমেইল নোটিফিকেশন চালু করুন (Email Order Alerts)
-                </label>
-              </div>
-              <label>
-                অ্যাডমিন ইমেইল এড্রেস (যে ইমেইলে নতুন অর্ডারের নোটিফিকেশন যাবে)
-                <input
-                  name="admin_email"
-                  type="email"
-                  placeholder="halalsheba878@gmail.com"
-                  defaultValue={data.notifications?.admin_email ?? data.contact?.email ?? 'halalsheba878@gmail.com'}
-                />
-              </label>
-            </div>
-
-            {/* SMS Notification Section */}
-            <div style={{ background: '#f8fafc', padding: 18, borderRadius: 10, border: '1px solid #e2e8f0', marginBottom: 20 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                <input
-                  type="checkbox"
-                  id="sms_enabled"
-                  name="sms_enabled"
-                  defaultChecked={data.notifications?.sms_enabled ?? false}
-                  style={{ width: 18, height: 18, cursor: 'pointer' }}
-                />
-                <label htmlFor="sms_enabled" style={{ margin: 0, fontSize: 15, fontWeight: 700, color: '#0f172a', cursor: 'pointer' }}>
-                  📱 মোবাইল এসএমএস নোটিফিকেশন (Mobile SMS Alerts)
+                <label htmlFor="email_enabled" style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#0f172a', cursor: 'pointer' }}>
+                  📧 নতুন অর্ডার আসলে ইমেইল অ্যালার্ট পাঠান (Enable Email Alerts)
                 </label>
               </div>
 
               <div className="grid">
-                <label>
-                  আপনার মোবাইল নম্বর (যে নম্বরে SMS রিমাইন্ডার আসবে)
+                <label className="span-2">
+                  অ্যাডমিন ইমেইল এড্রেস (যে ইমেইলে অর্ডারের নোটিফিকেশন আসবে)
                   <input
-                    name="admin_phone"
-                    placeholder="01716333670"
-                    defaultValue={data.notifications?.admin_phone ?? data.contact?.phone ?? '01716333670'}
+                    name="admin_email"
+                    type="email"
+                    placeholder="n.shakib2027@gmail.com"
+                    defaultValue={data.notifications?.admin_email ?? 'n.shakib2027@gmail.com'}
                   />
                 </label>
 
                 <label>
-                  এসএমএস প্রোভাইডার (SMS Gateway)
-                  <select name="sms_provider" defaultValue={data.notifications?.sms_provider ?? 'greenweb'}>
-                    <option value="greenweb">Greenweb BD (সবচেয়ে জনপ্রিয়)</option>
-                    <option value="bulksmsbd">BulkSMSBD</option>
-                    <option value="elitbuzz">Elitbuzz</option>
-                    <option value="mimsms">MimSMS</option>
-                    <option value="custom">কাস্টম Webhook URL</option>
-                  </select>
+                  প্রেরক জিমেইল (Sender Gmail)
+                  <input
+                    name="smtp_user"
+                    type="email"
+                    placeholder="n.shakib2027@gmail.com"
+                    defaultValue={data.notifications?.smtp_user ?? 'n.shakib2027@gmail.com'}
+                  />
                 </label>
 
-                <label className="span-2">
-                  এসএমএস গেটওয়ে API Key / Token
+                <label>
+                  গুগল অ্যাপ পাসওয়ার্ড (Google 16-character App Password)
                   <input
-                    name="sms_api_key"
+                    name="smtp_pass"
                     type="password"
-                    placeholder="আপনার SMS গেটওয়ে ড্যাশবোর্ড থেকে পাওয়া API Key / Token"
-                    defaultValue={data.notifications?.sms_api_key ?? ''}
-                  />
-                </label>
-
-                <label className="span-2">
-                  সেন্ডার আইডি / মাস্কিং নাম (ঐচ্ছিক)
-                  <input
-                    name="sms_sender_id"
-                    placeholder="Halal Sheba (বা নন-মাস্কিং খালি রাখুন)"
-                    defaultValue={data.notifications?.sms_sender_id ?? ''}
+                    placeholder="১৬ অক্ষরের পাসওয়ার্ড (যেমন: abcd efgh ijkl mnop)"
+                    defaultValue={data.notifications?.smtp_pass ?? ''}
                   />
                 </label>
               </div>
-            </div>
 
-            {/* Telegram Instant Alert Section (Free & Popular) */}
-            <div style={{ background: '#ecfdf5', padding: 18, borderRadius: 10, border: '1px solid #a7f3d0', marginBottom: 20 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                <input
-                  type="checkbox"
-                  id="telegram_enabled"
-                  name="telegram_enabled"
-                  defaultChecked={data.notifications?.telegram_enabled ?? false}
-                  style={{ width: 18, height: 18, cursor: 'pointer' }}
-                />
-                <label htmlFor="telegram_enabled" style={{ margin: 0, fontSize: 15, fontWeight: 700, color: '#065f46', cursor: 'pointer' }}>
-                  🚀 টেলিগ্রাম ইনস্ট্যান্ট পুশ অ্যালার্ট (১০০% ফ্রি ও আনলিমিটেড সাউন্ড রিমাইন্ডার)
-                </label>
-              </div>
-              <p style={{ fontSize: 12, color: '#047857', margin: '0 0 14px' }}>
-                💡 <strong>টিপস:</strong> এসএমএস-এ খরচ আছে, কিন্তু টেলিগ্রাম বোটে প্রতিটা অর্ডারের নোটিফিকেশন আপনার ফোনে সাথে সাথে ফ্রি সাউন্ড অ্যালার্ট দিয়ে চলে আসবে।
-              </p>
-
-              <div className="grid">
-                <label>
-                  টেলিগ্রাম বট টোকেন (Telegram Bot Token)
-                  <input
-                    name="telegram_bot_token"
-                    placeholder="123456789:ABCdefGhIJKlmNoPQRstuVWxYZ"
-                    defaultValue={data.notifications?.telegram_bot_token ?? ''}
-                  />
-                </label>
-                <label>
-                  আপনার চ্যাট আইডি (Your Chat ID)
-                  <input
-                    name="telegram_chat_id"
-                    placeholder="123456789"
-                    defaultValue={data.notifications?.telegram_chat_id ?? ''}
-                  />
-                </label>
+              <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: 14, marginTop: 16, fontSize: 13, color: '#166534', lineHeight: 1.6 }}>
+                <strong>💡 ১০০% ফ্রিতে ইমেইল চালু করার সহজ ৩টি ধাপ:</strong>
+                <ol style={{ margin: '6px 0 0 18px', padding: 0 }}>
+                  <li>আপনার ব্রাউজারে এই লিংকে যান: <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noreferrer" style={{ color: '#15803d', fontWeight: 'bold', textDecoration: 'underline' }}>myaccount.google.com/apppasswords</a></li>
+                  <li>অ্যাপের নাম লিখুন <strong>Halal Sheba</strong> এবং <strong>Create / Generate</strong> বাটনে ক্লিক করুন।</li>
+                  <li>গুগল যে ১৬ অক্ষরের একটি কোড দিবে, সেটি কপি করে উপরের <strong>Google App Password</strong> বক্সে পেস্ট করে নিচে <strong>সেটিংস সংরক্ষণ করুন</strong>।</li>
+                </ol>
+                <div style={{ marginTop: 6, fontWeight: 500 }}>
+                  ✅ ব্যাস! এরপর থেকে যে কেউ অর্ডার করলেই আপনার ফোনে <strong>n.shakib2027@gmail.com</strong> এ সরাসরি রিমাইন্ডার ইমেইল চলে আসবে।
+                </div>
               </div>
             </div>
           </div>
@@ -361,7 +298,7 @@ export function Settings() {
               onClick={handleTestAlert}
               style={{ fontWeight: 600, borderColor: '#075744', color: '#075744' }}
             >
-              {testing ? 'টেস্ট পাঠানো হচ্ছে...' : '🧪 টেস্ট অ্যালার্ট পাঠান (Send test alert)'}
+              {testing ? 'টেস্ট ইমেইল পাঠানো হচ্ছে...' : '🧪 টেস্ট ইমেইল পাঠান (Send test email)'}
             </button>
           )}
         </div>

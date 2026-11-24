@@ -54,16 +54,12 @@ class ManagementController extends Controller {
             'contact'=>['phone'=>'nullable|string|max:30','whatsapp'=>'nullable|regex:/^[0-9]{8,15}$/','email'=>'nullable|email','address'=>'nullable|string|max:1000','facebook'=>'nullable|url:https','instagram'=>'nullable|url:https'],
             'appearance'=>['announcement'=>'nullable|string|max:500','logo'=>'nullable|string|max:2048','favicon'=>'nullable|string|max:2048','footer'=>'nullable|string|max:2000','primary'=>'nullable|regex:/^#[0-9a-fA-F]{6}$/','accent'=>'nullable|regex:/^#[0-9a-fA-F]{6}$/','seo_title'=>'nullable|string|max:255','seo_description'=>'nullable|string|max:1000','hero_title'=>'nullable|string|max:255','hero_image'=>'nullable|string|max:2048','hero_text'=>'nullable|string|max:1000','sections'=>'array','sections.*'=>'in:honey,gur-sweets,oil,ghee,spices-seeds,organic-food','hidden_sections'=>'array','hidden_sections.*'=>'string|max:100'],
             'notifications'=>[
-                'admin_phone'=>'nullable|string|max:30',
                 'admin_email'=>'nullable|email',
                 'email_enabled'=>'nullable|boolean',
-                'sms_enabled'=>'nullable|boolean',
-                'sms_provider'=>'nullable|string|max:50',
-                'sms_api_key'=>'nullable|string|max:255',
-                'sms_sender_id'=>'nullable|string|max:100',
-                'telegram_enabled'=>'nullable|boolean',
-                'telegram_bot_token'=>'nullable|string|max:255',
-                'telegram_chat_id'=>'nullable|string|max:100',
+                'smtp_user'=>'nullable|string|max:150',
+                'smtp_pass'=>'nullable|string|max:255',
+                'smtp_host'=>'nullable|string|max:150',
+                'smtp_port'=>'nullable|integer',
             ],
             default=>abort(404),
         };
@@ -77,19 +73,23 @@ class ManagementController extends Controller {
         $dummyOrder = (object)[
             'id' => 999,
             'reference' => 'TEST-' . strtoupper(substr(md5((string)time()), 0, 6)),
-            'address' => 'ঢাকা, বাংলাদেশ (টেস্ট অর্ডার)',
+            'address' => 'মিরপুর ১০, ঢাকা, বাংলাদেশ (টেস্ট ডেলিভারি ঠিকানা)',
             'total' => 120000,
         ];
         $dummyCustomer = (object)[
-            'name' => 'টেস্ট কাস্টমার (Halal Sheba)',
-            'phone' => $r->input('admin_phone') ?: '01716333670',
+            'name' => 'টেস্ট কাস্টমার (Halal Sheba Test)',
+            'phone' => '01716333670',
         ];
         $dummyItems = [
             ['name' => 'সুন্দরবনের তাজা চাকের মধু (১ কেজি)', 'quantity' => 1, 'price' => 120000]
         ];
         $results = \App\Services\NotificationService::sendNewOrderAlert($dummyOrder, $dummyCustomer, $dummyItems);
+        $ok = !empty($results['email']);
         return [
-            'message' => 'টেস্ট নোটিফিকেশন রিকোয়েস্ট সফলভাবে পাঠানো হয়েছে। আপনার ইমেইল/এসএমএস/টেলিগ্রাম চেক করুন।',
+            'success' => $ok,
+            'message' => $ok 
+                ? '✅ টেস্ট ইমেইল সফলভাবে পাঠানো হয়েছে! আপনার জিমেইল ইনবক্স চেক করুন।' 
+                : ('⚠️ ইমেইল পাঠানো যায়নি: ' . ($results['error'] ?? 'অনুগ্রহ করে সেটিংস ও Google App Password চেক করুন।')),
             'results' => $results,
         ];
     }
