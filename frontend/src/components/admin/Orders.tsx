@@ -148,7 +148,7 @@ export function Orders() {
                 aria-label="Quantity"
                 style={{ width: 90 }}
                 type="number"
-                min="1"
+                min={variants?.find((v) => String(v.id) === item.variant_id)?.product_slug === "satkhira-aam" ? 5 : 1}
                 required
                 value={item.quantity}
                 onChange={(e) =>

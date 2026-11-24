@@ -38,7 +38,7 @@ class CommerceTest extends TestCase {
         $this->assertDatabaseHas('variants',['id'=>$v,'physical'=>50]);
     }
     public function test_order_is_authoritative_idempotent_and_releases_on_cancellation():void {
-        [, $v]=$this->fixture();$payload=$this->order($v);$payload['total']=1;$payload['items'][0]['price']=1;
+        [, $v]=$this->fixture();DB::table('settings')->insert(['key'=>'delivery','value'=>json_encode(['dhaka'=>6000,'outside'=>12000])]);$payload=$this->order($v);$payload['total']=1;$payload['items'][0]['price']=1;
         $first=$this->postJson('/api/orders',$payload)->assertOk();
         $this->assertEquals(105000,$first->json('total'));
         $this->postJson('/api/orders',$payload)->assertOk()->assertJsonPath('reference',$first->json('reference'));
@@ -57,7 +57,7 @@ class CommerceTest extends TestCase {
     public function test_overselling_and_inactive_products_are_rejected():void {
         [$p,$v]=$this->fixture();$d=$this->order($v);$d['items'][0]['quantity']=21;
         $this->postJson('/api/orders',$d)->assertUnprocessable();$this->assertDatabaseCount('orders',0);
-        DB::table('products')->where('id',$p)->update(['active'=>false]);$d['items'][0]['quantity']=1;
+        DB::table('products')->where('id',$p)->update(['deleted_at'=>now()]);$d['items'][0]['quantity']=1;
         $this->postJson('/api/orders',$d)->assertUnprocessable();$this->getJson('/api/catalog')->assertJsonCount(0,'products');
     }
     public function test_product_create_price_edit_archive_restore_and_duplicate():void {
@@ -77,4 +77,61 @@ class CommerceTest extends TestCase {
         $d=$this->order($v);$d['coupon']='SAVE10';$this->postJson('/api/quote',$d)->assertOk()->assertJsonPath('discount',9900);
         $this->assertDatabaseHas('coupons',['code'=>'SAVE10','used'=>0]);$this->assertDatabaseHas('variants',['id'=>$v,'reserved'=>0]);
     }
+
+    public function test_delivery_quote_and_order_use_configured_district_rates_and_free_threshold():void {
+        [, $v]=$this->fixture();
+        DB::table('settings')->insert(['key'=>'delivery','value'=>json_encode(['dhaka'=>6000,'outside'=>12000,'districts'=>['Dhaka'=>6000,'Satkhira'=>12000],'free_above'=>null])]);
+        $d=$this->order($v);$d['items'][0]['quantity']=1;
+        $this->postJson('/api/quote',$d)->assertOk()->assertJsonPath('delivery_charge',6000);
+        $d['district']='Satkhira';
+        $this->postJson('/api/quote',$d)->assertOk()->assertJsonPath('delivery_charge',12000);
+        DB::table('settings')->where('key','delivery')->update(['value'=>json_encode(['dhaka'=>6000,'outside'=>12000,'districts'=>['Dhaka'=>6000,'Satkhira'=>12000],'free_above'=>100000])]);
+        $d['district']='Dhaka';$d['items'][0]['quantity']=1;
+        $this->postJson('/api/quote',$d)->assertOk()->assertJsonPath('delivery_charge',6000);
+        $d['items'][0]['quantity']=4;
+        $this->postJson('/api/quote',$d)->assertOk()->assertJsonPath('delivery_charge',0);
+        $d['district']='Satkhira';
+        $this->postJson('/api/orders',$d)->assertOk()->assertJsonPath('delivery_charge',0);
+    }
+
+    public function test_reservation_is_rechecked_under_variant_lock_and_retry_is_idempotent():void {
+        [, $v]=$this->fixture();DB::table('variants')->where('id',$v)->update(['physical'=>1]);
+        $d=$this->order($v);$d['items'][0]['quantity']=1;
+        $this->postJson('/api/orders',$d)->assertOk();
+        $d['idempotency_key']=(string)Str::uuid();
+        $this->postJson('/api/orders',$d)->assertUnprocessable();
+        $this->assertDatabaseCount('orders',1);
+        $this->assertDatabaseHas('variants',['id'=>$v,'physical'=>1,'reserved'=>1]);
+    }
+
+    public function test_order_lines_keep_variant_unit_price_quantity_and_line_total():void {
+        [$p,$v]=$this->fixture();DB::table('products')->where('id',$p)->update(['name'=>'চুইঝাল']);
+        DB::table('variants')->where('id',$v)->update(['name'=>'চিকন','price'=>80000]);
+        $d=$this->order($v);$d['items'][0]['quantity']=2;
+        $o=app(OrderService::class)->create($d);
+        $line=DB::table('order_items')->where('order_id',$o->id)->first();
+        $this->assertSame('চিকন',$line->variant);$this->assertSame(80000,$line->price);$this->assertSame(2,$line->quantity);$this->assertSame(160000,$line->price*$line->quantity);
+    }
+
+    public function test_mango_minimum_quantity_is_enforced_for_customer_and_manual_orders():void {
+        $cat=DB::table('categories')->insertGetId(['name'=>'Fruit','slug'=>'fruit']);
+        $p=DB::table('products')->insertGetId(['name'=>'Mango','slug'=>'satkhira-aam','category_id'=>$cat]);
+        $v=DB::table('variants')->insertGetId(['product_id'=>$p,'name'=>'1kg pack','sku'=>'MANGO-1','price'=>12000,'cost'=>0,'physical'=>20]);
+        $d=$this->order($v);$d['items'][0]['quantity']=4;
+        $this->postJson('/api/orders',$d)->assertUnprocessable();$this->assertDatabaseCount('orders',0);
+        $this->actingAs(User::factory()->create());$d['idempotency_key']=(string)Str::uuid();
+        $this->postJson('/api/admin/orders',$d)->assertUnprocessable();$this->assertDatabaseCount('orders',0);
+        $d['items'][0]['quantity']=5;$d['idempotency_key']=(string)Str::uuid();
+        $this->postJson('/api/orders',$d)->assertOk();
+        $d['idempotency_key']=(string)Str::uuid();$this->postJson('/api/admin/orders',$d)->assertOk();
+        $this->assertDatabaseCount('orders',2);
+    }
+    public function test_analytics_profit_breakdown_uses_same_paid_delivered_orders_and_marks_unknown_delivery_cost():void {
+        [, $v]=$this->fixture();$d=$this->order($v);$d['items'][0]['quantity']=1;
+        $o=app(OrderService::class)->create($d);
+        DB::table('orders')->where('id',$o->id)->update(['status'=>'delivered','payment_status'=>'paid','delivery_cost'=>0,'refunded_amount'=>0]);
+        $response=$this->actingAs(User::factory()->create())->getJson('/api/admin/reports?from='.now()->toDateString().'&to='.now()->toDateString())->assertOk();
+        $response->assertJsonPath('revenue',33000)->assertJsonPath('cogs',20000)->assertJsonPath('gross_profit',13000)->assertJsonPath('delivery_fees_collected',0)->assertJsonPath('delivery_cost_unknown_orders',1)->assertJsonPath('estimated_net_profit',13000);
+    }
+
 }

@@ -6,7 +6,7 @@ use App\Services\InventoryService;
 class InventoryController extends Controller {
     public function index() {
         return DB::table('variants')->join('products','products.id','=','variants.product_id')
-            ->select('variants.*','products.name as product_name')->selectRaw('physical - reserved as available')->orderBy('product_name')->get();
+            ->select('variants.*','products.name as product_name','products.slug as product_slug')->selectRaw('physical - reserved as available')->orderBy('product_name')->get();
     }
     public function history() {
         return DB::table('inventory_transactions')->leftJoin('users','users.id','=','inventory_transactions.user_id')

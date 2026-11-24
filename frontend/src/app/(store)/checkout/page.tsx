@@ -154,7 +154,7 @@ function CheckoutInner() {
   const [appliedPromo, setAppliedPromo] = useState<string | null>(null);
 
   // Terms agreement checkbox
-  const [agreedTerms, setAgreedTerms] = useState(true);
+  const [agreedTerms, setAgreedTerms] = useState(false);
 
   // Completed Order state
   const [completedOrder, setCompletedOrder] = useState<CustomerOrder | null>(null);
@@ -163,7 +163,7 @@ function CheckoutInner() {
   const subtotal = checkoutItems.reduce((sum,item)=>sum+item.price*item.quantity,0);
   const delivery = settings.delivery || {};
   const districtFees = (delivery.districts || {}) as Record<string,number>;
-  const defaultFee=Number(districtFees[district]??(district==='Dhaka'?delivery.dhaka??6000:delivery.outside??12000))/100;
+  const defaultFee=Number(districtFees[district]??(district==='Dhaka'?delivery.dhaka??0:delivery.outside??0))/100;
   const deliveryCost=quote?quote.delivery_charge/100:Number(delivery.free_above)>0 && subtotal>=Number(delivery.free_above)/100?0:defaultFee;
   const discount=quote?quote.discount/100:0;
   const total=quote?quote.total/100:subtotal+deliveryCost;
@@ -175,6 +175,8 @@ function CheckoutInner() {
   const handleItemQtyChange = (productId: number, newQty: number) => {
     if (buyNowProduct) {
       if (newQty <= 0) return;
+      const min = buyNowProduct?.slug === "satkhira-aam" ? 5 : 1;
+      if (newQty < min) { showToast(`?? ?????? ????????? ?????? ${min} ?????`, "error"); return; }
       setBuyNowCount(newQty);
     } else {
       updateQuantity(productId, newQty);
@@ -191,6 +193,10 @@ function CheckoutInner() {
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (checkoutItems.some((item) => item.slug === "satkhira-aam" && item.quantity < 5)) {
+      showToast("?????????? ???? ????????? ?????? ? ?????", "error");
+      return;
+    }
     if (checkoutItems.length === 0) {
       showToast("Your cart is empty!", "info");
       return;
@@ -321,7 +327,11 @@ function CheckoutInner() {
     );
   }
 
-  if (checkoutItems.length === 0) {
+  if (checkoutItems.some((item) => item.slug === "satkhira-aam" && item.quantity < 5)) {
+      showToast("?????????? ???? ????????? ?????? ? ?????", "error");
+      return;
+    }
+    if (checkoutItems.length === 0) {
     return (
       <div className="mx-auto max-w-xl px-4 py-14 text-center">
         <div className="rounded-xl bg-white border border-gray-200 p-8 shadow-xs">
@@ -395,7 +405,7 @@ function CheckoutInner() {
             <div className="space-y-2.5">
               {checkoutItems.map((item) => (
                 <div
-                  key={item.productId}
+                  key={item.variantId || item.productId}
                   className="rounded-lg border border-gray-200 bg-white p-3 sm:p-4 flex items-center justify-between gap-3 shadow-2xs"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -412,11 +422,11 @@ function CheckoutInner() {
                       </p>
                       <div className="mt-1 flex items-center gap-3 text-xs text-gray-600">
                         <div className="flex items-center gap-1.5">
-                          <span>Qty:</span>
+                          <span>{item.weight || "Variant"} ? Qty:</span>
                           <div className="inline-flex items-center rounded border border-gray-200 bg-gray-50">
                             <button
                               type="button"
-                              onClick={() => handleItemQtyChange(item.productId, item.quantity - 1)}
+                              onClick={() => handleItemQtyChange(item.variantId || item.productId, Math.max(item.slug === "satkhira-aam" ? 5 : 1, item.quantity - 1))}
                               className="h-6 w-6 flex items-center justify-center text-gray-600 hover:bg-gray-200 cursor-pointer text-xs"
                             >
                               -
@@ -426,7 +436,7 @@ function CheckoutInner() {
                             </span>
                             <button
                               type="button"
-                              onClick={() => handleItemQtyChange(item.productId, item.quantity + 1)}
+                              onClick={() => handleItemQtyChange(item.variantId || item.productId, item.quantity + 1)}
                               className="h-6 w-6 flex items-center justify-center text-gray-600 hover:bg-gray-200 cursor-pointer text-xs"
                             >
                               +
@@ -443,7 +453,7 @@ function CheckoutInner() {
                   {/* Red Delete Button */}
                   <button
                     type="button"
-                    onClick={() => handleItemRemove(item.productId)}
+                    onClick={() => handleItemRemove(item.variantId || item.productId)}
                     aria-label={`Remove ${item.name}`}
                     className="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors cursor-pointer shrink-0"
                   >
@@ -464,14 +474,14 @@ function CheckoutInner() {
             <div className="rounded-lg border border-gray-200 bg-white p-4 sm:p-5 space-y-3.5 shadow-2xs">
               {/* Row 1: Name and Phone with Bangladesh Prefix */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <input
+                <label className="block text-xs font-medium text-gray-700">???????? ???<input
                   type="text"
                   required
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder="Your Full Name *"
+                  aria-label="Customer name" placeholder="????? ????? ??? *"
                   className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-[#f48721] transition-colors"
-                />
+                /></label>
 
                 <div>
                   <div className="relative flex items-center rounded-md border border-gray-300 bg-white focus-within:border-[#f48721] transition-colors">
@@ -513,7 +523,7 @@ function CheckoutInner() {
                   required
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder="ex: House no. / building / street / area"
+                  aria-label="Full delivery address" placeholder="?????, ???, ?????, ???? ? ???? ?? ???????? ?????? *"
                   className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-[#f48721] transition-colors"
                 />
               </div>
@@ -531,7 +541,7 @@ function CheckoutInner() {
                   >
                     {DISTRICTS.map((d) => (
                       <option key={d} value={d}>
-                        {d} {d === "Dhaka" ? "(Delivery ৳60)" : "(Delivery ৳120)"}
+                        {d} (Delivery ?{formatTakaDecimals(Number(districtFees[d] ?? (d === "Dhaka" ? delivery.dhaka ?? 0 : delivery.outside ?? 0)) / 100)})
                       </option>
                     ))}
                   </select>
@@ -700,7 +710,7 @@ function CheckoutInner() {
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    placeholder="Enter Coupon"
+                    aria-label="Coupon code" placeholder="???? ??? ?????"
                     className="flex-1 rounded-md border border-gray-300 px-3.5 py-2 text-sm outline-none focus:border-[#f48721]"
                   />
                   <button
@@ -728,7 +738,7 @@ function CheckoutInner() {
             </div>
             <div className="flex items-center justify-between text-gray-700">
               <span>Delivery cost</span>
-              <span className="font-medium text-gray-900">{deliveryCost} BDT</span>
+              <span className="font-medium text-gray-900">{formatTakaDecimals(deliveryCost)} BDT</span>
             </div>
             {discount > 0 && (
               <div className="flex items-center justify-between text-emerald-700 font-semibold">
@@ -738,7 +748,7 @@ function CheckoutInner() {
             )}
             <div className="border-t border-gray-200 pt-3 flex items-center justify-between text-base font-bold text-gray-900">
               <span>Total</span>
-              <span>{formatTakaDecimals(total)}BDT</span>
+              <span>{formatTakaDecimals(total)} BDT</span>
             </div>
           </div>
 
@@ -772,11 +782,11 @@ function CheckoutInner() {
             />
             <label htmlFor="terms-checkbox" className="text-xs text-gray-600 cursor-pointer leading-relaxed">
               I have read and agree to the{" "}
-              <Link href="/page/happy-return" className="text-[#f48721] hover:underline">
+              <Link href="/page/terms" className="text-[#f48721] hover:underline">
                 Terms and Conditions
               </Link>
               ,{" "}
-              <Link href="/page/refund-policy" className="text-[#f48721] hover:underline">
+              <Link href="/page/privacy" className="text-[#f48721] hover:underline">
                 Privacy Policy
               </Link>{" "}
               &amp;{" "}

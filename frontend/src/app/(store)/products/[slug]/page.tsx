@@ -75,9 +75,7 @@ export default function ProductDetailPage() {
   const wishlisted = isWishlisted(wishlistProduct.id);
 
   const whatsappUrl = `https://api.whatsapp.com/send/?phone=8801313946402&text=${encodeURIComponent(
-    `Hello Halal Sheba, I want to order: ${product.name} (Qty: ${quantity}) - Price: ${formatTaka(
-      product.price * quantity
-    )}`
+    `Hello Halal Sheba, I want to order: ${product.name} / ${product.weight || "Standard"} (Unit price: ${formatTaka(product.price)}, Qty: ${quantity}, Line total: ${formatTaka(product.price * quantity)})`
   )}`;
 
   const handleReviewSubmit = async (e:React.FormEvent) => {

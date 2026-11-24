@@ -67,8 +67,8 @@ interface StoreContextValue {
   openCart: () => void;
   closeCart: () => void;
   addToCart: (product: Product, quantity?: number, openDrawer?: boolean) => void;
-  removeFromCart: (productId: number) => void;
-  updateQuantity: (productId: number, quantity: number) => void;
+  removeFromCart: (variantId: number) => void;
+  updateQuantity: (variantId: number, quantity: number) => void;
   clearCart: () => void;
   wishlist: number[];
   toggleWishlist: (product: Product) => void;
@@ -185,6 +185,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const addToCart = useCallback(
     (product: Product, quantity = 1, openDrawer = true) => {
+      const minimum = product.slug === "satkhira-aam" ? 5 : 1;
+      if (quantity < minimum) { showToast(`Minimum order quantity is ${minimum} kg.`, "error"); return; }
       const variant =
         product.variants?.find((v) => v.id === product.variantId) ||
         product.variants?.[0] || {
@@ -232,20 +234,23 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   );
 
   const removeFromCart = useCallback((id: number) => {
-    setCart((prev) => prev.filter((item) => item.variantId !== id && item.productId !== id));
+    setCart((prev) => prev.filter((item) => (item.variantId || item.productId) !== id));
   }, []);
 
   const updateQuantity = useCallback((id: number, quantity: number) => {
+    const item = cart.find((entry) => (entry.variantId || entry.productId) === id);
+    const minimum = item?.slug === "satkhira-aam" ? 5 : 1;
+    if (quantity > 0 && quantity < minimum) { showToast(`Minimum order quantity is ${minimum} kg.`, "error"); return; }
     if (quantity <= 0) {
-      setCart((prev) => prev.filter((item) => item.variantId !== id && item.productId !== id));
+      setCart((prev) => prev.filter((item) => (item.variantId || item.productId) !== id));
       return;
     }
     setCart((prev) =>
       prev.map((item) =>
-        item.variantId === id || item.productId === id ? { ...item, quantity } : item
+        (item.variantId || item.productId) === id ? { ...item, quantity } : item
       )
     );
-  }, []);
+  }, [cart, showToast]);
 
   const clearCart = useCallback(() => setCart([]), []);
 
@@ -286,7 +291,6 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       const order:CustomerOrder={...orderData,orderId:result.reference,status:'Order Placed',subtotal:result.subtotal/100,discount:result.discount/100,deliveryCharge:result.delivery_charge/100,total:result.total/100,createdAt:result.created_at};
       setOrders(prev=>[order,...prev]);return order;
     } catch (err) {
-      sessionStorage.removeItem('checkout-request-key');
       throw err;
     }
   }, []);

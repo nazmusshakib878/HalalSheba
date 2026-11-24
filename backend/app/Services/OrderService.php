@@ -20,22 +20,23 @@ class OrderService {
             abort_unless($v, 422, 'Product variant unavailable.');
             $qty = (int)$item['quantity'];
             abort_unless($qty > 0, 422, 'Quantity must be positive.');
-            if (!$isAdmin && !$isQuote) {
-                $available = max(0, (int)($v->physical - $v->reserved));
-                abort_if($available < $qty, 422, "দুঃখিত, '{$v->name}' বর্তমানে পর্যাপ্ত স্টকে নেই।");
-            }
+            $product = DB::table('products')->where('id', $v->product_id)->where('active', true)->whereNull('deleted_at')->first();
+            abort_unless($product, 422, 'Product unavailable.');
+            $legacy = json_decode($product->legacy ?? '{}', true) ?: [];
+            $minimum = (int)($legacy['minimum_order_quantity'] ?? ($product->slug === 'satkhira-aam' ? 5 : 1));
+            abort_if($qty < $minimum, 422, "Minimum order quantity for {$v->name} is {$minimum}.");
             $subtotal += $v->price * $qty;
             $items[] = ['variant' => $v, 'quantity' => $qty];
         }
 
         // Calculate delivery charge from settings
         $deliverySettings = json_decode(DB::table('settings')->where('key', 'delivery')->value('value') ?? '{}', true);
-        $dhakaFee = (int)($deliverySettings['dhaka'] ?? 6000);
-        $outsideFee = (int)($deliverySettings['outside'] ?? 12000);
+        $dhakaFee = (int)($deliverySettings['dhaka'] ?? 0);
+        $outsideFee = (int)($deliverySettings['outside'] ?? 0);
         $freeAbove = isset($deliverySettings['free_above']) && $deliverySettings['free_above'] !== null ? (int)$deliverySettings['free_above'] : null;
 
         $district = trim($d['district'] ?? 'Dhaka');
-        $isDhaka = strcasecmp($district, 'Dhaka') === 0 || stripos($d['address'] ?? '', 'Dhaka') !== false;
+        $isDhaka = strcasecmp($district, 'Dhaka') === 0;
         $deliveryCharge = $deliverySettings['districts'][$district] ?? ($isDhaka ? $dhakaFee : $outsideFee);
 
         if ($freeAbove !== null && $freeAbove > 0 && $subtotal >= $freeAbove) {
@@ -79,7 +80,21 @@ class OrderService {
             ];
         }
 
-        return DB::transaction(function() use ($d, $items, $subtotal, $discount, $deliveryCharge, $total, $couponId) {
+        return DB::transaction(function() use ($d, $items, $subtotal, $discount, $deliveryCharge, $total, $couponId, $isAdmin) {
+            $idempotencyKey = $d['idempotency_key'] ?? (string)\Illuminate\Support\Str::uuid();
+            $existing = DB::table('orders')->where('idempotency_key', $idempotencyKey)->first();
+            if ($existing) return $existing;
+            $lockedItems = [];
+            foreach ($items as $i) {
+                $v = DB::table('variants')->where('id', $i['variant']->id)->lockForUpdate()->first();
+                abort_unless($v && $v->active, 422, 'Product variant unavailable.');
+                if (!$isAdmin) {
+                    $available = max(0, (int)($v->physical - $v->reserved));
+                    abort_if($available < $i['quantity'], 422, "Insufficient stock for {$v->name}.");
+                }
+                $lockedItems[] = ['variant' => $v, 'quantity' => $i['quantity']];
+            }
+            $items = $lockedItems;
             // Find or create customer
             $cust = DB::table('customers')->where('phone', $d['phone'])->first();
             if ($cust) {
@@ -101,14 +116,6 @@ class OrderService {
             }
 
             $reference = (string)\Illuminate\Support\Str::uuid();
-            $idempotencyKey = $d['idempotency_key'] ?? (string)\Illuminate\Support\Str::uuid();
-
-            // If idempotency_key already exists, return existing order
-            $existing = DB::table('orders')->where('idempotency_key', $idempotencyKey)->first();
-            if ($existing) {
-                return $existing;
-            }
-
             $oid = DB::table('orders')->insertGetId([
                 'reference' => $reference,
                 'idempotency_key' => $idempotencyKey,
@@ -241,3 +248,4 @@ class OrderService {
         }, 3);
     }
 }
+
