@@ -1,7 +1,7 @@
 "use client";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { api } from '@/lib/api';
 
 const links = [
@@ -23,6 +23,7 @@ const links = [
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const [open, setOpen] = useState(false);
+  const [unreadOrderCount, setUnreadOrderCount] = useState<number>(0);
   const [user, setUser] = useState<{ name: string; role: string } | null>(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -32,6 +33,44 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     }
     return null;
   });
+
+  const markOrdersAsSeen = useCallback(() => {
+    setUnreadOrderCount(0);
+    api<Array<{ id: number }>>('admin/orders')
+      .then((orders) => {
+        if (Array.isArray(orders) && orders.length > 0) {
+          const maxId = Math.max(...orders.map((o) => o.id));
+          localStorage.setItem('admin_last_seen_order_id', String(maxId));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const checkNewOrders = useCallback(async () => {
+    try {
+      const orders = await api<Array<{ id: number; status: string }>>('admin/orders');
+      if (!Array.isArray(orders) || orders.length === 0) return;
+
+      const isOrdersPage = window.location.pathname === '/admin/orders' || window.location.pathname.startsWith('/admin/orders/');
+      const maxId = Math.max(...orders.map((o) => o.id));
+
+      if (isOrdersPage) {
+        localStorage.setItem('admin_last_seen_order_id', String(maxId));
+        setUnreadOrderCount(0);
+        return;
+      }
+
+      const storedLastSeen = localStorage.getItem('admin_last_seen_order_id');
+      if (storedLastSeen === null) {
+        const newOrders = orders.filter((o) => o.status === 'new');
+        setUnreadOrderCount(newOrders.length);
+      } else {
+        const lastSeenId = Number(storedLastSeen);
+        const unread = orders.filter((o) => o.id > lastSeenId);
+        setUnreadOrderCount(unread.length);
+      }
+    } catch {}
+  }, []);
 
   useEffect(() => {
     if (!user) {
@@ -46,10 +85,20 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     }
   }, [user]);
 
-  // Close sidebar on route change
+  // When visiting orders page, automatically clear the badge
   useEffect(() => {
     setOpen(false);
-  }, [path]);
+    if (path === '/admin/orders' || path.startsWith('/admin/orders/')) {
+      markOrdersAsSeen();
+    }
+  }, [path, markOrdersAsSeen]);
+
+  // Periodically check for new orders
+  useEffect(() => {
+    checkNewOrders();
+    const timer = setInterval(checkNewOrders, 8000);
+    return () => clearInterval(timer);
+  }, [checkNewOrders, path]);
 
   return (
     <div className="admin-shell">
@@ -94,35 +143,115 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </div>
 
         <nav>
-          {links.map(([key, label]) => (
-            <Link
-              key={key}
-              href={'/admin' + (key ? '/' + key : '')}
-              onClick={() => setOpen(false)}
-              className={path === '/admin' + (key ? '/' + key : '') ? 'active' : ''}
-            >
-              {label}
-            </Link>
-          ))}
+          {links.map(([key, label]) => {
+            const isOrders = key === 'orders';
+            const isActive = path === '/admin' + (key ? '/' + key : '');
+            return (
+              <Link
+                key={key}
+                href={'/admin' + (key ? '/' + key : '')}
+                onClick={() => {
+                  setOpen(false);
+                  if (isOrders) markOrdersAsSeen();
+                }}
+                className={isActive ? 'active' : ''}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  position: 'relative',
+                }}
+              >
+                <span>{label}</span>
+                {isOrders && unreadOrderCount > 0 && (
+                  <span
+                    style={{
+                      background: '#ef4444',
+                      color: '#ffffff',
+                      fontSize: '11px',
+                      fontWeight: '800',
+                      height: '20px',
+                      minWidth: '20px',
+                      borderRadius: '10px',
+                      padding: '0 6px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      lineHeight: 1,
+                      boxShadow: '0 2px 6px rgba(239, 68, 68, 0.45)',
+                    }}
+                  >
+                    {unreadOrderCount}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
         </nav>
       </aside>
 
       <div>
         <header className="admin-topbar">
           <div className="row">
-            <button
-              className="mobile-menu secondary"
-              onClick={() => setOpen(!open)}
-              style={{ minHeight: 40, minWidth: 40, fontSize: 18 }}
-              aria-label="Open navigation menu"
-            >
-              ☰
-            </button>
+            <div style={{ position: 'relative', display: 'inline-flex' }}>
+              <button
+                className="mobile-menu secondary"
+                onClick={() => setOpen(!open)}
+                style={{ minHeight: 40, minWidth: 40, fontSize: 18 }}
+                aria-label="Open navigation menu"
+              >
+                ☰
+              </button>
+              {unreadOrderCount > 0 && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: -4,
+                    right: -4,
+                    background: '#ef4444',
+                    color: '#ffffff',
+                    fontSize: '10px',
+                    fontWeight: 'bold',
+                    height: '16px',
+                    minWidth: '16px',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0 3px',
+                  }}
+                >
+                  {unreadOrderCount}
+                </span>
+              )}
+            </div>
             <span className="muted" style={{ fontWeight: 600 }}>Halal Sheba / Administration</span>
+            {unreadOrderCount > 0 && (
+              <Link
+                href="/admin/orders"
+                onClick={markOrdersAsSeen}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: '#fee2e2',
+                  color: '#b91c1c',
+                  border: '1px solid #fca5a5',
+                  padding: '4px 10px',
+                  borderRadius: '16px',
+                  fontSize: '12px',
+                  fontWeight: '700',
+                  textDecoration: 'none',
+                }}
+              >
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', display: 'inline-block' }} />
+                {unreadOrderCount} New Order{unreadOrderCount > 1 ? 's' : ''}
+              </Link>
+            )}
           </div>
           <div className="row">
             <Link href="/" target="_blank" className="muted" style={{ fontSize: 13 }}>
-              ওয়েবসাইট দেখুন ↗
+              View Website ↗
             </Link>
             <span style={{ fontWeight: 600, fontSize: 13 }}>{user?.name || 'Admin'}</span>
             <button
@@ -147,28 +276,54 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             className={path === '/admin' ? 'active' : ''}
           >
             <span style={{ fontSize: 18 }}>📊</span>
-            <span>ওভারভিউ</span>
+            <span>Overview</span>
           </Link>
           <Link
             href="/admin/orders"
+            onClick={markOrdersAsSeen}
             className={path.startsWith('/admin/orders') ? 'active' : ''}
+            style={{ position: 'relative' }}
           >
-            <span style={{ fontSize: 18 }}>📦</span>
-            <span>অর্ডারস</span>
+            <span style={{ fontSize: 18, position: 'relative' }}>
+              📦
+              {unreadOrderCount > 0 && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: -4,
+                    right: -6,
+                    background: '#ef4444',
+                    color: '#ffffff',
+                    fontSize: '9px',
+                    fontWeight: 'bold',
+                    height: '14px',
+                    minWidth: '14px',
+                    borderRadius: '7px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0 2px',
+                  }}
+                >
+                  {unreadOrderCount}
+                </span>
+              )}
+            </span>
+            <span>Orders</span>
           </Link>
           <Link
             href="/admin/products"
             className={path.startsWith('/admin/products') ? 'active' : ''}
           >
             <span style={{ fontSize: 18 }}>🏷️</span>
-            <span>প্রোডাক্টস</span>
+            <span>Products</span>
           </Link>
           <Link
             href="/admin/settings"
             className={path.startsWith('/admin/settings') ? 'active' : ''}
           >
             <span style={{ fontSize: 18 }}>⚙️</span>
-            <span>সেটিংস</span>
+            <span>Settings</span>
           </Link>
           <button
             type="button"
@@ -189,7 +344,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             }}
           >
             <span style={{ fontSize: 18 }}>☰</span>
-            <span>মেনু</span>
+            <span>Menu</span>
           </button>
         </nav>
       </div>
