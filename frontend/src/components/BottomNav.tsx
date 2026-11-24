@@ -39,7 +39,7 @@ export function BottomNav() {
   const [categoriesOpen, setCategoriesOpen] = useState(false);
 
   const isHome = pathname === "/";
-  const isWishlist = pathname === "/wishlist";
+  const isWishlist = pathname === "/my/wishlists" || pathname === "/wishlist";
 
   return (
     <>
@@ -172,7 +172,7 @@ export function BottomNav() {
 
           {/* 4. Wishlist */}
           <Link
-            href="/wishlist"
+            href="/my/wishlists"
             className={`flex flex-col items-center justify-center py-1 px-1.5 rounded-lg transition-colors relative cursor-pointer ${
               isWishlist
                 ? "text-[#d97706]"
