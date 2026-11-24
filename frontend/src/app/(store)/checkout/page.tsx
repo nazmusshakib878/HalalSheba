@@ -228,6 +228,7 @@ function CheckoutInner() {
       customerName: customerName.trim(),
       phone: validPhone,
       area,
+      district,
       address: `${address.trim()}${thana ? ", " + thana : ""}, ${district}`,
       note: note.trim() || undefined,
       coupon: appliedPromo || undefined,

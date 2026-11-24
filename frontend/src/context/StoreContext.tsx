@@ -30,6 +30,7 @@ export interface CustomerOrder {
   phone: string;
   area: "inside-dhaka" | "outside-dhaka";
   address: string;
+  district?: string;
   note?: string;
   coupon?: string;
   paymentMethod: "cod" | "bkash" | "nagad" | "sslcommerz";
@@ -130,6 +131,43 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       // Ignore storage quota issues
     }
   }, [cart, wishlist, orders, reviews, user, hydrated]);
+
+  // Synchronize cart item prices and details with latest catalog
+  useEffect(() => {
+    if (!hydrated || !PRODUCTS || PRODUCTS.length === 0) return;
+    setCart((prevCart) => {
+      let changed = false;
+      const updated = prevCart.map((item) => {
+        const product = PRODUCTS.find((p) => p.id === item.productId || p.slug === item.slug);
+        if (!product) return item;
+        const variant = product.variants?.find((v) => v.id === item.variantId) || product.variants?.[0];
+        const newPrice = variant?.price ?? product.price;
+        const newRegularPrice = variant?.regularPrice ?? product.regularPrice;
+        const newName = product.name;
+        const newWeight = variant?.name || product.weight || item.weight;
+        const newImage = variant?.image || product.image || item.image;
+        if (
+          newPrice !== item.price ||
+          newRegularPrice !== item.regularPrice ||
+          newName !== item.name ||
+          newWeight !== item.weight ||
+          newImage !== item.image
+        ) {
+          changed = true;
+          return {
+            ...item,
+            price: newPrice,
+            regularPrice: newRegularPrice,
+            name: newName,
+            weight: newWeight,
+            image: newImage,
+          };
+        }
+        return item;
+      });
+      return changed ? updated : prevCart;
+    });
+  }, [hydrated, PRODUCTS]);
 
   const showToast = useCallback(
     (text: string, type: "success" | "info" = "success") => {
@@ -237,14 +275,20 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if(sessionStorage.getItem('checkout-request-data')!==fingerprint){sessionStorage.removeItem('checkout-request-key');sessionStorage.setItem('checkout-request-data',fingerprint);}
     let key=sessionStorage.getItem('checkout-request-key');
     if(!key){key=crypto.randomUUID();sessionStorage.setItem('checkout-request-key',key);}
-    const result=await api<{reference:string;subtotal:number;discount:number;delivery_charge:number;total:number;created_at:string}>('orders',{method:'POST',body:JSON.stringify({
-      idempotency_key:key,name:orderData.customerName,phone:orderData.phone,address:orderData.address,
-      district:orderData.area==='inside-dhaka'?'Dhaka':orderData.address.split(',').at(-1)?.trim()||'Outside Dhaka',
-      payment_method:'cod',note:orderData.note,coupon:orderData.coupon,items:orderData.items.map(i=>({variant_id:i.variantId,quantity:i.quantity}))
-    })});
-    sessionStorage.removeItem('checkout-request-key');
-    const order:CustomerOrder={...orderData,orderId:result.reference,status:'Order Placed',subtotal:result.subtotal/100,discount:result.discount/100,deliveryCharge:result.delivery_charge/100,total:result.total/100,createdAt:result.created_at};
-    setOrders(prev=>[order,...prev]);return order;
+    try {
+      const result=await api<{reference:string;subtotal:number;discount:number;delivery_charge:number;total:number;created_at:string}>('orders',{method:'POST',body:JSON.stringify({
+        idempotency_key:key,name:orderData.customerName,phone:orderData.phone,address:orderData.address,
+        district:orderData.district || (orderData.area==='inside-dhaka'?'Dhaka':orderData.address.split(',').at(-1)?.trim()||'Outside Dhaka'),
+        payment_method:'cod',note:orderData.note,coupon:orderData.coupon,items:orderData.items.map(i=>({variant_id:i.variantId,quantity:i.quantity}))
+      })});
+      sessionStorage.removeItem('checkout-request-key');
+      sessionStorage.removeItem('checkout-request-data');
+      const order:CustomerOrder={...orderData,orderId:result.reference,status:'Order Placed',subtotal:result.subtotal/100,discount:result.discount/100,deliveryCharge:result.delivery_charge/100,total:result.total/100,createdAt:result.created_at};
+      setOrders(prev=>[order,...prev]);return order;
+    } catch (err) {
+      sessionStorage.removeItem('checkout-request-key');
+      throw err;
+    }
   }, []);
 
   const findOrder = useCallback(

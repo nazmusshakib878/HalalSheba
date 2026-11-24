@@ -5,6 +5,10 @@ import {TopSellingSection} from '@/components/TopSellingSection';
 import {BrandCarousel} from '@/components/BrandCarousel';
 import {ProductCarouselSection} from '@/components/ProductCarouselSection';
 import {TestimonialsSection} from '@/components/TestimonialsSection';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const titles:Record<string,string>={honey:'খাঁটি প্রাকৃতিক মধু','gur-sweets':'খেজুরের গুড় ও ঐতিহ্যবাহী মিষ্টি',oil:'খাঁটি তেল',ghee:'খাঁটি ঘি ও মাখন','spices-seeds':'মসলা, চুইঝাল ও ভেষজ পণ্য','organic-food':'অর্গানিক ফুড, ড্রাই ফ্রুটস ও মৌসুমি ফল'};
 export default async function HomePage(){
  const {products,categories,settings}=await getCatalog();

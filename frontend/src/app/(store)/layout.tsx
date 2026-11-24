@@ -8,6 +8,9 @@ import { FloatingWidgets } from '@/components/FloatingWidgets';
 import { BottomNav } from '@/components/BottomNav';
 import { StoreAppearance } from '@/components/StoreAppearance';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function generateMetadata() {
   const { settings } = await getCatalog();
   return {

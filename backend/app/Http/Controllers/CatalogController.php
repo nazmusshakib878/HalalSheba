@@ -3,6 +3,10 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\{DB,Cache};
 
 class CatalogController extends Controller {
+    public static function clearCache(): void {
+        Cache::forget('catalog_api_payload');
+    }
+
     public function index() {
         return Cache::remember('catalog_api_payload', 60, function() {
             $categories = DB::table('categories')->where('active', true)->whereNull('deleted_at')->orderBy('sort_order')->get();

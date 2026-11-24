@@ -18,6 +18,8 @@ class InventoryController extends Controller {
             'reason'=>'required|string|min:3|max:2000','cost'=>'nullable|integer|min:0','supplier'=>'nullable|string|max:255',
             'batch'=>'nullable|string|max:255','expires_at'=>'nullable|date','received_at'=>'nullable|date']);
         if($d['type']!=='correct') abort_unless($d['quantity']>0,422,'Quantity must be positive.');
-        return $service->adjust($id,$d);
+        $res = $service->adjust($id,$d);
+        CatalogController::clearCache();
+        return $res;
     }
 }

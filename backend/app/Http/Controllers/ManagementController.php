@@ -37,7 +37,9 @@ class ManagementController extends Controller {
             $data['updated_at']=now();
             if($id) DB::table($table)->where('id',$id)->update($data);
             else $id=DB::table($table)->insertGetId([...$data,'created_at'=>now()]);
-            Audit::record('save',$table,$id,$data); return DB::table($table)->find($id);
+            Audit::record('save',$table,$id,$data);
+            CatalogController::clearCache();
+            return DB::table($table)->find($id);
         });
     }
     public function settings() { return DB::table('settings')->get()->mapWithKeys(fn($s)=>[$s->key=>json_decode($s->value,true)]); }
@@ -50,7 +52,9 @@ class ManagementController extends Controller {
         };
         $data=$r->validate($rules);
         DB::table('settings')->updateOrInsert(['key'=>$key],['value'=>json_encode($data),'created_at'=>now(),'updated_at'=>now()]);
-        Audit::record('settings.update',$key,null,$data); return $data;
+        Audit::record('settings.update',$key,null,$data);
+        CatalogController::clearCache();
+        return $data;
     }
     public function staff() { return DB::table('users')->get(['id','name','email','role','active','created_at']); }
     public function saveStaff(Request $r,?int $id=null) {

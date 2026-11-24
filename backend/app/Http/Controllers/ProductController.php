@@ -51,6 +51,7 @@ class ProductController extends Controller {
             }
             DB::table('variants')->where('product_id',$id)->whereNotIn('id',$kept)->update(['active'=>false]);
             Audit::record($before?'product.update':'product.create','product',$id,['before'=>$before,'after'=>$this->detail($id)]);
+            CatalogController::clearCache();
             return $this->detail($id);
         });
     }
@@ -67,10 +68,14 @@ class ProductController extends Controller {
                     foreach(['physical','reserved','received','sold'] as $key) $v[$key]=0;
                     $v['restocked_at']=null; DB::table('variants')->insert($v);
                 }
-                Audit::record('product.duplicate','product',$new); return $this->detail($new);
+                Audit::record('product.duplicate','product',$new);
+                CatalogController::clearCache();
+                return $this->detail($new);
             }
             DB::table('products')->where('id',$id)->update(['deleted_at'=>$r->action==='archive'?now():null,'active'=>false,'updated_at'=>now()]);
-            Audit::record('product.'.$r->action,'product',$id); return ['message'=>'Product updated'];
+            Audit::record('product.'.$r->action,'product',$id);
+            CatalogController::clearCache();
+            return ['message'=>'Product updated'];
         });
     }
     public function upload(Request $r) {

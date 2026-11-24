@@ -2,9 +2,13 @@ import { cache } from 'react';
 import type { CatalogData } from '@/context/CatalogContext';
 import { PRODUCTS, CATEGORIES } from '@/data/catalog';
 
-// Ultra-fast in-memory cache with 60-second TTL
+// Ultra-fast in-memory cache: 0s in development (instant updates), 3s in production (protect against traffic spikes)
 let memoryCache: { data: CatalogData; expiresAt: number } | null = null;
-const CACHE_TTL_MS = 60000;
+const CACHE_TTL_MS = process.env.NODE_ENV === 'production' ? 3000 : 0;
+
+export function clearCatalogServerCache() {
+  memoryCache = null;
+}
 
 export const getCatalog = cache(async (): Promise<CatalogData> => {
   const now = Date.now();
@@ -16,7 +20,7 @@ export const getCatalog = cache(async (): Promise<CatalogData> => {
     const apiBase = process.env.LARAVEL_API_URL || 'http://127.0.0.1:8000';
     const response = await fetch(`${apiBase}/api/catalog`, {
       cache: 'no-store',
-      signal: AbortSignal.timeout(2000),
+      signal: AbortSignal.timeout(5000),
       headers: { Accept: 'application/json' },
     });
 
@@ -29,7 +33,11 @@ export const getCatalog = cache(async (): Promise<CatalogData> => {
           settings: data.settings || {},
           unavailable: false,
         };
-        memoryCache = { data: result, expiresAt: now + CACHE_TTL_MS };
+        if (CACHE_TTL_MS > 0) {
+          memoryCache = { data: result, expiresAt: now + CACHE_TTL_MS };
+        } else {
+          memoryCache = null;
+        }
         return result;
       }
     }
@@ -43,6 +51,6 @@ export const getCatalog = cache(async (): Promise<CatalogData> => {
     settings: {},
     unavailable: false,
   };
-  memoryCache = { data: fallbackResult, expiresAt: now + CACHE_TTL_MS };
+  // Do not lock memoryCache on fallback so next request retries backend immediately
   return fallbackResult;
 });
