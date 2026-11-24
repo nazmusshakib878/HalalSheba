@@ -33,6 +33,7 @@ Route::prefix('api')->group(function() {
         Route::post('manage/{resource}',[ManagementController::class,'save']); Route::put('manage/{resource}/{id}',[ManagementController::class,'save']);
         Route::get('settings',[ManagementController::class,'settings']);
         Route::put('settings/{key}',[ManagementController::class,'saveSettings'])->middleware('admin:super_admin');
+        Route::post('settings/test-notification',[ManagementController::class,'testNotification'])->middleware('admin:super_admin');
         Route::get('staff',[ManagementController::class,'staff'])->middleware('admin:super_admin');
         Route::post('staff',[ManagementController::class,'saveStaff'])->middleware('admin:super_admin');
         Route::put('staff/{id}',[ManagementController::class,'saveStaff'])->middleware('admin:super_admin');

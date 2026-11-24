@@ -156,7 +156,17 @@ class OrderService {
             }
 
             Audit::record('order.create', 'order', $oid);
-            return DB::table('orders')->find($oid);
+            $newOrder = DB::table('orders')->find($oid);
+
+            try {
+                $cust = DB::table('customers')->find($cid);
+                $oItems = DB::table('order_items')->where('order_id', $oid)->get()->toArray();
+                NotificationService::sendNewOrderAlert($newOrder, $cust, $oItems);
+            } catch (\Throwable $ne) {
+                \Illuminate\Support\Facades\Log::warning("Order notification trigger error: " . $ne->getMessage());
+            }
+
+            return $newOrder;
         }, 3);
     }
 
