@@ -30,5 +30,11 @@ Artisan::command('catalog:import {file=database/seeders/catalog.json}', function
             foreach($variants as $i=>$v) DB::table('variants')->insert(['product_id'=>$id,'name'=>$v['name'],'sku'=>'HS-'.$id.'-'.($i+1),'price'=>(int)round($v['price']*100),'regular_price'=>isset($p['regularPrice'])&&$i===0?(int)round($p['regularPrice']*100):null,'physical'=>100,'received'=>100,'reserved'=>0,'image'=>$v['image'],'created_at'=>now(),'updated_at'=>now()]);
         }
     });
+    // The seeder inserts products with explicit IDs, which never advances
+    // the PostgreSQL sequence — resync it so new product creates stop
+    // colliding on the primary key (see migration 2026_11_25_000004).
+    if (DB::getDriverName() === 'pgsql') {
+        DB::statement("SELECT setval('products_id_seq', COALESCE((SELECT MAX(id) FROM products), 0))");
+    }
     $this->info('Catalog imported without overwriting existing products. Stock initialized to 100 units.');
 });
