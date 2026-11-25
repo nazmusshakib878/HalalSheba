@@ -14,13 +14,19 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const { addToCart, toggleWishlist, isWishlisted } = useStore();
   const wishlisted = isWishlisted(product.id);
-  // Variant products (e.g. the wooden roti maker with ৮/৯/১০ ইঞ্চি sizes):
-  // show the size buttons and a SELECT OPTIONS button, like the product
-  // detail page's size selector. No stock count is shown anywhere.
+  // Variant products (e.g. the wooden roti maker with ৮/৯/১০ ইঞ্চি sizes,
+  // or mustard oil with ১/৫ লিটার): show the size buttons and an Add to
+  // Cart button that adds the selected variant directly — like the product
+  // detail page, which pre-selects the first variant. No stock count is
+  // shown anywhere.
   const variants = product.variants ?? [];
   const hasVariants = variants.length > 0;
   const [selectedVariant, setSelectedVariant] = useState<number | null>(null);
   const selected = selectedVariant != null ? variants[selectedVariant] : null;
+  // Default to the first variant when no size is selected yet, matching
+  // the product detail page (which starts at variant index 0). addToCart
+  // also falls back to variants[0] when variantId is undefined.
+  const effectiveVariant = selected ?? variants[0];
   const minPrice = hasVariants ? Math.min(...variants.map((v) => v.price)) : product.price;
   const maxPrice = hasVariants ? Math.max(...variants.map((v) => v.price)) : product.price;
 
@@ -105,12 +111,16 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {hasVariants ? (
-          <Link
-            href={`/products/${product.slug}`}
+          <button
+            type="button"
+            onClick={() =>
+              addToCart({ ...product, variantId: effectiveVariant.id }, 1, true)
+            }
             className="premium-cart-button mt-3 sm:mt-4 w-full inline-flex items-center justify-center gap-1.5 min-h-11 py-2 px-2 text-[12px] sm:text-[13px] font-semibold cursor-pointer active:scale-95 transition-transform"
           >
-            <span>SELECT OPTIONS</span>
-          </Link>
+            <CartIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+            <span>Add to Cart</span>
+          </button>
         ) : (
           <button
             type="button"

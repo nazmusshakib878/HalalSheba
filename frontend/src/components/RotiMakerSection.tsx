@@ -7,8 +7,8 @@ import { ProductCarouselSection } from "@/components/ProductCarouselSection";
 // (প্রিমিয়াম মেহগনি কাঠের রুটি মেকার), using the site's own product card
 // and carousel — the same pattern as every other homepage section. The card
 // shows the size buttons (৮/৯/১০ ইঞ্চি), the ৳1,090 – ৳1,420 price range
-// and a SELECT OPTIONS button; the detail page's own size selector shows
-// each size's price, exactly like the mustard oil product.
+// and an Add to Cart button for the selected size; the detail page's own
+// size selector shows each size's price, exactly like the mustard oil product.
 //
 // Products are DB-backed, so this section renders ONLY once the product
 // exists in the catalog (created in the admin panel with slug
