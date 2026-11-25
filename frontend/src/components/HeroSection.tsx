@@ -44,17 +44,31 @@ export function HeroSection() {
         onTouchStart={(event) => { touch.current = { x: event.touches[0].clientX, y: event.touches[0].clientY }; }}
         onTouchEnd={(event) => { if (!touch.current) return; const dx = event.changedTouches[0].clientX - touch.current.x; const dy = event.changedTouches[0].clientY - touch.current.y; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) move(dx > 0 ? -1 : 1); touch.current = null; }}>
         <div className="store-hero-copy" key={`copy-${active}`}>
+          <p className="store-hero-badge"><span aria-hidden="true" />{slide.label}</p>
           <h1>{slide.title}<br /><em>{slide.emphasis}</em></h1>
           <p className="store-hero-description">{active === 0 ? String(appearance.hero_text||"আপনার পছন্দের মধু বেছে নিন।") : active === 1 ? "প্রতিদিনের রান্নায় ঘি ও তেলের সংগ্রহ।" : "খেজুরের গুড় ও দেশি মিষ্টির সংগ্রহ।"}</p>
           <div className="store-hero-actions">
             <Link href={slide.href} className="store-primary-link">{slide.action}<span aria-hidden="true">↗</span></Link>
           </div>
+          <ul className="store-hero-trust">
+            <li>১০০% খাঁটি</li>
+            <li>ক্যাশ অন ডেলিভারি</li>
+            <li>সারা দেশে ডেলিভারি</li>
+          </ul>
         </div>
         <div className="store-hero-visual" key={`image-${active}`}>
-          <img src={slide.image} alt={slide.alt} fetchPriority={active === 0 ? "high" : "auto"} className="store-hero-photo" />
+          <div className="store-hero-glow" aria-hidden="true" />
+          <span className="store-hero-dot store-hero-dot--a" aria-hidden="true" />
+          <span className="store-hero-dot store-hero-dot--b" aria-hidden="true" />
+          <div className="store-hero-frame">
+            <img src={slide.image} alt={slide.alt} fetchPriority={active === 0 ? "high" : "auto"} className="store-hero-photo" />
+            <span className="store-hero-chip">{slide.caption}</span>
+          </div>
         </div>
+        <span className="store-hero-numeral" aria-hidden="true">{slide.number}</span>
         <div className="store-slider-controls">
           <div className="store-slide-dots">{slides.map((item, index) => <button key={item.number} type="button" aria-label={`${item.caption} দেখুন`} aria-pressed={index === active} onClick={() => setActive(index)}><span className={index === active ? "is-active" : ""} /></button>)}</div>
+          <span className="store-slide-count">{slide.number}<span> / 03</span></span>
           <button type="button" aria-label="Previous slide" onClick={() => move(-1)}><ChevronLeftIcon className="h-4 w-4" /></button>
           <button type="button" aria-label="Next slide" onClick={() => move(1)}><ChevronRightIcon className="h-4 w-4" /></button>
           {!reduced && <button type="button" aria-label={paused ? "Resume slideshow" : "Pause slideshow"} aria-pressed={paused} onClick={() => setPaused(!paused)}>{paused ? "▶" : "Ⅱ"}</button>}
