@@ -88,23 +88,67 @@ input[type="range"].hs-range::-moz-range-thumb {
 }
 
 /* Storefront presentation */
-/* Unique centred hero: giant headline, one animated honeycomb-and-bees
-   illustration (pure inline SVG + CSS, no photo), one CTA, marquee strip
-   on top and a honeycomb band closing the hero. No carousel. */
+/* Video hero carousel: slide 1 is a full-bleed real honeybee video
+   (deep forest-green gradient behind the left copy, fading to
+   transparent toward the center); slides 2–3 are photo slides. The
+   marquee strip sits on top, a honeycomb band closes the hero. */
 .store-hero-unique { background:#f7f3e9; overflow:hidden; }
 .store-hero-marquee { overflow:hidden; background:#0a371f; color:#f7f3e9; }
 .store-hero-marquee-track { display:flex; width:max-content; animation:store-marquee 28s linear infinite; }
 .store-hero-marquee-track span { padding:10px 0; font-size:13px; font-weight:700; letter-spacing:.14em; white-space:nowrap; }
 @keyframes store-marquee { from { transform:translateX(0); } to { transform:translateX(-50%); } }
-.store-hero-unique-inner { max-width:880px; margin:auto; padding:72px 24px 64px; text-align:center; }
-.store-hero-unique h1 { font-family:var(--font-bengali); font-size:clamp(40px,7.2vw,88px); line-height:1.28; font-weight:800; color:#0a371f; letter-spacing:-.01em; text-wrap:balance; }
-.store-hero-unique h1 em { font-style:normal; background:linear-gradient(92deg,#eec25e,#d5a33d 48%,#b9822e); -webkit-background-clip:text; background-clip:text; color:transparent; }
-/* Animated honeycomb scene: frameless illustration floating on the cream
-   ground, with a soft warm glow behind the comb. Bees fly on CSS paths;
-   the comb itself is static SVG. */
-.store-hero-visual { position:relative; max-width:720px; margin:44px auto 0; }
+.store-hero-wrap { max-width:1480px; margin:auto; padding:20px 24px 0; }
+/* Fixed height reserves the banner before playback starts, so the
+   product sections below never shift when the video loads. */
+.store-hero { position:relative; min-height:520px; border-radius:10px; overflow:hidden; background:#f3ede1; box-shadow:0 12px 32px -18px rgba(10,55,31,.35); isolation:isolate; }
+.store-hero-slide { position:absolute; inset:0; }
+/* Slide 1 media stack (bottom to top): SVG fallback scene, poster
+   image, video. The video is invisible until its first frame is ready,
+   so the poster is always what the visitor sees first — never black. */
+.store-hero-poster, .store-hero-video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:62% 45%; display:block; }
+.store-hero-video { opacity:0; transition:opacity .4s ease; }
+.store-hero-video.is-ready { opacity:1; }
+.store-hero-video.is-dissolving { opacity:0; }
+.store-hero-photo { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
+/* Light cream scrim for photo slides; on the video slide the scrim is a
+   deep forest-green gradient behind the text, fading to transparent
+   toward the center. The video's natural colors are never filtered. */
+.store-hero-scrim { position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(90deg,rgba(250,246,239,.97) 0%,rgba(250,246,239,.88) 34%,rgba(250,246,239,.45) 55%,rgba(250,246,239,0) 72%); }
+.store-hero--video .store-hero-scrim { background:linear-gradient(90deg,rgba(10,55,31,.88) 0%,rgba(10,55,31,.62) 38%,rgba(10,55,31,.18) 62%,rgba(10,55,31,0) 78%); }
+/* Copy fades in once per slide entry (~400ms) and then stays steady —
+   it never re-animates on video loops. */
+.store-hero-copy { position:relative; z-index:2; max-width:560px; padding:48px 24px 96px 48px; animation:store-enter .4s ease both; }
+.store-hero-badge { display:inline-flex; align-items:center; padding:7px 14px; border-radius:999px; background:#fff; border:1px solid #e5ddc8; font-size:12px; font-weight:700; letter-spacing:.14em; color:#0a371f; margin-bottom:20px; box-shadow:0 2px 8px rgba(10,55,31,.08); }
+.store-hero h1 { font-family:var(--font-bengali); font-size:clamp(34px,3.4vw,50px); line-height:1.25; font-weight:800; color:#0a371f; letter-spacing:-.01em; text-wrap:balance; }
+.store-hero h1 em { font-style:normal; }
+.store-hero--video .store-hero-copy h1 { color:#fff; text-shadow:0 2px 18px rgba(10,55,31,.45); }
+.store-hero-description { max-width:440px; margin-top:16px; color:#4c5b51; font-size:17px; line-height:1.75; }
+.store-hero--video .store-hero-description { color:#f7f3e9; text-shadow:0 1px 12px rgba(10,55,31,.5); }
+.store-hero-actions { display:flex; flex-wrap:wrap; align-items:center; gap:14px; margin-top:28px; }
+.store-hero-arrow { position:absolute; z-index:3; top:50%; transform:translateY(-50%); width:40px; height:40px; display:flex; align-items:center; justify-content:center; border:0; border-radius:8px; background:#fff; color:#0a371f; box-shadow:0 6px 18px rgba(10,55,31,.22); cursor:pointer; transition:background .2s; }
+.store-hero-arrow:hover { background:#f7f3e9; }
+.store-hero-arrow--prev { left:-14px; }
+.store-hero-arrow--next { right:-14px; }
+.store-slider-controls { position:absolute; z-index:3; bottom:20px; left:48px; display:flex; align-items:center; gap:10px; }
+.store-slider-controls button { width:32px; height:32px; display:flex; align-items:center; justify-content:center; border:0; border-radius:50%; cursor:pointer; color:#0a371f; background:rgba(255,255,255,.88); box-shadow:0 2px 8px rgba(10,55,31,.18); transition:background .2s; }
+.store-slider-controls button:hover { background:#fff; }
+.store-slide-dots { display:flex; gap:6px; }
+.store-slide-dots button { border:0; width:26px; height:32px; background:transparent; box-shadow:none; padding:0; }
+.store-slide-dots button span { width:8px; height:8px; border-radius:10px; background:rgba(255,255,255,.95); border:1px solid rgba(10,55,31,.25); transition:width .3s, background .3s; }
+.store-slide-dots button span.is-active { background:#0a371f; border-color:#0a371f; width:22px; }
+.store-slide-count { font-size:12px; font-weight:700; color:#0a371f; margin-left:4px; }
+.store-slide-count > span { color:#7a8a7e; font-weight:500; }
+/* On the video slide the controls sit over the dark gradient, so the
+   count and the active dot switch to cream/gold for contrast. */
+.store-hero--video .store-slide-count { color:#f7f3e9; }
+.store-hero--video .store-slide-count > span { color:rgba(247,243,233,.75); }
+.store-hero--video .store-slide-dots button span.is-active { background:#d5a33d; border-color:#d5a33d; }
+/* Fallback scene (animated SVG honeycomb + bees): only rendered when
+   both the video and the poster are unavailable. It fills the banner
+   like the video does, on the same cream ground. */
+.store-hero-visual { position:absolute; inset:0; background:#f7f3e9; }
 .store-hero-visual::before { content:""; position:absolute; inset:-30px -40px; background:radial-gradient(ellipse 55% 55% at 50% 42%, rgba(242,183,5,.30), rgba(245,210,110,.12) 55%, transparent 75%); pointer-events:none; }
-.store-hero-visual svg { position:relative; width:100%; height:auto; display:block; overflow:visible; }
+.store-hero-visual svg { position:absolute; inset:0; width:100%; height:100%; display:block; }
 .bee-path-loop-a { animation:bee-loop-a 8s ease-in-out infinite; }
 .bee-path-loop-b { animation:bee-loop-b 7s ease-in-out 1.2s infinite; }
 .bee-path-cross-r { animation:bee-cross-r 11s linear infinite; }
@@ -122,13 +166,6 @@ input[type="range"].hs-range::-moz-range-thumb {
 @keyframes bee-wing { from { transform:scaleY(1); } to { transform:scaleY(.45); } }
 @keyframes drip-strand { 0% { transform:scaleY(0); opacity:0; } 12% { opacity:1; } 50% { transform:scaleY(1); opacity:1; } 62% { transform:scaleY(1); opacity:0; } 100% { transform:scaleY(0); opacity:0; } }
 @keyframes drip-drop { 0% { transform:translateY(0); opacity:0; } 55% { transform:translateY(0); opacity:0; } 62% { opacity:1; } 88% { transform:translateY(42px); opacity:1; } 100% { transform:translateY(50px); opacity:0; } }
-.store-hero-pills { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:36px; }
-.store-hero-pills a { padding:9px 20px; border-radius:999px; background:#fff; border:1px solid #e5ddc8; color:#0a371f; font-size:14px; font-weight:600; text-decoration:none; box-shadow:0 2px 8px rgba(10,55,31,.06); transition:border-color .2s, box-shadow .2s; }
-.store-hero-pills a:hover { border-color:#d5a33d; box-shadow:0 4px 14px rgba(10,55,31,.12); }
-.store-hero-trust { margin-top:22px; font-size:14px; font-weight:500; color:#6d7a6f; letter-spacing:.02em; }
-.store-hero-cta { display:inline-flex; align-items:center; gap:10px; min-height:56px; margin-top:28px; padding:14px 36px; border-radius:999px; background:#0a371f; color:#f7f3e9; font-size:17px; font-weight:700; text-decoration:none; box-shadow:0 16px 30px -12px rgba(10,55,31,.55); transition:background .2s, transform .2s, box-shadow .2s; }
-.store-hero-cta:hover { background:#14532f; transform:translateY(-2px); box-shadow:0 20px 34px -12px rgba(10,55,31,.6); }
-.store-hero-cta > span { font-size:19px; }
 .store-hero-band { height:58px; border-radius:50% 50% 0 0 / 30px 30px 0 0; background-color:#0a371f; background-image:linear-gradient(30deg,#d5a33d 12%,transparent 12.5%,transparent 87%,#d5a33d 87.5%,#d5a33d),linear-gradient(150deg,#d5a33d 12%,transparent 12.5%,transparent 87%,#d5a33d 87.5%,#d5a33d),linear-gradient(30deg,#d5a33d 12%,transparent 12.5%,transparent 87%,#d5a33d 87.5%,#d5a33d),linear-gradient(150deg,#d5a33d 12%,transparent 12.5%,transparent 87%,#d5a33d 87.5%,#d5a33d),linear-gradient(60deg,rgba(213,163,61,.55) 25%,transparent 25.5%,transparent 75%,rgba(213,163,61,.55) 75%,rgba(213,163,61,.55)),linear-gradient(60deg,rgba(213,163,61,.55) 25%,transparent 25.5%,transparent 75%,rgba(213,163,61,.55) 75%,rgba(213,163,61,.55)); background-size:56px 98px; background-position:0 0,0 0,28px 49px,28px 49px,0 0,28px 49px; opacity:.96; }
 .store-hero-strip-wrap { max-width:1480px; margin:auto; padding:0 24px; }
 
@@ -158,20 +195,32 @@ input[type="range"].hs-range::-moz-range-thumb {
 @keyframes store-image-enter { from { opacity:.65; transform:scale(1.035); } to { opacity:1; transform:scale(1); } }
 
 @media (max-width:1023px) {
- .store-hero-unique-inner { padding:56px 20px 52px; }
- .store-hero-visual { margin-top:36px; }
+ .store-hero { min-height:480px; }
+ .store-hero-copy { padding:40px 32px 96px; }
+ .store-hero-arrow--prev { left:10px; }
+ .store-hero-arrow--next { right:10px; }
+ .store-slider-controls { left:32px; }
  .store-service-strip { grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px 0; }
  .store-service-strip > :nth-child(2) { border:0; }
  .store-service-strip > * { justify-content:flex-start; }
 }
 @media (max-width:639px) {
- .store-hero-unique-inner { padding:44px 16px 44px; }
- .store-hero-unique h1 { font-size:clamp(34px,10vw,52px); line-height:1.3; }
- .store-hero-visual { margin-top:28px; }
- .store-hero-pills { margin-top:28px; gap:8px; }
- .store-hero-pills a { font-size:13px; padding:8px 16px; }
- .store-hero-trust { font-size:13px; margin-top:18px; }
- .store-hero-cta { min-height:52px; margin-top:24px; padding:12px 30px; font-size:16px; }
+ /* Mobile: bees and honeycomb stay in the upper part (mobile crop keeps
+    the main bee in view); text and button sit near the bottom over a
+    gradient that fades upward. The headline stays within two lines and
+    the button keeps clear room above the dots for easy tapping. */
+ .store-hero-wrap { padding:16px 12px 0; }
+ .store-hero { min-height:560px; }
+ .store-hero-poster, .store-hero-video { object-position:62% 42%; }
+ .store-hero-scrim { background:linear-gradient(0deg,rgba(250,246,239,.97) 0%,rgba(250,246,239,.85) 45%,rgba(250,246,239,0) 75%); }
+ .store-hero--video .store-hero-scrim { background:linear-gradient(0deg,rgba(10,55,31,.92) 0%,rgba(10,55,31,.55) 42%,rgba(10,55,31,0) 72%); }
+ .store-hero-copy { position:absolute; left:0; right:0; bottom:0; max-width:none; padding:0 20px 92px; }
+ .store-hero h1 { font-size:clamp(30px,8.5vw,40px); line-height:1.3; }
+ .store-hero-description { font-size:15px; line-height:1.7; margin-top:12px; }
+ .store-hero-actions { margin-top:20px; }
+ .store-hero-arrow--prev { left:10px; }
+ .store-hero-arrow--next { right:10px; }
+ .store-slider-controls { left:20px; bottom:16px; }
  .store-hero-band { height:44px; border-radius:50% 50% 0 0 / 20px 20px 0 0; }
  .store-hero-strip-wrap { padding:0 12px; }
  .store-hero-marquee-track span { font-size:12px; }
@@ -188,6 +237,7 @@ input[type="range"].hs-range::-moz-range-thumb {
 }
 @media (prefers-reduced-motion:reduce) {
  .store-hero-marquee-track { animation:none; }
+ .store-hero-copy { animation:none; }
  .store-hero-visual .bee-path-loop-a, .store-hero-visual .bee-path-loop-b,
  .store-hero-visual .bee-path-cross-r, .store-hero-visual .bee-path-cross-l,
  .store-hero-visual .bee-bob, .store-hero-visual .bee-wing,
@@ -276,4 +326,7 @@ input[type="range"].hs-range::-moz-range-thumb {
 .store-hero-actions .store-primary-link { font-size:16px; min-height:48px; padding:12px 26px; border-radius:999px; background:#0a371f; color:#f7f3e9; font-weight:700; box-shadow:0 10px 24px -10px rgba(10,55,31,.55); transition:transform .2s, box-shadow .2s, background .2s; }
 .store-hero-actions .store-primary-link:hover { background:#14532f; transform:translateY(-2px); box-shadow:0 14px 28px -10px rgba(10,55,31,.6); }
 .store-hero-actions .store-primary-link > span { font-size:18px; }
+/* Honey-gold CTA on the video slide (dark green text on gold). */
+.store-hero-actions .store-primary-link.store-hero-gold-btn { background:linear-gradient(92deg,#eec25e,#d5a33d 48%,#b9822e); color:#0a371f; box-shadow:0 10px 24px -10px rgba(185,130,46,.65); }
+.store-hero-actions .store-primary-link.store-hero-gold-btn:hover { background:linear-gradient(92deg,#f4d07e,#e0b04a 48%,#c08d33); transform:translateY(-2px); box-shadow:0 14px 28px -10px rgba(185,130,46,.7); }
 @media(max-width:639px) { .store-hero-actions .store-primary-link { font-size:15px; } }
