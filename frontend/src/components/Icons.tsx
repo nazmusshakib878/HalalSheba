@@ -1,13 +1,14 @@
 "use client";
 import React from "react";
 import {useCatalog} from '@/context/CatalogContext';
+import { SafeImage } from "@/components/SafeImage";
 
 export function BrandLogoSvg({ className = "h-10 sm:h-12 md:h-14 w-auto" }: { className?: string }) {
   const {settings}=useCatalog();
   return (
     <div className={`inline-flex items-center select-none ${className}`}>
       {/* Official 3D Gold Halal Sheba Brand Logo */}
-      <img
+      <SafeImage
         src={String(settings.appearance?.logo || '/images/halal-sheba-logo.png')}
         alt="Halal Sheba (হালাল সেবা)"
         className="h-full w-auto max-w-full object-contain filter drop-shadow-[0_2px_5px_rgba(0,0,0,0.15)] transition-transform hover:scale-[1.02]"

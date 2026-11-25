@@ -464,7 +464,7 @@ function CheckoutInner() {
           <div className="space-y-3 pt-2">
             <h2 className="text-[15px] font-bold text-gray-800 flex items-center gap-2">
               <span className="text-[#f48721] font-black text-lg">|</span>
-              <span>Shipping Address</span>
+              <span>ডেলিভারি ঠিকানা</span>
             </h2>
 
             <div className="rounded-lg border border-gray-200 bg-white p-4 sm:p-5 space-y-3.5 shadow-2xs">
@@ -509,7 +509,7 @@ function CheckoutInner() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="example@gmail.com (optional)"
+                  placeholder="example@gmail.com (ঐচ্ছিক)"
                   className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-[#f48721] transition-colors"
                 /></label>
               </div>
@@ -521,7 +521,7 @@ function CheckoutInner() {
                   required
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  aria-label="Full delivery address (house, road, area, thana and district)" placeholder="House, road, area, thana and district *"
+                  aria-label="সম্পূর্ণ ডেলিভারি ঠিকানা" placeholder="বাসা/রোড, এলাকা, থানা ও জেলা *"
                   className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-[#f48721] transition-colors"
                 />
               </div>
@@ -556,7 +556,7 @@ function CheckoutInner() {
                       onChange={(e) => setThana(e.target.value)}
                       className="w-full appearance-none rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-700 outline-none focus:border-[#f48721] transition-colors cursor-pointer"
                     >
-                      <option value="">Select Thana (Optional)</option>
+                      <option value="">থানা নির্বাচন করুন (ঐচ্ছিক)</option>
                       {availableThanas.map((t) => (
                         <option key={t} value={t}>
                           {t}
@@ -568,7 +568,7 @@ function CheckoutInner() {
                       type="text"
                       value={thana}
                       onChange={(e) => setThana(e.target.value)}
-                      aria-label="Thana or area (optional)" placeholder="Enter thana or area (optional)"
+                      aria-label="Thana or area (optional)" placeholder="থানা বা এলাকার নাম লিখুন (ঐচ্ছিক)"
                       className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-[#f48721]"
                     />
                   )}
@@ -587,13 +587,13 @@ function CheckoutInner() {
             <div className="rounded-lg border border-gray-200 bg-white p-4 flex items-center justify-between shadow-2xs">
               <h2 className="text-[15px] font-bold text-gray-800 flex items-center gap-2">
                 <span className="text-[#f48721] font-black text-lg">|</span>
-                <span>Billing Address</span>
+                <span>বিলিং ঠিকানা</span>
               </h2>
               <div className="flex items-center gap-2 text-xs text-gray-600 font-medium select-none">
                 <span className="h-4 w-4 rounded-full border-2 border-[#f48721] flex items-center justify-center">
                   <span className="h-2 w-2 rounded-full bg-[#f48721]" />
                 </span>
-                <span>Same as shipping address</span>
+                <span>ডেলিভারি ঠিকানার মতোই</span>
               </div>
             </div>
           </div>

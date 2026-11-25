@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SafeImage } from "@/components/SafeImage";
 import { notFound } from "next/navigation";
 import { STATIC_PAGES } from "@/data/catalog";
 
@@ -12,7 +13,7 @@ export function InfoPage({ slug, content }: { slug: string; content?: {title:str
     <nav className="info-breadcrumb" aria-label="Breadcrumb"><Link href="/">Home</Link><span>/</span><span aria-current="page">{page.title}</span></nav>
     <header className={`info-hero ${about ? "info-hero-about" : ""}`}>
       <div className="info-hero-copy"><p className="store-eyebrow">HALAL SHEBA / {about ? "OUR STORY" : "CUSTOMER CARE"}</p><h1>{about ? <>দেশের স্বাদ,<br /><span>ঘরে ঘরে।</span></> : page.title}</h1><p className="info-subtitle">{page.subtitle}</p>{about && <Link href="/collections/all-products" className="store-primary-link">আমাদের সংগ্রহ দেখুন ↗</Link>}</div>
-      {about && <div className="info-hero-image"><img src="/images/products/gawa-ghee.jpg" alt="হালাল সেবার গাওয়া ঘি" fetchPriority="high" /><span>দেশজ স্বাদের প্রতি ভালোবাসা</span></div>}
+      {about && <div className="info-hero-image"><SafeImage src="/images/products/gawa-ghee.jpg" alt="হালাল সেবার গাওয়া ঘি" fetchPriority="high" /><span>দেশজ স্বাদের প্রতি ভালোবাসা</span></div>}
     </header>
     <div className="info-content-layout">
       <article className="info-article"><p className="store-eyebrow">{about ? "ROOTED IN EVERYDAY GOODNESS" : "HERE TO HELP"}</p><h2>{about ? "আমাদের গল্প" : page.title}</h2><div className="info-prose">{page.body.map((text, i) => <p key={i}>{text}</p>)}</div>

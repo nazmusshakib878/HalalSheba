@@ -1,11 +1,12 @@
 import Link from "next/link";
+import { SafeImage } from "@/components/SafeImage";
 
 export function CollectionSpotlight() {
   return (
     <section className="collection-spotlight-wrap" aria-labelledby="spotlight-title">
       <div className="collection-spotlight">
         <div className="collection-spotlight-photo">
-          <img src="/images/products/gawa-ghee.jpg" alt="হালাল সেবার গাওয়া ঘি ও পরিবেশনের বাটি" loading="lazy" />
+          <SafeImage src="/images/products/gawa-ghee.jpg" alt="হালাল সেবার গাওয়া ঘি ও পরিবেশনের বাটি" loading="lazy" />
         </div>
         <div className="collection-spotlight-copy">
           <p className="store-eyebrow">THE EVERYDAY COLLECTION</p>

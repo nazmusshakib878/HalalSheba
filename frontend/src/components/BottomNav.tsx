@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useStore } from "@/context/StoreContext";
+import { SafeImage } from "@/components/SafeImage";
 
 import {
   CartIcon,
@@ -89,7 +90,7 @@ export function BottomNav() {
                   onClick={() => setCategoriesOpen(false)}
                   className="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 transition-colors"
                 >
-                  <img
+                  <SafeImage
                     src={cat.image}
                     alt={cat.name}
                     className="h-10 w-10 object-contain rounded-lg bg-amber-50/50 p-0.5"

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {useCatalog} from '@/context/CatalogContext';
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/Icons";
+import { SafeImage } from "@/components/SafeImage";
 
 const slides = [
   { label: "প্রকৃতির মিষ্টি উপহার", title: "প্রতিদিনের শুরু হোক", emphasis: "মধুর স্বাদে।", description: "সুন্দরবনের মধু থেকে ফুলের মধু—আপনার পছন্দের স্বাদ খুঁজে নিন আমাদের সংগ্রহে।", image: "/images/products/sundarban-chaker-modhu.jpg", alt: "হালাল সেবার মধুর বোতল", href: "/collections/honey", action: "মধুর সংগ্রহ দেখুন", number: "01", caption: "মধু", tone: "honey" },
@@ -51,7 +52,7 @@ export function HeroSection() {
           </div>
         </div>
         <div className="store-hero-visual" key={`image-${active}`}>
-          <img src={slide.image} alt={slide.alt} fetchPriority={active === 0 ? "high" : "auto"} className="store-hero-photo" />
+          <SafeImage src={slide.image} alt={slide.alt} fetchPriority={active === 0 ? "high" : "auto"} className="store-hero-photo" />
         </div>
         <div className="store-slider-controls">
           <div className="store-slide-dots">{slides.map((item, index) => <button key={item.number} type="button" aria-label={`${item.caption} দেখুন`} aria-pressed={index === active} onClick={() => setActive(index)}><span className={index === active ? "is-active" : ""} /></button>)}</div>
