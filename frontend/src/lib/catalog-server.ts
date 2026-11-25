@@ -1,7 +1,7 @@
 import { cache } from 'react';
 import type { CatalogData } from '@/context/CatalogContext';
 import type { Product, Category } from '@/data/catalog';
-import { PRODUCTS, CATEGORIES } from '@/data/catalog';
+import { PRODUCTS, CATEGORIES, sortProductVariants } from '@/data/catalog';
 
 // The legacy "মসলা ও বীজ" category (slug spices-seeds) was split in the admin
 // panel into "মসলা" (spices), "বাদাম ও বীজ" (nuts-seeds) and "ফাংশনাল ফুড"
@@ -52,7 +52,7 @@ export const getCatalog = cache(async (): Promise<CatalogData> => {
           Array.isArray(data.categories) && data.categories.length > 0 ? data.categories : CATEGORIES
         );
         const result: CatalogData = {
-          products: merged.products,
+          products: sortProductVariants(merged.products),
           categories: merged.categories,
           settings: data.settings || {},
           unavailable: false,
@@ -71,7 +71,7 @@ export const getCatalog = cache(async (): Promise<CatalogData> => {
 
   const mergedFallback = mergeLegacySpicesSeeds(PRODUCTS, CATEGORIES);
   const fallbackResult: CatalogData = {
-    products: mergedFallback.products,
+    products: sortProductVariants(mergedFallback.products),
     categories: mergedFallback.categories,
     settings: {},
     unavailable: false,

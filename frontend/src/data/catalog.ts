@@ -80,6 +80,26 @@ export interface Product {
   origin: string;
 }
 
+// Variants arrive from the API in database order, which is not always
+// small → large (e.g. mustard oil listed ৫ লিটার before ১ লিটার, so "Add to
+// Cart" with no size picked added the expensive ৫ লিটার variant). Sort each
+// product's variants ascending by price, in the one place every storefront
+// surface reads from, so the first variant — and therefore the default — is
+// always the cheapest/smallest. Stable: equal prices keep their original order.
+export function sortProductVariants(products: Product[]): Product[] {
+  return products.map((p) =>
+    p.variants && p.variants.length > 1
+      ? {
+          ...p,
+          variants: p.variants
+            .map((v, i) => ({ v, i }))
+            .sort((a, b) => a.v.price - b.v.price || a.i - b.i)
+            .map(({ v }) => v),
+        }
+      : p
+  );
+}
+
 export const SITE_ASSETS = {
   logo: "/images/halal-sheba-logo.png",
   paymentGateway: "/images/badges/payment-methods.svg",
