@@ -34,6 +34,8 @@ export interface CustomerOrder {
   note?: string;
   coupon?: string;
   paymentMethod: "cod" | "bkash" | "nagad" | "sslcommerz";
+  bkashSenderNumber?: string;
+  bkashTrxId?: string;
   items: CartItem[];
   subtotal: number;
   deliveryCharge: number;
@@ -276,7 +278,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   );
 
   const placeOrder = useCallback(async (orderData: Omit<CustomerOrder, "orderId" | "status" | "createdAt">) => {
-    if (orderData.paymentMethod !== 'cod') throw new Error('Online payments are not configured. Please select Cash on Delivery.');
+    if (orderData.paymentMethod !== 'cod' && orderData.paymentMethod !== 'bkash') throw new Error('Online payments are not configured. Please select Cash on Delivery or bKash.');
     const fingerprint=JSON.stringify(orderData);
     if(sessionStorage.getItem('checkout-request-data')!==fingerprint){sessionStorage.removeItem('checkout-request-key');sessionStorage.setItem('checkout-request-data',fingerprint);}
     let key=sessionStorage.getItem('checkout-request-key');
@@ -285,7 +287,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       const result=await api<{reference:string;subtotal:number;discount:number;delivery_charge:number;total:number;created_at:string}>('orders',{method:'POST',body:JSON.stringify({
         idempotency_key:key,name:orderData.customerName,phone:orderData.phone,address:orderData.address,
         district:orderData.district || (orderData.area==='inside-dhaka'?'Dhaka':orderData.address.split(',').at(-1)?.trim()||'Outside Dhaka'),
-        source:'web',payment_method:'cod',note:orderData.note,coupon:orderData.coupon,items:orderData.items.map(i=>({variant_id:i.variantId || i.productId,quantity:i.quantity}))
+        source:'web',payment_method:orderData.paymentMethod,bkash_sender_number:orderData.bkashSenderNumber,bkash_trxid:orderData.bkashTrxId,note:orderData.note,coupon:orderData.coupon,items:orderData.items.map(i=>({variant_id:i.variantId || i.productId,quantity:i.quantity}))
       })});
       sessionStorage.removeItem('checkout-request-key');
       sessionStorage.removeItem('checkout-request-data');

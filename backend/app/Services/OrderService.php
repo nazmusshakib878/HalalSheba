@@ -123,6 +123,8 @@ class OrderService {
                 'status' => 'new',
                 'payment_status' => 'unpaid',
                 'payment_method' => $d['payment_method'] ?? 'cod',
+                'bkash_sender_number' => $d['bkash_sender_number'] ?? null,
+                'bkash_trxid' => $d['bkash_trxid'] ?? null,
                 'source' => $d['source'] ?? 'web',
                 'address' => $d['address'],
                 'district' => $d['district'] ?? 'Dhaka',

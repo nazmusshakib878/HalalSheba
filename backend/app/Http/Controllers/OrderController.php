@@ -33,7 +33,9 @@ class OrderController extends Controller {
         try {
             $d=$r->validate(['idempotency_key'=>'required|uuid','name'=>'required|string|max:255','phone'=>'required|regex:/^\+?[0-9]{10,15}$/',
                 'email'=>'nullable|email','address'=>'required|string|max:2000','district'=>'required|string|max:100',
-                'note'=>'nullable|string|max:2000','payment_method'=>'required|in:cod','source'=>'nullable|in:phone,whatsapp,manual,web',
+                'note'=>'nullable|string|max:2000','payment_method'=>'required|in:cod,bkash',
+                'bkash_sender_number'=>'nullable|string|max:20','bkash_trxid'=>'required_if:payment_method,bkash|nullable|string|max:100',
+                'source'=>'nullable|in:phone,whatsapp,manual,web',
                 'coupon'=>'nullable|string|max:100','items'=>'required|array|min:1|max:100','items.*.variant_id'=>'required|integer',
                 'items.*.quantity'=>'required|integer|min:1|max:10000']);
 

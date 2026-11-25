@@ -239,6 +239,11 @@ export function Orders() {
                     <div style={{ fontSize: 15, fontWeight: 700, color: '#1e293b' }}>
                       {o.name}
                     </div>
+                    {o.payment_method === 'bkash' && (
+                      <div style={{ fontSize: 12, fontWeight: 700, color: '#be185d', marginTop: 4 }}>
+                        বিকাশ • TrxID: {o.bkash_trxid || '—'}
+                      </div>
+                    )}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, marginBottom: 10, flexWrap: 'wrap' }}>
                       <a
                         href={`tel:${o.phone}`}
@@ -315,6 +320,11 @@ export function Orders() {
                       <strong style={{ fontFamily: 'monospace', letterSpacing: '0.5px' }}>
                         #{o.reference.slice(0, 8).toUpperCase()}
                       </strong>
+                      {o.payment_method === 'bkash' && (
+                        <div style={{ marginTop: 4, fontSize: 11, color: '#be185d', fontWeight: 700 }}>
+                          বিকাশ • TrxID: {o.bkash_trxid || '—'}
+                        </div>
+                      )}
                       {isUnconfirmed && (
                         <div style={{ marginTop: 4 }}>
                           <span style={{ fontSize: 10, background: '#fef3c7', color: '#92400e', padding: '2px 6px', borderRadius: 4, fontWeight: 700 }}>
@@ -605,8 +615,20 @@ export function OrderDetail({ id }: { id: string }) {
                 </tr>
                 <tr>
                   <th>পেমেন্ট মেথড:</th>
-                  <td>ক্যাশ অন ডেলিভারি (COD)</td>
+                  <td>{o.payment_method === 'bkash' ? 'বিকাশ (Send Money)' : 'ক্যাশ অন ডেলিভারি (COD)'}</td>
                 </tr>
+                {o.payment_method === 'bkash' && (
+                  <>
+                    <tr>
+                      <th>গ্রাহকের bKash নম্বর:</th>
+                      <td>{o.bkash_sender_number || '—'}</td>
+                    </tr>
+                    <tr>
+                      <th>bKash TrxID:</th>
+                      <td><strong>{o.bkash_trxid || '—'}</strong></td>
+                    </tr>
+                  </>
+                )}
                 <tr>
                   <th>পেমেন্ট স্ট্যাটাস:</th>
                   <td>

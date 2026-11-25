@@ -9,6 +9,9 @@ import { formatTakaDecimals } from "@/data/catalog";
 import { CustomerOrder, useStore } from "@/context/StoreContext";
 import { SafeImage } from "@/components/SafeImage";
 
+// Manual bKash (Send Money) receiving number — the shop's confirmed bKash number (same as the hotline).
+const BKASH_RECEIVE_NUMBER = "01313-946402";
+
 // Bangladesh Districts (all 64)
 const DISTRICTS = [
   "Dhaka",
@@ -236,6 +239,10 @@ function CheckoutInner() {
   const [note, setNote] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "online" | "bkash">("cod");
 
+  // Manual bKash (Send Money) fields
+  const [bkashSenderNumber, setBkashSenderNumber] = useState("");
+  const [bkashTrxId, setBkashTrxId] = useState("");
+
   // Coupon Accordion
   const [couponOpen, setCouponOpen] = useState(true);
   const [couponCode, setCouponCode] = useState("");
@@ -320,6 +327,10 @@ function CheckoutInner() {
       showToast("Please agree to the terms and privacy policy", "info");
       return;
     }
+    if (paymentMethod === "bkash" && !bkashTrxId.trim()) {
+      showToast("অনুগ্রহ করে আপনার bKash Transaction ID (TrxID) দিন", "error");
+      return;
+    }
 
     const area = district.toLowerCase() === "dhaka" ? "inside-dhaka" : "outside-dhaka";
 
@@ -334,6 +345,8 @@ function CheckoutInner() {
       note: note.trim() || undefined,
       coupon: appliedPromo || undefined,
       paymentMethod: paymentMethod === "online" ? "sslcommerz" : paymentMethod,
+      bkashSenderNumber: paymentMethod === "bkash" ? bkashSenderNumber.trim() || undefined : undefined,
+      bkashTrxId: paymentMethod === "bkash" ? bkashTrxId.trim() : undefined,
       items: checkoutItems,
       subtotal,
       deliveryCharge: deliveryCost,
@@ -385,9 +398,19 @@ function CheckoutInner() {
               <span className="font-semibold uppercase text-[#222831]">
                 {completedOrder.paymentMethod === "cod"
                   ? "Cash on Delivery"
-                  : completedOrder.paymentMethod}
+                  : completedOrder.paymentMethod === "bkash"
+                    ? "bKash (Send Money)"
+                    : completedOrder.paymentMethod}
               </span>
             </div>
+            {completedOrder.paymentMethod === "bkash" && completedOrder.bkashTrxId && (
+              <div className="flex justify-between">
+                <span className="text-gray-500">bKash TrxID:</span>
+                <span className="font-semibold text-[#222831]">
+                  {completedOrder.bkashTrxId}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between border-t border-gray-200 pt-1.5">
               <span className="text-gray-500">Total Payable:</span>
               <span className="font-bold text-[#f48721]">
@@ -754,7 +777,7 @@ function CheckoutInner() {
               {/* Option 3: bKash (full width or row below) */}
               <button
                 type="button"
-                disabled title="Currently unavailable"
+                onClick={() => setPaymentMethod("bkash")}
                 className={`w-full flex items-center justify-between p-3 rounded-lg border text-left transition-all cursor-pointer ${
                   paymentMethod === "bkash"
                     ? "border-[#f48721] bg-[#fffaf5] shadow-xs ring-1 ring-[#f48721]"
@@ -766,7 +789,7 @@ function CheckoutInner() {
                     <BkashIcon className="h-6 w-6" />
                   </div>
                   <span className="text-xs sm:text-[13px] font-bold text-gray-800">
-                    bKash (Unavailable)
+                    bKash
                   </span>
                 </div>
                 {paymentMethod === "bkash" && (
@@ -775,6 +798,40 @@ function CheckoutInner() {
                   </span>
                 )}
               </button>
+
+              {/* Manual bKash (Send Money) details — shown when bKash is selected */}
+              {paymentMethod === "bkash" && (
+                <div className="rounded-lg border border-pink-200 bg-pink-50/60 p-4 space-y-3">
+                  <p className="text-[13px] text-gray-800 leading-relaxed">
+                    নিচের bKash নম্বরে <strong>Send Money</strong> করুন, তারপর আপনার Transaction ID (TrxID) এখানে লিখুন।
+                  </p>
+                  <div className="flex items-center justify-between gap-2 rounded-md bg-white border border-pink-200 px-3 py-2.5">
+                    <span className="text-xs text-gray-500">bKash নম্বর (Send Money)</span>
+                    <span className="text-sm font-bold text-[#e2136e] tracking-wide">{BKASH_RECEIVE_NUMBER}</span>
+                  </div>
+                  <label className="block text-xs font-medium text-gray-700">আপনার bKash নম্বর
+                    <input
+                      type="tel"
+                      value={bkashSenderNumber}
+                      onChange={(e) => setBkashSenderNumber(e.target.value)}
+                      placeholder="যেমন: 01712345678"
+                      className="mt-1 w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-[#f48721] transition-colors"
+                    />
+                  </label>
+                  <label className="block text-xs font-medium text-gray-700">Transaction ID (TrxID) *
+                    <input
+                      type="text"
+                      value={bkashTrxId}
+                      onChange={(e) => setBkashTrxId(e.target.value)}
+                      placeholder="যেমন: 9HX7K2LMNP"
+                      className="mt-1 w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-[#f48721] transition-colors"
+                    />
+                  </label>
+                  <p className="text-[11.5px] text-gray-500 leading-relaxed">
+                    আমরা আপনার পেমেন্ট যাচাই করে অর্ডার কনফার্ম করব। TrxID ছাড়া অর্ডার দেওয়া যাবে না।
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
