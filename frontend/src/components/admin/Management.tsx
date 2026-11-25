@@ -7,6 +7,29 @@ import { notifyCatalogUpdated } from '@/context/CatalogContext';
 
 type Field = { key: string; label: string; type?: string; options?: string[] };
 
+// Audit-log "changes" arrive as a JSON string with Bengali escaped as \u09xx
+// sequences. Parse and re-stringify it so the log reads in plain Bengali
+// instead of raw escapes; fall back to the raw value when it is not JSON.
+function formatChanges(value: unknown) {
+  if (value == null || value === '') return '—';
+  let parsed: unknown = value;
+  if (typeof value === 'string') {
+    try {
+      parsed = JSON.parse(value);
+    } catch {
+      return value;
+    }
+  }
+  if (parsed != null && typeof parsed === 'object') {
+    return (
+      <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 12, maxHeight: 140, overflow: 'auto' }}>
+        {JSON.stringify(parsed, null, 2)}
+      </pre>
+    );
+  }
+  return String(parsed);
+}
+
 async function compressImage(file: File): Promise<File | Blob> {
   if (file.size <= 1024 * 1024) return file;
   return new Promise((resolve) => {
@@ -336,6 +359,8 @@ export function Management({ section }: { section: string }) {
                 <td key={k} title={String(r[k] ?? '')}>
                   {k === 'spending'
                     ? money(r[k])
+                    : k === 'changes'
+                    ? formatChanges(r[k])
                     : ['active', 'vip'].includes(k)
                     ? r[k]
                       ? 'Yes'

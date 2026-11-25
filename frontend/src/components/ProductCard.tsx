@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Product, formatTaka } from "@/data/catalog";
 import { useStore } from "@/context/StoreContext";
@@ -14,6 +14,15 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const { addToCart, toggleWishlist, isWishlisted } = useStore();
   const wishlisted = isWishlisted(product.id);
+  // Variant products (e.g. the wooden roti maker with ৮/৯/১০ ইঞ্চি sizes):
+  // show the size buttons and a SELECT OPTIONS button, like the product
+  // detail page's size selector. No stock count is shown anywhere.
+  const variants = product.variants ?? [];
+  const hasVariants = variants.length > 0;
+  const [selectedVariant, setSelectedVariant] = useState<number | null>(null);
+  const selected = selectedVariant != null ? variants[selectedVariant] : null;
+  const minPrice = hasVariants ? Math.min(...variants.map((v) => v.price)) : product.price;
+  const maxPrice = hasVariants ? Math.max(...variants.map((v) => v.price)) : product.price;
 
   return (
     <div className="premium-product group relative flex h-full min-w-0 flex-col">
@@ -60,24 +69,58 @@ export function ProductCard({ product }: ProductCardProps) {
 
           <div className="mt-1.5 sm:mt-2 flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
             <span className="text-[15px] sm:text-[18px] font-semibold text-[#254b39]">
-              {formatTaka(product.price)}
+              {selected
+                ? formatTaka(selected.price)
+                : hasVariants && minPrice !== maxPrice
+                ? `${formatTaka(minPrice)} – ${formatTaka(maxPrice)}`
+                : formatTaka(product.price)}
             </span>
-            {product.regularPrice && (
+            {!selected && product.regularPrice && (
               <span className="text-[11.5px] sm:text-[13px] text-slate-400 line-through">
                 {formatTaka(product.regularPrice)}
               </span>
             )}
           </div>
+
+          {hasVariants && (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {variants.map((v, i) => (
+                <button
+                  key={v.id}
+                  type="button"
+                  aria-pressed={selectedVariant === i}
+                  onClick={() => setSelectedVariant(i)}
+                  className={
+                    "rounded-lg border px-2.5 py-1.5 text-[11px] sm:text-xs font-bold cursor-pointer " +
+                    (selectedVariant === i
+                      ? "border-orange-500 text-orange-500 bg-orange-50"
+                      : "border-slate-200 text-slate-700")
+                  }
+                >
+                  {v.name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        <button
-          type="button"
-          onClick={() => addToCart(product, 1, true)}
-          className="premium-cart-button mt-3 sm:mt-4 w-full inline-flex items-center justify-center gap-1.5 min-h-11 py-2 px-2 text-[12px] sm:text-[13px] font-semibold cursor-pointer active:scale-95 transition-transform"
-        >
-          <CartIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-          <span>Add to Cart</span>
-        </button>
+        {hasVariants ? (
+          <Link
+            href={`/products/${product.slug}`}
+            className="premium-cart-button mt-3 sm:mt-4 w-full inline-flex items-center justify-center gap-1.5 min-h-11 py-2 px-2 text-[12px] sm:text-[13px] font-semibold cursor-pointer active:scale-95 transition-transform"
+          >
+            <span>SELECT OPTIONS</span>
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={() => addToCart(product, 1, true)}
+            className="premium-cart-button mt-3 sm:mt-4 w-full inline-flex items-center justify-center gap-1.5 min-h-11 py-2 px-2 text-[12px] sm:text-[13px] font-semibold cursor-pointer active:scale-95 transition-transform"
+          >
+            <CartIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+            <span>Add to Cart</span>
+          </button>
+        )}
       </div>
     </div>
   );

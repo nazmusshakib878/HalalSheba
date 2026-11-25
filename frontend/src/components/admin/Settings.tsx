@@ -186,7 +186,7 @@ export function Settings() {
                   <li>গুগল যে ১৬ অক্ষরের একটি কোড দিবে, সেটি কপি করে উপরের <strong>Google App Password</strong> বক্সে পেস্ট করে নিচে <strong>সেটিংস সংরক্ষণ করুন</strong>।</li>
                 </ol>
                 <div style={{ marginTop: 6, fontWeight: 500 }}>
-                  ✅ ব্যাস! এরপর থেকে যে কেউ অর্ডার করলেই আপনার ফোনে <strong>n.shakib2027@gmail.com</strong> এ সরাসরি রিমাইন্ডার ইমেইল চলে আসবে।
+                  ✅ ব্যাস! এরপর থেকে যে কেউ অর্ডার করলেই আপনার ফোনে <strong>nazmusshakib335@gmail.com</strong> এ সরাসরি রিমাইন্ডার ইমেইল চলে আসবে।
                 </div>
               </div>
             </div>

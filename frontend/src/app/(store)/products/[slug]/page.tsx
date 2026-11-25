@@ -493,7 +493,7 @@ export default function ProductDetailPage() {
 
                 {productReviews.length === 0 ? (
                   <p className="text-sm text-gray-500">
-                    No customer reviews yet. Be the first to review {product.name}!
+                    No customer reviews yet. Be the first to review{' '}{product.name}!
                   </p>
                 ) : (
                   <div className="space-y-4">

@@ -144,7 +144,7 @@ export function Header() {
                   setQuery(e.target.value);
                   setSearchFocused(true);
                 }}
-                placeholder="Search in..."
+                placeholder="Search products..."
                 aria-label="Search products"
                 className="w-full h-[42px] rounded-md bg-[#f4f5f7] border border-transparent focus:border-[#f48721]/60 focus:bg-white pl-4 pr-11 text-[14px] text-[#222831] placeholder:text-[#6b7280] outline-none transition-colors"
               />

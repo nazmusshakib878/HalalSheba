@@ -150,11 +150,6 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/collections/ghee" className="hover:text-[#f48721]">
-                  Ghee
-                </Link>
-              </li>
-              <li>
                 <Link href="/collections/organic-food" className="hover:text-[#f48721]">
                   Organic Food
                 </Link>

@@ -33,7 +33,9 @@ function CollectionViewInner() {
   const { PRODUCTS, CATEGORIES } = useCatalog();
   const params = useParams<{ slug: string }>();
   const searchParams = useSearchParams();
-  const slug = params?.slug || "all-products";
+  // Legacy alias: the old "মসলা ও বীজ" collection was merged into "মসলা".
+  const rawSlug = params?.slug || "all-products";
+  const slug = rawSlug === "spices-seeds" ? "spices" : rawSlug;
   const searchQuery = searchParams.get("q") || "";
   const initialSub = searchParams.get("sub") || "";
 
