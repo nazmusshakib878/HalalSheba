@@ -89,7 +89,9 @@ input[type="range"].hs-range::-moz-range-thumb {
 
 /* Storefront presentation */
 /* Unique centred hero: giant headline, one featured photo, one CTA,
-   marquee strip on top and a honeycomb band closing the hero. No carousel. */
+   marquee strip on top and a honeycomb band closing the hero. Simple
+   3-slide carousel — all slides share one grid cell so the banner
+   height never shifts when slides change. */
 .store-hero-unique { background:#f7f3e9; overflow:hidden; }
 .store-hero-marquee { overflow:hidden; background:#0a371f; color:#f7f3e9; }
 .store-hero-marquee-track { display:flex; width:max-content; animation:store-marquee 28s linear infinite; }
@@ -107,6 +109,17 @@ input[type="range"].hs-range::-moz-range-thumb {
 .store-hero-cta { display:inline-flex; align-items:center; gap:10px; min-height:56px; margin-top:28px; padding:14px 36px; border-radius:999px; background:#0a371f; color:#f7f3e9; font-size:17px; font-weight:700; text-decoration:none; box-shadow:0 16px 30px -12px rgba(10,55,31,.55); transition:background .2s, transform .2s, box-shadow .2s; }
 .store-hero-cta:hover { background:#14532f; transform:translateY(-2px); box-shadow:0 20px 34px -12px rgba(10,55,31,.6); }
 .store-hero-cta > span { font-size:19px; }
+.store-hero-slides { display:grid; }
+.store-hero-slide { grid-area:1 / 1; opacity:0; visibility:hidden; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease, visibility 0s linear .5s; pointer-events:none; }
+.store-hero-slide.is-active { opacity:1; visibility:visible; transform:none; transition:opacity .5s ease, transform .5s ease; pointer-events:auto; }
+.store-hero-badge { display:inline-block; margin:0 0 22px; padding:8px 20px; border-radius:999px; background:#fff; border:1px solid #e5ddc8; color:#0a371f; font-size:13px; font-weight:700; letter-spacing:.06em; box-shadow:0 2px 8px rgba(10,55,31,.06); }
+.store-hero-desc { max-width:640px; margin:20px auto 0; font-size:17px; line-height:1.7; color:#4c5a50; text-wrap:balance; }
+.store-hero-controls { display:flex; align-items:center; justify-content:center; gap:18px; margin-top:34px; }
+.store-hero-arrow { width:44px; height:44px; border-radius:50%; border:1px solid #e5ddc8; background:#fff; color:#0a371f; font-size:22px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0 0 2px; transition:border-color .2s, box-shadow .2s; }
+.store-hero-arrow:hover { border-color:#d5a33d; box-shadow:0 4px 14px rgba(10,55,31,.12); }
+.store-hero-dots { display:flex; gap:8px; }
+.store-hero-dot { width:10px; height:10px; border-radius:999px; border:0; padding:0; background:#d8d2bf; cursor:pointer; transition:width .25s ease, background .25s ease; }
+.store-hero-dot.is-active { width:28px; background:#0a371f; }
 .store-hero-band { height:58px; border-radius:50% 50% 0 0 / 30px 30px 0 0; background-color:#0a371f; background-image:linear-gradient(30deg,#d5a33d 12%,transparent 12.5%,transparent 87%,#d5a33d 87.5%,#d5a33d),linear-gradient(150deg,#d5a33d 12%,transparent 12.5%,transparent 87%,#d5a33d 87.5%,#d5a33d),linear-gradient(30deg,#d5a33d 12%,transparent 12.5%,transparent 87%,#d5a33d 87.5%,#d5a33d),linear-gradient(150deg,#d5a33d 12%,transparent 12.5%,transparent 87%,#d5a33d 87.5%,#d5a33d),linear-gradient(60deg,rgba(213,163,61,.55) 25%,transparent 25.5%,transparent 75%,rgba(213,163,61,.55) 75%,rgba(213,163,61,.55)),linear-gradient(60deg,rgba(213,163,61,.55) 25%,transparent 25.5%,transparent 75%,rgba(213,163,61,.55) 75%,rgba(213,163,61,.55)); background-size:56px 98px; background-position:0 0,0 0,28px 49px,28px 49px,0 0,28px 49px; opacity:.96; }
 .store-hero-strip-wrap { max-width:1480px; margin:auto; padding:0 24px; }
 
@@ -150,6 +163,10 @@ input[type="range"].hs-range::-moz-range-thumb {
  .store-hero-pills a { font-size:13px; padding:8px 16px; }
  .store-hero-trust { font-size:13px; margin-top:18px; }
  .store-hero-cta { min-height:52px; margin-top:24px; padding:12px 30px; font-size:16px; }
+ .store-hero-badge { font-size:12px; padding:7px 16px; margin-bottom:16px; }
+ .store-hero-desc { font-size:15px; margin-top:16px; }
+ .store-hero-controls { margin-top:26px; gap:14px; }
+ .store-hero-arrow { width:40px; height:40px; font-size:20px; }
  .store-hero-band { height:44px; border-radius:50% 50% 0 0 / 20px 20px 0 0; }
  .store-hero-strip-wrap { padding:0 12px; }
  .store-hero-marquee-track span { font-size:12px; }
@@ -166,6 +183,7 @@ input[type="range"].hs-range::-moz-range-thumb {
 }
 @media (prefers-reduced-motion:reduce) {
  .store-hero-marquee-track { animation:none; }
+ .store-hero-slide, .store-hero-dot { transition:none; }
 }
 
 /* Quiet surfaces and consistent product presentation. */
