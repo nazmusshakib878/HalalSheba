@@ -1,12 +1,13 @@
 "use client";
+import { Product } from "@/data/catalog";
 import { useCatalog } from "@/context/CatalogContext";
 import Link from "next/link";
 
 import { ProductCard } from "@/components/ProductCard";
 
-export function TopSellingSection() {
-  const { PRODUCTS, CATEGORIES } = useCatalog();
-  const topSelling = PRODUCTS.filter((product) => product.isTopSelling || product.featured);
+export function TopSellingSection({ products }: { products?: Product[] }) {
+  const { PRODUCTS } = useCatalog();
+  const topSelling = (products ?? PRODUCTS).filter((product) => product.isTopSelling || product.featured);
 
   return (
     <section className="mx-auto max-w-[1320px] px-3 sm:px-6 pb-8 sm:pb-11">

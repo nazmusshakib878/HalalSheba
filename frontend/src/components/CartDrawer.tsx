@@ -3,11 +3,13 @@
 import React from "react";
 import Link from "next/link";
 import { useStore } from "@/context/StoreContext";
+import { useCatalog } from "@/context/CatalogContext";
 import { formatTaka, formatTakaDecimals } from "@/data/catalog";
 import { SafeImage } from "@/components/SafeImage";
 import { CloseIcon } from "@/components/Icons";
 
 export function CartDrawer() {
+  const { settings } = useCatalog();
   const {
     cart,
     subtotal,
@@ -18,6 +20,10 @@ export function CartDrawer() {
     removeFromCart,
     clearCart,
   } = useStore();
+  // Delivery fees come from store settings (paisa); fall back to the real ৳70/৳100 rates.
+  const deliverySettings = (settings.delivery || {}) as Record<string, unknown>;
+  const dhakaFee = Number(deliverySettings.dhaka ?? 7000) / 100;
+  const outsideFee = Number(deliverySettings.outside ?? 10000) / 100;
 
   if (!isCartOpen) return null;
 
@@ -182,7 +188,7 @@ export function CartDrawer() {
               </span>
             </div>
             <p className="text-xs text-gray-500">
-              Delivery charge (৳60 Inside Dhaka / ৳120 Outside Dhaka) calculated at checkout.
+              Delivery charge (৳{dhakaFee} Inside Dhaka / ৳{outsideFee} Outside Dhaka) calculated at checkout.
             </p>
             <div className="grid grid-cols-2 gap-2.5 pt-1">
               <button

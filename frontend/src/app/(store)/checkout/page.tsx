@@ -9,7 +9,7 @@ import { formatTakaDecimals } from "@/data/catalog";
 import { CustomerOrder, useStore } from "@/context/StoreContext";
 import { SafeImage } from "@/components/SafeImage";
 
-// Bangladesh Districts
+// Bangladesh Districts (all 64)
 const DISTRICTS = [
   "Dhaka",
   "Satkhira",
@@ -46,16 +46,104 @@ const DISTRICTS = [
   "Magura",
   "Meherpur",
   "Narail",
+  "Barguna",
+  "Bhola",
+  "Patuakhali",
+  "Pirojpur",
+  "Jhalokati",
+  "Chandpur",
+  "Lakshmipur",
+  "Habiganj",
+  "Moulvibazar",
+  "Sunamganj",
+  "Netrokona",
+  "Sherpur",
+  "Kishoreganj",
+  "Gopalganj",
+  "Madaripur",
+  "Shariatpur",
+  "Rajbari",
+  "Natore",
+  "Chapainawabganj",
+  "Joypurhat",
+  "Gaibandha",
+  "Kurigram",
+  "Lalmonirhat",
+  "Nilphamari",
+  "Panchagarh",
+  "Thakurgaon",
+  "Rangamati",
+  "Bandarban",
+  "Khagrachhari",
   "Other Districts",
 ];
 
-// District Thanas / Upazilas mapping (common examples)
+// District Thanas / Upazilas (all 64 districts; districts not listed fall back to a free-text field)
 const THANAS: Record<string, string[]> = {
   Dhaka: ["Dhanmondi", "Gulshan", "Banani", "Mirpur", "Uttara", "Mohammadpur", "Badda", "Motijheel", "Rampura", "Khilgaon", "Jatrabari", "Mohakhali", "Tejgaon", "Old Dhaka"],
   Satkhira: ["Satkhira Sadar", "Kalaroa", "Tala", "Debhata", "Kaliganj", "Assasuni", "Shyamnagar"],
   Chattogram: ["Kotwali", "Panchlaish", "Halishahar", "Pahartali", "Bakalia", "Double Mooring", "Hathazari", "Sitakunda"],
   Khulna: ["Khulna Sadar", "Sonadanga", "Khalishpur", "Daulatpur", "Khan Jahan Ali", "Rupsha", "Dumuria"],
   Gazipur: ["Gazipur Sadar", "Tongi", "Kaliakair", "Kapasia", "Sreepur", "Kaliganj"],
+  Narayanganj: ["Narayanganj Sadar", "Araihazar", "Bandar", "Rupganj", "Sonargaon"],
+  Rajshahi: ["Boalia", "Paba", "Bagha", "Bagmara", "Charghat", "Durgapur", "Godagari", "Mohanpur", "Puthia", "Tanore"],
+  Sylhet: ["Sylhet Sadar", "Balaganj", "Beanibazar", "Bishwanath", "Companiganj", "Dakshin Surma", "Fenchuganj", "Golapganj", "Gowainghat", "Jaintiapur", "Kanaighat", "Osmaninagar", "Zakiganj"],
+  Barishal: ["Barishal Sadar", "Agailjhara", "Babuganj", "Bakerganj", "Banaripara", "Gournadi", "Hizla", "Mehendiganj", "Muladi", "Wazirpur"],
+  Rangpur: ["Rangpur Sadar", "Badarganj", "Gangachara", "Kaunia", "Mithapukur", "Pirgachha", "Pirganj", "Taraganj"],
+  Mymensingh: ["Mymensingh Sadar", "Bhaluka", "Dhobaura", "Fulbaria", "Gaffargaon", "Gauripur", "Haluaghat", "Ishwarganj", "Muktagachha", "Nandail", "Phulpur", "Tarakanda", "Trishal"],
+  Cumilla: ["Cumilla Sadar", "Cumilla Sadar Dakshin", "Barura", "Brahmanpara", "Burichang", "Chandina", "Chauddagram", "Daudkandi", "Debidwar", "Homna", "Laksam", "Lalmai", "Meghna", "Monoharganj", "Muradnagar", "Nangalkot", "Titas"],
+  Bogura: ["Bogura Sadar", "Adamdighi", "Dhunat", "Dupchanchia", "Gabtali", "Kahaloo", "Nandigram", "Sariakandi", "Shajahanpur", "Sherpur", "Shibganj", "Sonatala"],
+  Jessore: ["Jessore Sadar", "Abhaynagar", "Bagherpara", "Chaugachha", "Jhikargachha", "Keshabpur", "Manirampur", "Sharsha"],
+  Kushtia: ["Kushtia Sadar", "Bheramara", "Daulatpur", "Khoksa", "Kumarkhali", "Mirpur"],
+  Faridpur: ["Faridpur Sadar", "Alfadanga", "Bhanga", "Boalmari", "Charbhadrasan", "Madhukhali", "Nagarkanda", "Sadarpur", "Saltha"],
+  Pabna: ["Pabna Sadar", "Atgharia", "Bera", "Bhangura", "Chatmohar", "Faridpur", "Ishwardi", "Santhia", "Sujanagar"],
+  Tangail: ["Tangail Sadar", "Basail", "Bhuapur", "Delduar", "Dhanbari", "Ghatail", "Gopalpur", "Kalihati", "Madhupur", "Mirzapur", "Nagarpur", "Sakhipur"],
+  "Cox's Bazar": ["Cox's Bazar Sadar", "Chakaria", "Eidgaon", "Kutubdia", "Maheshkhali", "Pekua", "Ramu", "Teknaf", "Ukhia"],
+  Feni: ["Feni Sadar", "Chhagalnaiya", "Daganbhuiyan", "Fulgazi", "Parshuram", "Sonagazi"],
+  Noakhali: ["Noakhali Sadar", "Begumganj", "Chatkhil", "Companiganj", "Hatiya", "Kabirhat", "Senbagh", "Sonaimuri", "Subarnachar"],
+  Brahmanbaria: ["Brahmanbaria Sadar", "Akhaura", "Ashuganj", "Bancharampur", "Bijoynagar", "Kasba", "Nabinagar", "Nasirnagar", "Sarail"],
+  Dinajpur: ["Dinajpur Sadar", "Birampur", "Birganj", "Birol", "Bochaganj", "Chirirbandar", "Ghoraghat", "Hakimpur", "Kaharole", "Khansama", "Nawabganj", "Parbatipur", "Phulbari"],
+  Jamalpur: ["Jamalpur Sadar", "Bakshiganj", "Dewanganj", "Islampur", "Madarganj", "Melandaha", "Sarishabari"],
+  Sirajganj: ["Sirajganj Sadar", "Belkuchi", "Chauhali", "Kamarkhanda", "Kazipur", "Raiganj", "Shahjadpur", "Tarash", "Ullahpara"],
+  Naogaon: ["Naogaon Sadar", "Atrai", "Badalgachhi", "Dhamoirhat", "Manda", "Mohadevpur", "Niamatpur", "Patnitala", "Porsha", "Raninagar", "Sapahar"],
+  Manikganj: ["Manikganj Sadar", "Daulatpur", "Ghior", "Harirampur", "Saturia", "Shivalaya", "Singair"],
+  Munshiganj: ["Munshiganj Sadar", "Gazaria", "Lohajang", "Sirajdikhan", "Sreenagar", "Tongibari"],
+  Narsingdi: ["Narsingdi Sadar", "Belabo", "Monohardi", "Palash", "Raipura", "Shibpur"],
+  Bagerhat: ["Bagerhat Sadar", "Chitalmari", "Fakirhat", "Kachua", "Mollahat", "Mongla", "Morrelganj", "Rampal", "Sarankhola"],
+  Chuadanga: ["Chuadanga Sadar", "Alamdanga", "Damurhuda", "Jibannagar"],
+  Jhenaidah: ["Jhenaidah Sadar", "Harinakunda", "Kaliganj", "Kotchandpur", "Maheshpur", "Shailkupa"],
+  Magura: ["Magura Sadar", "Mohammadpur", "Shalikha", "Sreepur"],
+  Meherpur: ["Meherpur Sadar", "Gangni", "Mujibnagar"],
+  Narail: ["Narail Sadar", "Kalia", "Lohagara"],
+  Barguna: ["Barguna Sadar", "Amtali", "Bamna", "Betagi", "Patharghata", "Taltali"],
+  Bhola: ["Bhola Sadar", "Borhanuddin", "Char Fasson", "Daulatkhan", "Lalmohan", "Manpura", "Tazumuddin"],
+  Patuakhali: ["Patuakhali Sadar", "Bauphal", "Dashmina", "Dumki", "Galachipa", "Kalapara", "Mirzaganj", "Rangabali"],
+  Pirojpur: ["Pirojpur Sadar", "Bhandaria", "Kawkhali", "Mathbaria", "Nazirpur", "Nesarabad", "Zianagar"],
+  Jhalokati: ["Jhalokati Sadar", "Kathalia", "Nalchity", "Rajapur"],
+  Chandpur: ["Chandpur Sadar", "Faridganj", "Haimchar", "Hajiganj", "Kachua", "Matlab Dakshin", "Matlab Uttar", "Shahrasti"],
+  Lakshmipur: ["Lakshmipur Sadar", "Kamalnagar", "Raipur", "Ramganj", "Ramgati"],
+  Habiganj: ["Habiganj Sadar", "Ajmiriganj", "Bahubal", "Baniachang", "Chunarughat", "Lakhai", "Madhabpur", "Nabiganj", "Shayestaganj"],
+  Moulvibazar: ["Moulvibazar Sadar", "Barlekha", "Juri", "Kamalganj", "Kulaura", "Rajnagar", "Sreemangal"],
+  Sunamganj: ["Sunamganj Sadar", "Bishwambharpur", "Chhatak", "Derai", "Dharampasha", "Dowarabazar", "Jagannathpur", "Jamalganj", "Shalla", "Tahirpur", "Dirai"],
+  Netrokona: ["Netrokona Sadar", "Atpara", "Barhatta", "Durgapur", "Kalmakanda", "Kendua", "Khaliajuri", "Madan", "Mohanganj", "Purbadhala"],
+  Sherpur: ["Sherpur Sadar", "Jhenaigati", "Nakla", "Nalitabari", "Sreebardi"],
+  Kishoreganj: ["Kishoreganj Sadar", "Austagram", "Bajitpur", "Bhairab", "Hossainpur", "Itna", "Karimganj", "Katiadi", "Kuliarchar", "Mithamoin", "Nikli", "Pakundia", "Tarail"],
+  Gopalganj: ["Gopalganj Sadar", "Kashiani", "Kotalipara", "Muksudpur", "Tungipara"],
+  Madaripur: ["Madaripur Sadar", "Dasar", "Kalkini", "Rajoir", "Shibchar"],
+  Shariatpur: ["Shariatpur Sadar", "Bhedarganj", "Damudya", "Gosairhat", "Naria", "Zajira"],
+  Rajbari: ["Rajbari Sadar", "Baliakandi", "Goalandaghat", "Kalukhali", "Pangsha"],
+  Natore: ["Natore Sadar", "Bagatipara", "Baraigram", "Gurudaspur", "Lalpur", "Naldanga", "Singra"],
+  Chapainawabganj: ["Chapainawabganj Sadar", "Bholahat", "Gomastapur", "Nachole", "Shibganj"],
+  Joypurhat: ["Joypurhat Sadar", "Akkelpur", "Kalai", "Khetlal", "Panchbibi"],
+  Gaibandha: ["Gaibandha Sadar", "Fulchhari", "Gobindaganj", "Palashbari", "Sadullapur", "Saghata", "Sundarganj"],
+  Kurigram: ["Kurigram Sadar", "Bhurungamari", "Char Rajibpur", "Chilmari", "Nageshwari", "Phulbari", "Rajarhat", "Roumari", "Ulipur"],
+  Lalmonirhat: ["Lalmonirhat Sadar", "Aditmari", "Hatibandha", "Kaliganj", "Patgram"],
+  Nilphamari: ["Nilphamari Sadar", "Dimla", "Domar", "Jaldhaka", "Kishoreganj", "Saidpur"],
+  Panchagarh: ["Panchagarh Sadar", "Atwari", "Boda", "Debiganj", "Tetulia"],
+  Thakurgaon: ["Thakurgaon Sadar", "Baliadangi", "Haripur", "Pirganj", "Ranisankail"],
+  Rangamati: ["Rangamati Sadar", "Baghaichhari", "Barkal", "Belaichhari", "Juraichhari", "Kaptai", "Kawkhali", "Langadu", "Naniarchar", "Rajasthali"],
+  Bandarban: ["Bandarban Sadar", "Alikadam", "Lama", "Naikhongchhari", "Rowangchhari", "Ruma", "Thanchi"],
+  Khagrachhari: ["Khagrachhari Sadar", "Dighinala", "Guimara", "Laxmichhari", "Mahalchhari", "Manikchhari", "Matiranga", "Panchhari", "Ramgarh"],
 };
 
 function TrashIcon({ className = "h-4 w-4" }: { className?: string }) {
@@ -176,7 +264,7 @@ function CheckoutInner() {
     if (buyNowProduct) {
       if (newQty <= 0) return;
       const min = buyNowProduct?.slug === "satkhira-aam" ? 5 : 1;
-      if (newQty < min) { showToast(`?? ?????? ????????? ?????? ${min} ?????`, "error"); return; }
+      if (newQty < min) { showToast(`সাতক্ষীরার আম কমপক্ষে ${min} কেজি নিতে হবে`, "error"); return; }
       setBuyNowCount(newQty);
     } else {
       updateQuantity(productId, newQty);
@@ -194,7 +282,7 @@ function CheckoutInner() {
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (checkoutItems.some((item) => item.slug === "satkhira-aam" && item.quantity < 5)) {
-      showToast("?????????? ???? ????????? ?????? ? ?????", "error");
+      showToast("সাতক্ষীরার আম অর্ডার করতে কমপক্ষে ৫ কেজি নিতে হবে", "error");
       return;
     }
     if (checkoutItems.length === 0) {
@@ -328,7 +416,7 @@ function CheckoutInner() {
   }
 
   if (checkoutItems.some((item) => item.slug === "satkhira-aam" && item.quantity < 5)) {
-      showToast("?????????? ???? ????????? ?????? ? ?????", "error");
+      showToast("সাতক্ষীরার আম অর্ডার করতে কমপক্ষে ৫ কেজি নিতে হবে", "error");
       return;
     }
     if (checkoutItems.length === 0) {
@@ -373,7 +461,7 @@ function CheckoutInner() {
       {/* Top Banner: Login / Register Prompt */}
       <div className="mb-6 rounded-lg border border-gray-200 bg-white px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
         <span className="text-[13.5px] text-gray-700 font-medium">
-          Have any account? please login or register
+          Have an account? Please log in or register
         </span>
         <div className="flex items-center gap-2">
           <Link
@@ -422,7 +510,7 @@ function CheckoutInner() {
                       </p>
                       <div className="mt-1 flex items-center gap-3 text-xs text-gray-600">
                         <div className="flex items-center gap-1.5">
-                          <span>{item.weight || "Variant"} ? Qty:</span>
+                          <span>{item.weight || "Variant"} • Qty:</span>
                           <div className="inline-flex items-center rounded border border-gray-200 bg-gray-50">
                             <button
                               type="button"
@@ -444,7 +532,7 @@ function CheckoutInner() {
                           </div>
                         </div>
                         <span className="font-bold text-gray-800">
-                          ৳{formatTakaDecimals(item.price * item.quantity)}
+                          {formatTakaDecimals(item.price * item.quantity)}
                         </span>
                       </div>
                     </div>
@@ -474,12 +562,12 @@ function CheckoutInner() {
             <div className="rounded-lg border border-gray-200 bg-white p-4 sm:p-5 space-y-3.5 shadow-2xs">
               {/* Row 1: Name and Phone with Bangladesh Prefix */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <label className="block text-xs font-medium text-gray-700">???????? ???<input
+                <label className="block text-xs font-medium text-gray-700">গ্রাহকের নাম<input
                   type="text"
                   required
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  aria-label="Customer name" placeholder="????? ????? ??? *"
+                  aria-label="Customer name" placeholder="আপনার নিজের নাম লিখুন *"
                   className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-[#f48721] transition-colors"
                 /></label>
 
@@ -523,7 +611,7 @@ function CheckoutInner() {
                   required
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  aria-label="Full delivery address" placeholder="?????, ???, ?????, ???? ? ???? ?? ???????? ?????? *"
+                  aria-label="Full delivery address" placeholder="বাসার নং, রোড, এলাকা, থানা, জেলা ও পোস্টকোড লিখুন *"
                   className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-[#f48721] transition-colors"
                 />
               </div>
@@ -541,7 +629,7 @@ function CheckoutInner() {
                   >
                     {DISTRICTS.map((d) => (
                       <option key={d} value={d}>
-                        {d} (Delivery ?{formatTakaDecimals(Number(districtFees[d] ?? (d === "Dhaka" ? delivery.dhaka ?? 0 : delivery.outside ?? 0)) / 100)})
+                        {d} (Delivery {formatTakaDecimals(Number(districtFees[d] ?? (d === "Dhaka" ? delivery.dhaka ?? 0 : delivery.outside ?? 0)) / 100)})
                       </option>
                     ))}
                   </select>
@@ -710,7 +798,7 @@ function CheckoutInner() {
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    aria-label="Coupon code" placeholder="???? ??? ?????"
+                    aria-label="Coupon code" placeholder="কুপন কোড লিখুন"
                     className="flex-1 rounded-md border border-gray-300 px-3.5 py-2 text-sm outline-none focus:border-[#f48721]"
                   />
                   <button

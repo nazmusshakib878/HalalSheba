@@ -29,6 +29,16 @@
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
   }
+
+  /* Form controls must use the Bengali-capable font first: placeholders and
+     option text in Bengali (e.g. the checkout shipping-address field) render
+     as "???????" when the control inherits a Latin-only font. Noto Sans
+     Bengali also covers Latin, so English input text is unaffected. */
+  input,
+  select,
+  textarea {
+    font-family: var(--font-bengali), var(--font-open-sans), sans-serif;
+  }
 }
 
 .font-bengali {

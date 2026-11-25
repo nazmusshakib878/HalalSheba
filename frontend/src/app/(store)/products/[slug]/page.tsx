@@ -60,7 +60,7 @@ export default function ProductDetailPage() {
   );
 
   const averageRating = useMemo(() => {
-    if (productReviews.length === 0) return 5;
+    if (productReviews.length === 0) return 0;
     const sum = productReviews.reduce((acc, r) => acc + r.rating, 0);
     return Number((sum / productReviews.length).toFixed(1));
   }, [productReviews]);
@@ -182,25 +182,31 @@ export default function ProductDetailPage() {
               {product.name}
             </h1>
 
-            {/* Rating summary */}
+            {/* Rating summary — no stars at all until a real review exists */}
             <div className="flex items-center gap-2">
-              <div className="flex items-center text-[#d97706]">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <StarIcon
-                    key={i}
-                    className="h-4 w-4"
-                    filled={i < Math.round(averageRating)}
-                  />
-                ))}
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveTab("reviews")}
-                className="text-xs text-slate-500 hover:text-[#065f46] cursor-pointer"
-              >
-                ({productReviews.length} Customer{" "}
-                {productReviews.length === 1 ? "Review" : "Reviews"})
-              </button>
+              {productReviews.length > 0 ? (
+                <>
+                  <div className="flex items-center text-[#d97706]">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <StarIcon
+                        key={i}
+                        className="h-4 w-4"
+                        filled={i < Math.round(averageRating)}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("reviews")}
+                    className="text-xs text-slate-500 hover:text-[#065f46] cursor-pointer"
+                  >
+                    ({productReviews.length} Customer{" "}
+                    {productReviews.length === 1 ? "Review" : "Reviews"})
+                  </button>
+                </>
+              ) : (
+                <span className="text-xs text-slate-500">No reviews yet</span>
+              )}
             </div>
 
             {/* Price Block */}
@@ -333,7 +339,7 @@ export default function ProductDetailPage() {
             </div>
             <div className="rounded-xl bg-slate-50 border border-slate-100 p-3">
               <span className="font-bold text-[#064e3b] block text-[13px] mb-0.5">Happy Return</span>
-              7-Day Easy Return
+              48-Hour Easy Return
             </div>
           </div>
         </div>
@@ -453,7 +459,7 @@ export default function ProductDetailPage() {
                       ))}
                     </div>
                     <span className="block text-xs text-gray-500 mt-1">
-                      {productReviews.length} reviews
+                      {productReviews.length}{" "}reviews
                     </span>
                   </div>
                   <div className="flex-1 space-y-1.5 text-xs">

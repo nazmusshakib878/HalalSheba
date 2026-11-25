@@ -66,7 +66,7 @@ export function TestimonialsSection() {
                         <StarIcon key={i} className="h-4 w-4" filled />
                       ))}
                     </div>
-                    <p className="text-[13.5px] leading-relaxed text-[#4b5563] line-clamp-3">
+                    <p className="text-[13.5px] leading-relaxed text-[#4b5563]">
                       &ldquo;{item.quote}&rdquo;
                     </p>
                   </div>

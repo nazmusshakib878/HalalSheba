@@ -26,7 +26,7 @@ export function Header() {
   const NAV_ITEMS: NavItem[] = [{label:"Home",href:"/"},{label:"All Products",href:"/collections/all-products"},...CATEGORIES.map(c=>({label:c.name,href:"/collections/"+c.slug,subcategories:PRODUCTS.filter(p=>p.categorySlug===c.slug).map(p=>({label:p.name,href:"/products/"+p.slug}))})),{label:"আমাদের সম্পর্কে",href:"/page/about-us"},{label:"যোগাযোগ",href:"/page/contact-us"}];
   const router = useRouter();
   const pathname = usePathname();
-  const { totalItems, openCart, wishlist, user } = useStore();
+  const { totalItems, openCart, wishlist, user, hydrated } = useStore();
 
   const [query, setQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
@@ -257,9 +257,11 @@ export function Header() {
             >
               <div className="relative">
                 <CartIcon className="h-[20px] w-[20px] sm:h-[22px] sm:w-[22px] text-white sm:text-[#222831]" />
-                <span className="absolute -top-2 -right-2.5 h-[17px] min-w-[17px] px-1 rounded-full bg-[#f48721] text-white text-[10px] font-bold flex items-center justify-center leading-none">
-                  {totalItems}
-                </span>
+                {hydrated && (
+                  <span className="absolute -top-2 -right-2.5 h-[17px] min-w-[17px] px-1 rounded-full bg-[#f48721] text-white text-[10px] font-bold flex items-center justify-center leading-none">
+                    {totalItems}
+                  </span>
+                )}
               </div>
               <span className="text-[12px] font-bold sm:hidden text-white">
                 কার্ট

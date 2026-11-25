@@ -13,7 +13,7 @@ import {
 } from "@/components/Icons";
 
 export function FloatingWidgets() {
-  const { totalItems, subtotal, openCart } = useStore();
+  const { totalItems, subtotal, openCart, hydrated } = useStore();
   const [showTop, setShowTop] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [chatInput, setChatInput] = useState("");
@@ -49,7 +49,9 @@ export function FloatingWidgets() {
 
   return (
     <>
-      {/* Fixed Right-Edge Floating Cart Badge (visible on tablet & desktop, hidden on mobile) */}
+      {/* Fixed Right-Edge Floating Cart Badge (visible on tablet & desktop, hidden on mobile).
+          Hidden until the cart has hydrated from storage so it never flashes a wrong "0 Items". */}
+      {hydrated && (
       <button
         type="button"
         onClick={openCart}
@@ -66,6 +68,7 @@ export function FloatingWidgets() {
           {formatTakaDecimals(subtotal)}
         </div>
       </button>
+      )}
 
       {/* Bottom-Right Controls: Scroll To Top + Live Support Chat (elevated above mobile bottom nav) */}
       <div className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] md:bottom-6 right-3 sm:right-6 z-[85] flex flex-col items-end gap-2.5 sm:gap-3">

@@ -421,7 +421,7 @@ function CollectionViewInner() {
 
             <div className="flex items-center gap-2 shrink-0">
               <span className="text-xs text-gray-500 hidden sm:inline">
-                {filteredProducts.length} items found
+                {filteredProducts.length}{" "}items found
               </span>
               <select
                 aria-label="Items per page"
@@ -469,7 +469,7 @@ function CollectionViewInner() {
               <p className="text-xs sm:text-sm text-gray-500">
                 Showing {(safePage - 1) * perPage + 1} -{" "}
                 {Math.min(safePage * perPage, filteredProducts.length)} of{" "}
-                {filteredProducts.length} results
+                {filteredProducts.length}{" "}results
               </p>
 
               <div className="flex items-center gap-1.5">

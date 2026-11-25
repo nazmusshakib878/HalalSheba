@@ -15,5 +15,15 @@ export default async function HomePage(){
  const appearance=settings.appearance||{};
  const hidden=(appearance.hidden_sections||[]) as string[];
  const order=(appearance.sections?.constructor===Array?appearance.sections:Object.keys(titles)) as string[];
- return <div className="storefront"><HeroSection/>{!hidden.includes('categories')&&<FeaturedCategories/>}{!hidden.includes('top-selling')&&<TopSellingSection/>}{order.filter(slug=>!hidden.includes(slug)).map((slug,i)=><ProductCarouselSection key={slug} title={titles[slug]||categories.find(c=>c.slug===slug)?.name||slug} viewAllHref={'/collections/'+slug} products={products.filter(p=>p.categorySlug===slug||(slug==='organic-food'&&['satkhira-aam','twin-fol','dry-food-mix','kumra-bori','beetroot-powder'].includes(p.slug)))} direction={i%2?'right':'left'}/>)}<BrandCarousel/><TestimonialsSection/></div>;
+ // Each product appears only once on the homepage: track what the earlier
+ // sections already showed and exclude those from the later ones.
+ const seen = new Set<number>();
+ const topSelling = products.filter(p=>p.isTopSelling || p.featured);
+ topSelling.forEach(p=>seen.add(p.id));
+ const sections = order.filter(slug=>!hidden.includes(slug)).map(slug=>{
+   const list = products.filter(p=>p.categorySlug===slug||(slug==='organic-food'&&['satkhira-aam','twin-fol','dry-food-mix','kumra-bori','beetroot-powder'].includes(p.slug))).filter(p=>!seen.has(p.id));
+   list.forEach(p=>seen.add(p.id));
+   return {slug, list};
+ });
+ return <div className="storefront"><HeroSection/>{!hidden.includes('categories')&&<FeaturedCategories/>}{!hidden.includes('top-selling')&&<TopSellingSection products={products}/>}{sections.map(({slug,list},i)=><ProductCarouselSection key={slug} title={titles[slug]||categories.find(c=>c.slug===slug)?.name||slug} viewAllHref={'/collections/'+slug} products={list} direction={i%2?'right':'left'}/>)}<BrandCarousel/><TestimonialsSection/></div>;
 }

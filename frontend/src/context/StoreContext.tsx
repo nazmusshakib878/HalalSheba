@@ -63,6 +63,7 @@ interface StoreContextValue {
   cart: CartItem[];
   totalItems: number;
   subtotal: number;
+  hydrated: boolean;
   isCartOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
@@ -343,6 +344,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       cart,
       totalItems,
       subtotal,
+      hydrated,
       isCartOpen,
       openCart,
       closeCart,
@@ -367,6 +369,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       cart,
       totalItems,
       subtotal,
+      hydrated,
       isCartOpen,
       openCart,
       closeCart,

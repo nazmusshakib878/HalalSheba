@@ -305,27 +305,6 @@ export const BRANDS: Brand[] = [
     image: "/images/halal-sheba-logo.png",
     tagline: "হালাল ও খাঁটি পণ্যের এক বিশ্বস্ত প্রতিষ্ঠান",
   },
-  {
-    id: "brand-sundarban",
-    name: "Sundarban Naturals",
-    slug: "sundarban",
-    image: "/images/products/sundarban-chaker-modhu.jpg",
-    tagline: "সুন্দরবনের শতভাগ প্রাকৃতিক চাকের মধু",
-  },
-  {
-    id: "brand-satkhira",
-    name: "Satkhira Agro",
-    slug: "satkhira-agro",
-    image: "/images/products/chui-jhal.jpg",
-    tagline: "সাতক্ষীরার খাঁটি চুইঝাল ও খেজুরের গুড়",
-  },
-  {
-    id: "brand-baghabari",
-    name: "Baghabari Dairy",
-    slug: "baghabari",
-    image: "/images/products/gawa-ghee.jpg",
-    tagline: "ঐতিহ্যবাহী গাওয়া ঘি ও খাঁটি বাটার",
-  },
 ];
 
 export const TESTIMONIALS: Testimonial[] = [
