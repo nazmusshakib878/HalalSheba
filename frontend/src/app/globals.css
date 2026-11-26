@@ -89,7 +89,9 @@ input[type="range"].hs-range::-moz-range-thumb {
 
 /* Storefront presentation */
 /* Original v1 two-column hero, restored 26 Nov 2026 (5 slides, 4s
-   autoplay): copy left, big photo right, controls bottom-left. */
+   autoplay): copy left, big photo right, controls bottom-left.
+   Re-push: the 24be5ad push reported no Vercel checks, so this touch
+   re-fires the deploy webhook. */
 .store-hero-wrap { max-width:1320px; margin:auto; padding:24px 24px 0; }
 .store-hero { position:relative; display:grid; grid-template-columns:1.05fr 1fr; background:#f5f0e7; border:1px solid #e7dfd0; border-radius:16px; overflow:hidden; isolation:isolate; }
 .store-hero-copy { padding:72px 40px 112px 60px; min-height:500px; align-self:center; animation:store-enter .65s ease both; }
