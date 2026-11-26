@@ -37,14 +37,16 @@ export function TestimonialsSection() {
       </div>
 
       <div className="relative group/testi">
-        <button
-          type="button"
-          onClick={() => setIndex((i) => (i <= 0 ? maxIndex : i - 1))}
-          aria-label="Previous testimonial"
-          className="flex absolute -left-2 top-1/2 -translate-y-1/2 z-20 h-8 w-8 rounded-full bg-white border border-gray-200 text-[#222831] hover:bg-[#f48721] hover:text-white hover:border-[#f48721] items-center justify-center shadow-md lg:opacity-0 lg:group-hover/testi:opacity-100 transition-all cursor-pointer"
-        >
-          <ChevronLeftIcon className="h-4 w-4" />
-        </button>
+        {maxIndex > 0 && (
+          <button
+            type="button"
+            onClick={() => setIndex((i) => (i <= 0 ? maxIndex : i - 1))}
+            aria-label="Previous testimonial"
+            className="flex absolute -left-2 top-1/2 -translate-y-1/2 z-20 h-8 w-8 rounded-full bg-white border border-gray-200 text-[#222831] hover:bg-[#f48721] hover:text-white hover:border-[#f48721] items-center justify-center shadow-md lg:opacity-0 lg:group-hover/testi:opacity-100 transition-all cursor-pointer"
+          >
+            <ChevronLeftIcon className="h-4 w-4" />
+          </button>
+        )}
 
         <div className="overflow-hidden py-1">
           <div
@@ -92,14 +94,16 @@ export function TestimonialsSection() {
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setIndex((i) => (i >= maxIndex ? 0 : i + 1))}
-          aria-label="Next testimonial"
-          className="flex absolute -right-2 top-1/2 -translate-y-1/2 z-20 h-8 w-8 rounded-full bg-white border border-gray-200 text-[#222831] hover:bg-[#f48721] hover:text-white hover:border-[#f48721] items-center justify-center shadow-md lg:opacity-0 lg:group-hover/testi:opacity-100 transition-all cursor-pointer"
-        >
-          <ChevronRightIcon className="h-4 w-4" />
-        </button>
+        {maxIndex > 0 && (
+          <button
+            type="button"
+            onClick={() => setIndex((i) => (i >= maxIndex ? 0 : i + 1))}
+            aria-label="Next testimonial"
+            className="flex absolute -right-2 top-1/2 -translate-y-1/2 z-20 h-8 w-8 rounded-full bg-white border border-gray-200 text-[#222831] hover:bg-[#f48721] hover:text-white hover:border-[#f48721] items-center justify-center shadow-md lg:opacity-0 lg:group-hover/testi:opacity-100 transition-all cursor-pointer"
+          >
+            <ChevronRightIcon className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       {/* Orange Dot Indicators */}

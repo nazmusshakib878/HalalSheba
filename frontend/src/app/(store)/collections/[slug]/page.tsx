@@ -3,7 +3,7 @@ import { useCatalog } from "@/context/CatalogContext";
 
 import React, { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, usePathname, useSearchParams } from "next/navigation";
 import { formatTaka } from "@/data/catalog";
 import { ProductCard } from "@/components/ProductCard";
 import { CloseIcon } from "@/components/Icons";
@@ -103,7 +103,34 @@ function CollectionViewInner() {
   const [maxPrice, setMaxPrice] = useState(ceilingPrice);
   const [sortBy, setSortBy] = useState("default");
   const [perPage, setPerPage] = useState(16);
-  const [page, setPage] = useState(1);
+  // Start on the page the URL asks for (?page=2), so deep links and refresh
+  // land on the right page instead of always resetting to page 1.
+  const [page, setPage] = useState(() => {
+    const n = parseInt(searchParams.get("page") || "", 10);
+    return Number.isFinite(n) && n >= 1 ? n : 1;
+  });
+  const router = useRouter();
+  const pathname = usePathname();
+  const parsePageParam = (v: string | null) => {
+    const n = parseInt(v || "", 10);
+    return Number.isFinite(n) && n >= 1 ? n : 1;
+  };
+  // Every page change writes through to the URL (page 1 omits the param to
+  // keep URLs clean); back/forward and pasted ?page= links re-sync the grid.
+  const syncPageToUrl = (n: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (n <= 1) params.delete("page");
+    else params.set("page", String(n));
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  };
+  const goToPage = (n: number) => {
+    setPage(n);
+    syncPageToUrl(n);
+  };
+  useEffect(() => {
+    setPage(parsePageParam(searchParams.get("page")));
+  }, [searchParams]);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
   useEffect(() => {
@@ -112,7 +139,6 @@ function CollectionViewInner() {
     setSelectedBrands([]);
     setSelectedFlags([]);
     setSelectedSubs(initialSub ? [initialSub] : []);
-    setPage(1);
   }, [slug, ceilingPrice, initialSub]);
 
   const subcategoryOptions = useMemo(() => {
@@ -137,7 +163,7 @@ function CollectionViewInner() {
     setList: React.Dispatch<React.SetStateAction<string[]>>,
     val: string
   ) => {
-    setPage(1);
+    goToPage(1);
     setList((prev) =>
       prev.includes(val) ? prev.filter((item) => item !== val) : [...prev, val]
     );
@@ -213,7 +239,7 @@ function CollectionViewInner() {
     setMinPrice(0);
     setMaxPrice(ceilingPrice);
     setSortBy("default");
-    setPage(1);
+    goToPage(1);
   };
 
   const sidebarContent = (
@@ -277,7 +303,7 @@ function CollectionViewInner() {
             onChange={(e) => {
               const v = Math.min(Number(e.target.value), maxPrice - 50);
               setMinPrice(Math.max(0, v));
-              setPage(1);
+              goToPage(1);
             }}
             aria-label="Minimum price"
             className="hs-range absolute inset-0 w-full"
@@ -291,7 +317,7 @@ function CollectionViewInner() {
             onChange={(e) => {
               const v = Math.max(Number(e.target.value), minPrice + 50);
               setMaxPrice(Math.min(ceilingPrice, v));
-              setPage(1);
+              goToPage(1);
             }}
             aria-label="Maximum price"
             className="hs-range absolute inset-0 w-full"
@@ -430,7 +456,7 @@ function CollectionViewInner() {
                 value={perPage}
                 onChange={(e) => {
                   setPerPage(Number(e.target.value));
-                  setPage(1);
+                  goToPage(1);
                 }}
                 className="rounded-lg border border-slate-200 bg-white px-2 sm:px-3 py-1.5 text-[11.5px] sm:text-[13px] font-medium text-slate-700 outline-none focus:border-[#065f46]"
               >
@@ -478,7 +504,7 @@ function CollectionViewInner() {
                 <button
                   type="button"
                   disabled={safePage <= 1}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  onClick={() => goToPage(Math.max(1, page - 1))}
                   className="rounded border border-gray-200 px-3 py-1 text-xs font-medium text-gray-600 disabled:opacity-40 hover:border-[#f48721] hover:text-[#f48721] cursor-pointer"
                 >
                   &laquo; Previous
@@ -487,7 +513,7 @@ function CollectionViewInner() {
                   <button
                     key={i}
                     type="button"
-                    onClick={() => setPage(i + 1)}
+                    onClick={() => goToPage(i + 1)}
                     className={`h-7 min-w-[28px] rounded px-2 text-xs font-semibold cursor-pointer ${
                       safePage === i + 1
                         ? "bg-[#f48721] text-white"
@@ -500,7 +526,7 @@ function CollectionViewInner() {
                 <button
                   type="button"
                   disabled={safePage >= totalPages}
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  onClick={() => goToPage(Math.min(totalPages, page + 1))}
                   className="rounded border border-gray-200 px-3 py-1 text-xs font-medium text-gray-600 disabled:opacity-40 hover:border-[#f48721] hover:text-[#f48721] cursor-pointer"
                 >
                   Next &raquo;

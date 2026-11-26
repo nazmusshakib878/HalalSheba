@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { Product, Category } from '@/data/catalog';
-import { sortProductVariants } from '@/data/catalog';
+import { sortProductVariants, repairProductImages } from '@/data/catalog';
 
 export interface CatalogData {
   products: Product[];
@@ -62,7 +62,7 @@ export function CatalogProvider({
         const json = await res.json();
         if (json && Array.isArray(json.products) && json.products.length > 0) {
           setData((prev) => ({
-            products: sortProductVariants(json.products),
+            products: sortProductVariants(repairProductImages(json.products)),
             categories: Array.isArray(json.categories) && json.categories.length > 0 ? json.categories : prev.categories,
             settings: json.settings || prev.settings,
             unavailable: false,

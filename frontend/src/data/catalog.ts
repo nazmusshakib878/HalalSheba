@@ -100,6 +100,50 @@ export function sortProductVariants(products: Product[]): Product[] {
   );
 }
 
+// Admin-uploaded product photos that Render wiped: the backend stores uploads
+// on the free-plan container disk (render.yaml defines no persistent disk), so
+// every redeploy/restart deletes them while the database keeps referencing the
+// dead /api/media/products/<hash> URLs. Map each dead URL to the durable
+// static replacement in this repo, so the storefront shows a real photo of the
+// same product instead of a grey placeholder. The six non-roti replacements
+// are tracked files; the three roti-maker-*.jpg files exist locally but are
+// NOT in the repo yet (push-files rejects binaries) — upload them to
+// frontend/public/images/products/ via the GitHub web UI and the roti maker
+// photos light up with no further code change. The roti main/gallery
+// originals were never available locally, so they reuse the three size photos
+// (same product, 8"/9"/10") until the owner re-uploads his original shots.
+const DEAD_MEDIA_REPLACEMENTS: Record<string, string> = {
+  "/api/media/products/Vw4bFjZgdD2FffWEeY7awUpzIVXrKZ50rl7Obq02.png": "/images/products/gawa-ghee.jpg",
+  "/api/media/products/FnkBEcg4g69u4zHnVFXEZSGpWcGdBpv9ktG3zMOw.png": "/images/products/dry-food-mix.jpg",
+  "/api/media/products/QmKBHDDJ1a8oH3zaAGDNgeYNMmXc63fggCUflXxX.png": "/images/products/chak-shoho-modhu.jpg",
+  "/api/media/products/USaUpHEkLCo68CGFpa5JavfKILWQb45Lt54zDaqh.png": "/images/products/sharbat-seed-mixer.jpg",
+  "/api/media/products/fCRMg5G0PcSCvKPiJCHPUSTCuB21CPoIPwga9FCC.jpg": "/images/products/khejurer-beej-gur.jpg",
+  "/api/media/products/ngb4FwIxlPvyxQu3fa2wLAxCJPwH9sKjEeb08Oh8.png": "/images/products/chia-seed.jpg",
+  "/api/media/products/eMaPWHjrIirZJqJKYjreHUVauqeuGBQ7mbxaW0q4.jpg": "/images/products/roti-maker-8inch.jpg",
+  "/api/media/products/onP4rqYFXzI6rocwoFT79tynm1mnlf0aygBnrTMN.jpg": "/images/products/roti-maker-9inch.jpg",
+  "/api/media/products/UKzI64Go6pSJC0Z0fbX8K4rwvdNCQ2A1ic1SO7dX.jpg": "/images/products/roti-maker-10inch.jpg",
+  "/api/media/products/CnBRKCZTGTZYA5yqilytMz97ADrnp5jQS6MngOAs.jpg": "/images/products/roti-maker-8inch.jpg",
+  "/api/media/products/jJJFEQc6uLTz6f7V9hn0Vdj0TvUMG35b0mxC0D9F.jpg": "/images/products/roti-maker-9inch.jpg",
+  "/api/media/products/GTQYwnSfhiOeDfPRggrhnZedA6G2wJiJcJxZ42mA.jpg": "/images/products/roti-maker-10inch.jpg",
+};
+
+export function repairProductImage(url: string | undefined): string | undefined {
+  if (!url) return url;
+  return DEAD_MEDIA_REPLACEMENTS[url] ?? url;
+}
+
+// Apply the dead-media mapping to a product list (main image, gallery and
+// variant images). Safe to run on the static fallback too — its images are
+// already static, so it is a no-op there.
+export function repairProductImages(products: Product[]): Product[] {
+  return products.map((p) => ({
+    ...p,
+    image: repairProductImage(p.image) ?? p.image,
+    gallery: p.gallery?.map((g) => repairProductImage(g) ?? g),
+    variants: p.variants?.map((v) => ({ ...v, image: repairProductImage(v.image) })),
+  }));
+}
+
 export const SITE_ASSETS = {
   logo: "/images/halal-sheba-logo.png",
   paymentGateway: "/images/badges/payment-methods.svg",

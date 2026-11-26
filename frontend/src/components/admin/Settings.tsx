@@ -194,6 +194,10 @@ export function Settings() {
         )}
 
         {/* 2. DELIVERY TAB */}
+        {/* Fallback defaults match the live charges (৳70 inside / ৳100 outside)
+            so the form never shows stale ৳60/৳120 defaults when the delivery
+            settings row is missing. The live values come from the settings
+            table, which checkout, cart and catalog all read. */}
         {tab === 'delivery' && (
           <div className="grid">
             <label>
@@ -203,7 +207,7 @@ export function Settings() {
                 type="number"
                 min="0"
                 step="1"
-                defaultValue={(data.delivery?.dhaka ?? 6000) / 100}
+                defaultValue={(data.delivery?.dhaka ?? 7000) / 100}
               />
             </label>
             <label>
@@ -213,7 +217,7 @@ export function Settings() {
                 type="number"
                 min="0"
                 step="1"
-                defaultValue={(data.delivery?.outside ?? 12000) / 100}
+                defaultValue={(data.delivery?.outside ?? 10000) / 100}
               />
             </label>
             <label>
